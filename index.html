@@ -3,226 +3,665 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portfolio | Websites and apps</title>
-<meta name="description" content="Twelve demo projects: landing pages, WebGL scroll stories, web apps, a mobile app for iOS and Android, and a desktop app for macOS, Windows and Linux.">
-<meta name="theme-color" content="#f6f6f4" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#101112" media="(prefers-color-scheme: dark)">
+<title>lilbunnych | Websites and apps</title>
+<meta name="description" content="Websites and apps, end to end: landing pages, sites with booking and catalogs, web apps, mobile apps for iOS and Android, desktop apps. Fast, with a demo before you pay.">
+<meta name="theme-color" content="#0e0f11">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23ffd400'/%3E%3Crect x='20' y='8' width='9' height='24' rx='4.5' fill='%23111' transform='rotate(-12 24 32)'/%3E%3Crect x='35' y='8' width='9' height='24' rx='4.5' fill='%23111' transform='rotate(12 40 32)'/%3E%3Cpath d='M22 38l-8 7 8 7M42 38l8 7-8 7M36 36l-8 20' fill='none' stroke='%23111' stroke-width='5'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+/* Locked dark theme: yellow / black brand. */
 :root{
-  color-scheme: light dark;
-  --bg:#f6f6f4; --card:#ffffff; --ink:#131415; --muted:#63666b; --faint:#9a9da2; --line:#e4e4e0; --chip:#eeeeea;
-  --accent:#e4572e; --sans:'Geist', system-ui, sans-serif; --mono:'Geist Mono', ui-monospace, monospace;
-}
-@media (prefers-color-scheme: dark){
-  :root{ --bg:#101112; --card:#17181a; --ink:#ececea; --muted:#9a9ea4; --faint:#6b6f75; --line:#26282b; --chip:#1f2123; --accent:#ff7a52 }
+  --bg:#0e0f11; --bg2:#15171a; --card:#17191c; --ink:#f2f1ec; --muted:#9a9ea4; --faint:#63676d; --line:#26292d;
+  --y:#ffd400; --y-ink:#111; --sans:'Geist', system-ui, sans-serif; --mono:'Geist Mono', ui-monospace, monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
 }
 *{ box-sizing:border-box; margin:0; padding:0 }
-html{ -webkit-font-smoothing:antialiased }
-body{ background:var(--bg); color:var(--ink); font-family:var(--sans); line-height:1.5 }
+html{ -webkit-font-smoothing:antialiased; scroll-behavior:smooth; background:var(--bg) }
+body{ background:var(--bg); color:var(--ink); font-family:var(--sans); line-height:1.5; overflow-x:clip }
 a{ color:inherit }
 button{ font:inherit; color:inherit; background:none; border:0; cursor:pointer }
-:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:6px }
+:focus-visible{ outline:2px solid var(--y); outline-offset:3px; border-radius:6px }
 .wrap{ max-width:80rem; margin:0 auto; padding:0 1.25rem }
 @media (min-width:768px){ .wrap{ padding:0 2.5rem } }
+.sr{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0) }
 
-header.top{ display:flex; justify-content:space-between; align-items:center; padding:1.5rem 0 }
-.mark{ display:flex; align-items:center; gap:.6rem; font-weight:600 }
-.mark i{ width:.75rem; height:.75rem; border-radius:3px; background:var(--accent); display:inline-block }
-.top a.cta{ font-size:.9rem; text-decoration:none; padding:.55rem 1rem; border:1px solid var(--line); border-radius:999px }
-.top a.cta:hover{ border-color:var(--ink) }
-.top a.cta:not(.ghost){ background:var(--ink); color:var(--bg); border-color:var(--ink) }
-@media (max-width:640px){ .top a.cta.ghost{ display:none } }
-.top-r{ display:flex; align-items:center; gap:.75rem }
-.lang{ display:flex; padding:.2rem; border-radius:999px; background:var(--chip) }
+/* Header */
+header.top{ position:fixed; inset:0 0 auto; z-index:30; display:flex; justify-content:space-between; align-items:center; gap:1rem; padding:1rem 1.25rem; background:linear-gradient(var(--bg), transparent); transition:background .3s, border-color .3s; border-bottom:1px solid transparent }
+header.top.scrolled{ background:color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border-bottom-color:var(--line) }
+@media (min-width:768px){ header.top{ padding:1.25rem 2.5rem } }
+.mark{ display:flex; align-items:center; gap:.6rem; font-weight:700; letter-spacing:-.01em; text-decoration:none }
+.mark svg{ width:1.9rem; height:1.9rem; border-radius:.5rem }
+.top-r{ display:flex; align-items:center; gap:.6rem }
+.lang{ display:flex; padding:.2rem; border-radius:999px; background:var(--bg2); border:1px solid var(--line) }
 .lang button{ font-family:var(--mono); font-size:.8rem; padding:.35rem .7rem; border-radius:999px; color:var(--muted) }
-.lang button[aria-pressed="true"]{ background:var(--card); color:var(--ink); box-shadow:0 1px 2px rgba(0,0,0,.12) }
+.lang button[aria-pressed="true"]{ background:var(--y); color:var(--y-ink) }
+.cta{ font-size:.9rem; text-decoration:none; padding:.55rem 1rem; border:1px solid var(--line); border-radius:999px; white-space:nowrap; transition:border-color .2s, background .2s }
+.cta:hover{ border-color:var(--ink) }
+.cta.solid{ background:var(--y); color:var(--y-ink); border-color:var(--y); font-weight:600 }
+.cta.solid:hover{ filter:brightness(1.05) }
+@media (max-width:720px){ .cta.ghost{ display:none } }
+@media (max-width:420px){ .cta.solid{ padding:.5rem .8rem; font-size:.82rem } }
 
-.intro{ padding:4rem 0 3rem; display:grid; gap:2rem }
-.intro h1{ font-size:clamp(2.5rem,6vw,4.75rem); line-height:1; letter-spacing:-.045em; font-weight:600; max-width:14ch }
-.intro p{ font-size:1.125rem; color:var(--muted); max-width:44ch }
-.facts{ display:flex; flex-wrap:wrap; gap:.5rem 2rem; font-family:var(--mono); font-size:.8125rem; color:var(--muted) }
-.facts b{ color:var(--ink); font-weight:500 }
-@media (min-width:960px){ .intro{ grid-template-columns:1.2fr .8fr; align-items:end } }
+/* 3D stage */
+.stage{ position:relative; height:100svh; min-height:560px; overflow:hidden; background:radial-gradient(70% 60% at 50% 55%, #1b1d21 0%, var(--bg) 70%) }
+#scene{ position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:pan-y; cursor:grab }
+#scene.drag{ cursor:grabbing }
+.hero-copy{ position:absolute; left:0; right:0; top:4.6rem; z-index:5; pointer-events:none; text-align:center; padding:0 1.25rem }
+.hero-copy h1{ font-size:clamp(1.9rem,4.6vw,3.6rem); line-height:1.02; letter-spacing:-.045em; font-weight:700 }
+.hero-copy h1 em{ font-style:normal; color:var(--y) }
+.hero-copy p{ margin:.6rem auto 0; color:var(--muted); max-width:46ch; font-size:.95rem }
+.info{ position:absolute; left:50%; bottom:1.25rem; transform:translateX(-50%); z-index:6; width:min(40rem, calc(100% - 2rem)); padding:1.1rem 1.25rem; border-radius:1.25rem;
+  background:color-mix(in srgb, var(--bg2) 82%, transparent); border:1px solid var(--line); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); display:grid; grid-template-columns:auto 1fr auto; gap:.25rem 1rem; align-items:center }
+.info .nav{ width:2.6rem; height:2.6rem; border-radius:999px; border:1px solid var(--line); display:grid; place-items:center; font-size:1.1rem; color:var(--muted) }
+.info .nav:hover{ color:var(--ink); border-color:var(--ink) }
+.info .meta{ font-family:var(--mono); font-size:.72rem; color:var(--faint); display:flex; justify-content:space-between; gap:.5rem }
+.info h2{ font-size:1.35rem; letter-spacing:-.02em; line-height:1.15 }
+.info p{ font-size:.9rem; color:var(--muted) }
+.info .links{ display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.45rem }
+.info .links a{ font-size:.82rem; text-decoration:none; padding:.4rem .8rem; border-radius:999px; border:1px solid var(--line) }
+.info .links a.primary{ background:var(--y); color:var(--y-ink); border-color:var(--y); font-weight:600 }
+.info .body{ min-width:0; transition:opacity .25s }
+.info.swap .body{ opacity:0 }
+.hint{ position:absolute; right:1.25rem; top:50%; z-index:5; font-family:var(--mono); font-size:.72rem; color:var(--faint); writing-mode:vertical-rl; pointer-events:none }
+@media (max-width:720px){ .hint{ display:none } .info{ padding:.9rem; gap:.25rem .6rem } .info p{ display:none } }
+/* Desktop: copy and project panel live on the left, the bunny and active card own the centre-right */
+@media (min-width:1000px){
+  .hero-copy{ top:6.5rem; left:2.5rem; right:auto; width:30rem; text-align:left; padding:0 }
+  .hero-copy h1{ font-size:clamp(2.6rem,4.2vw,3.9rem) }
+  .hero-copy p{ margin-left:0 }
+  .info{ left:2.5rem; bottom:2rem; transform:none; width:26rem; grid-template-columns:1fr auto auto; grid-template-areas:"body prev next" }
+  .info .body{ grid-area:body } #prev{ grid-area:prev; align-self:end } #next{ grid-area:next; align-self:end }
+}
+.stage-fallback{ position:absolute; inset:0; display:grid; place-items:center; color:var(--muted); padding:2rem; text-align:center }
 
-.filters{ position:sticky; top:0; z-index:5; display:flex; gap:.5rem; overflow-x:auto; padding:.9rem 0; background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); scrollbar-width:none }
-.filters button{ flex-shrink:0; padding:.5rem 1rem; border-radius:999px; background:var(--chip); color:var(--muted); font-size:.9rem; transition:all .2s }
-.filters button:hover{ color:var(--ink) }
-.filters button[aria-pressed="true"]{ background:var(--ink); color:var(--bg) }
+/* Sections */
+section.block{ padding:6rem 0; scroll-margin-top:4.5rem }
+.eyebrow{ font-family:var(--mono); font-size:.8rem; color:var(--y); letter-spacing:.06em; text-transform:uppercase }
+.block h2.title{ margin-top:.75rem; font-size:clamp(2rem,5vw,3.5rem); line-height:1; letter-spacing:-.045em; font-weight:700; max-width:18ch }
+.block .lead{ margin-top:1rem; color:var(--muted); max-width:52ch; font-size:1.05rem }
+[data-rv]{ opacity:0; transform:translateY(28px); transition:opacity .9s var(--ease), transform .9s var(--ease); transition-delay:var(--d,0ms) }
+[data-rv].in{ opacity:1; transform:none }
 
-.grid{ display:grid; gap:1.25rem; padding:1rem 0 5rem }
-@media (min-width:720px){ .grid{ grid-template-columns:repeat(2,1fr) } }
-@media (min-width:1120px){ .grid{ grid-template-columns:repeat(3,1fr) } }
-.card{ display:flex; flex-direction:column; background:var(--card); border:1px solid var(--line); border-radius:1.25rem; overflow:hidden; transition:transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s }
-.card:hover{ transform:translateY(-4px); box-shadow:0 24px 50px -30px rgba(0,0,0,.35) }
-.card[hidden]{ display:none }
-.shot{ position:relative; aspect-ratio:16/10; overflow:hidden; background:var(--chip); border-bottom:1px solid var(--line) }
-.shot img{ width:100%; height:100%; object-fit:cover; object-position:top; transition:transform .8s cubic-bezier(.16,1,.3,1) }
-.card:hover .shot img{ transform:scale(1.03) }
-.shot.phone{ display:grid; place-items:center; background:linear-gradient(160deg, #1f7a55, #0b3a28) }
-.shot.phone img{ width:auto; height:92%; border-radius:1.25rem; box-shadow:0 20px 40px rgba(0,0,0,.35); object-fit:contain }
-.demo-tag{ position:absolute; left:.75rem; top:.75rem; background:#ffd400; color:#111; font:800 .7rem/1 system-ui, sans-serif; letter-spacing:.14em; padding:.4rem .55rem; border-radius:.3rem; border:2px solid #111 }
-.body{ padding:1.25rem 1.25rem 1.1rem; display:flex; flex-direction:column; gap:.6rem; flex:1 }
-.meta{ display:flex; justify-content:space-between; gap:.5rem; font-family:var(--mono); font-size:.75rem; color:var(--faint) }
-.card h2{ font-size:1.25rem; letter-spacing:-.02em; font-weight:600 }
-.card p{ color:var(--muted); font-size:.95rem }
-.tags{ display:flex; flex-wrap:wrap; gap:.35rem; margin-top:.25rem }
-.tags li{ list-style:none; font-size:.75rem; padding:.25rem .6rem; border-radius:999px; background:var(--chip); color:var(--muted) }
-.links{ margin-top:auto; padding-top:.75rem; display:flex; flex-wrap:wrap; gap:.5rem }
-.links a{ font-size:.875rem; font-weight:500; text-decoration:none; padding:.5rem .9rem; border-radius:999px; border:1px solid var(--line) }
-.links a.primary{ background:var(--ink); color:var(--bg); border-color:var(--ink) }
-.links a:hover{ border-color:var(--ink) }
+/* Project list */
+.filters{ display:flex; gap:.5rem; overflow-x:auto; margin-top:2rem; scrollbar-width:none }
+.filters button{ flex-shrink:0; padding:.5rem 1rem; border-radius:999px; background:var(--bg2); border:1px solid var(--line); color:var(--muted); font-size:.9rem }
+.filters button[aria-pressed="true"]{ background:var(--ink); color:var(--bg); border-color:var(--ink) }
+.rows{ margin-top:1.5rem; border-top:1px solid var(--line) }
+.row{ display:grid; grid-template-columns:3rem 1fr auto; gap:.15rem 1rem; align-items:center; padding:1rem .25rem; border-bottom:1px solid var(--line); text-decoration:none; transition:background .2s, padding .4s var(--ease) }
+.row[hidden]{ display:none }
+.row:hover{ background:var(--bg2); padding-left:.9rem }
+.row .n{ font-family:var(--mono); font-size:.8rem; color:var(--faint) }
+.row .t{ font-weight:600; font-size:1.1rem }
+.row .k{ color:var(--muted); font-size:.9rem }
+.row .s{ font-family:var(--mono); font-size:.75rem; color:var(--faint) }
+.row .go{ color:var(--y); font-size:.85rem; white-space:nowrap }
+@media (min-width:860px){ .row{ grid-template-columns:3rem 1fr 1.2fr 1fr auto } }
+@media (max-width:859px){ .row .k, .row .s{ grid-column:2 } .row .go{ grid-row:1 / span 3; grid-column:3 } .row .n{ grid-row:1 / span 3 } }
 
-footer{ border-top:1px solid var(--line); padding:2rem 0 3rem; color:var(--muted); font-size:.875rem; display:flex; flex-wrap:wrap; justify-content:space-between; gap:1rem }
-@media (prefers-reduced-motion: reduce){ *{ transition:none !important } }
+/* Pricing */
+.pricing{ position:relative; overflow:hidden }
+.pricing::before{ content:""; position:absolute; inset:-20% -10% auto; height:70%; background:radial-gradient(50% 50% at 50% 0%, rgba(255,212,0,.12), transparent 70%); pointer-events:none }
+.plans{ position:relative; margin-top:3rem; display:grid; gap:1rem; perspective:1200px; align-items:start }
+@media (min-width:720px){ .plans{ grid-template-columns:repeat(2,1fr) } }
+@media (min-width:1180px){ .plans{ grid-template-columns:repeat(5,1fr) } }
+.plan{ --mx:50%; --my:0%; position:relative; border-radius:1.25rem; padding:1.4rem 1.25rem 1.25rem; background:var(--card); border:1px solid var(--line); display:flex; flex-direction:column; gap:.9rem; transform-style:preserve-3d; transition:transform .5s var(--ease), opacity .9s var(--ease); will-change:transform }
+.plan::before{ content:""; position:absolute; inset:-1px; border-radius:inherit; padding:1px; background:radial-gradient(260px circle at var(--mx) var(--my), var(--y), transparent 55%); -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude; opacity:0; transition:opacity .3s; pointer-events:none }
+.plan::after{ content:""; position:absolute; inset:0; border-radius:inherit; background:radial-gradient(320px circle at var(--mx) var(--my), rgba(255,212,0,.07), transparent 60%); opacity:0; transition:opacity .3s; pointer-events:none }
+.plan:hover::before, .plan:hover::after{ opacity:1 }
+.plan .num{ font-family:var(--mono); font-size:.75rem; color:var(--faint) }
+.plan h3{ font-size:1.15rem; letter-spacing:-.02em; line-height:1.2; min-height:2.4em }
+.price{ display:flex; flex-direction:column; gap:.3rem }
+.price b{ font-size:2.6rem; letter-spacing:-.05em; font-weight:800; color:var(--y); font-variant-numeric:tabular-nums; line-height:1 }
+.price span{ color:var(--faint); font-size:.75rem; font-family:var(--mono); text-transform:uppercase; letter-spacing:.06em }
+.time{ display:inline-flex; align-items:center; gap:.45rem; font-size:.85rem; color:var(--ink); background:var(--bg2); border:1px solid var(--line); border-radius:999px; padding:.3rem .75rem; width:fit-content }
+.time i{ width:.45rem; height:.45rem; border-radius:50%; background:var(--y); box-shadow:0 0 10px var(--y); animation:pulse 2s ease-in-out infinite }
+@keyframes pulse{ 50%{ opacity:.35 } }
+.for{ font-size:.88rem; color:var(--muted) }
+.plan ul{ list-style:none; display:grid; gap:.45rem; font-size:.88rem }
+.plan li{ display:grid; grid-template-columns:1rem 1fr; gap:.45rem; color:#d6d6d1 }
+.plan li::before{ content:"+"; color:var(--y); font-family:var(--mono); font-weight:600 }
+.plan li.x{ display:none }
+.plan.open li.x{ display:grid; animation:fadeIn .4s var(--ease) both }
+@keyframes fadeIn{ from{ opacity:0; transform:translateY(-4px) } }
+.more{ text-align:left; font-size:.82rem; color:var(--y); padding:0 }
+.plan .note{ font-size:.78rem; color:var(--faint) }
+.plan .ex{ margin-top:auto; padding-top:.75rem; border-top:1px dashed var(--line); font-size:.8rem; color:var(--muted) }
+.plan .ex b{ color:var(--ink); font-weight:600 }
+.plan .order{ text-align:center; text-decoration:none; font-weight:600; font-size:.9rem; padding:.7rem; border-radius:.8rem; background:var(--bg2); border:1px solid var(--line); transition:all .25s }
+.plan .order:hover{ background:var(--y); color:var(--y-ink); border-color:var(--y) }
+
+.terms{ position:relative; margin-top:3rem; display:grid; gap:1rem }
+@media (min-width:900px){ .terms{ grid-template-columns:1.4fr 1fr } }
+.terms ol{ list-style:none; display:grid; gap:.75rem; counter-reset:t }
+@media (min-width:640px){ .terms ol{ grid-template-columns:1fr 1fr } }
+.terms li{ counter-increment:t; display:grid; grid-template-columns:2.4rem 1fr; gap:.8rem; align-items:start; padding:1rem; border-radius:1rem; background:var(--card); border:1px solid var(--line) }
+.terms li::before{ content:counter(t); display:grid; place-items:center; width:2.4rem; height:2.4rem; border-radius:.7rem; background:var(--y); color:var(--y-ink); font-weight:800 }
+.terms li b{ display:block }
+.terms li span{ color:var(--muted); font-size:.9rem }
+.extra{ padding:1.25rem; border-radius:1rem; border:1px dashed var(--line); color:var(--muted); font-size:.9rem; align-self:start }
+.extra h4{ color:var(--ink); font-size:1rem; margin-bottom:.6rem }
+.extra ul{ list-style:none; display:grid; gap:.4rem }
+
+footer{ border-top:1px solid var(--line); padding:2rem 0 3rem; color:var(--muted); font-size:.875rem }
+footer .wrap{ display:flex; flex-wrap:wrap; justify-content:space-between; gap:1rem }
+@media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto } *{ transition:none !important; animation:none !important } [data-rv]{ opacity:1; transform:none } }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="top">
-    <div class="mark"><i aria-hidden="true"></i><span data-i18n="brand">Portfolio</span></div>
-    <div class="top-r">
-      <div class="lang" role="group" aria-label="Language"><button data-lang="ru">RU</button><button data-lang="en">EN</button></div>
-      <a class="cta ghost" href="https://t.me/lilbunnych_dev" target="_blank" rel="noopener" data-i18n="channel">Telegram channel</a>
-      <a class="cta" href="https://t.me/lilbunnych" target="_blank" rel="noopener" data-i18n="contact">Get in touch</a>
-    </div>
-  </header>
 
-  <section class="intro">
-    <div>
-      <h1 data-i18n="h1">Websites and apps, built end to end.</h1>
+<header class="top">
+  <a class="mark" href="#work" aria-label="lilbunnych">
+    <svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#ffd400"/><rect x="20" y="8" width="9" height="24" rx="4.5" fill="#111" transform="rotate(-12 24 32)"/><rect x="35" y="8" width="9" height="24" rx="4.5" fill="#111" transform="rotate(12 40 32)"/><path d="M22 38l-8 7 8 7M42 38l8 7-8 7M36 36l-8 20" fill="none" stroke="#111" stroke-width="5"/></svg>
+    lilbunnych
+  </a>
+  <div class="top-r">
+    <div class="lang" role="group" aria-label="Language"><button data-lang="ru">RU</button><button data-lang="en">EN</button></div>
+    <a class="cta ghost" href="#pricing" data-i18n="navPrice">Pricing</a>
+    <a class="cta ghost" href="https://t.me/lilbunnych_dev" target="_blank" rel="noopener" data-i18n="channel">Telegram channel</a>
+    <a class="cta solid" href="https://t.me/lilbunnych" target="_blank" rel="noopener" data-i18n="contact">Get in touch</a>
+  </div>
+</header>
+
+<section class="stage" id="work" aria-label="Projects">
+  <canvas id="scene" aria-hidden="true"></canvas>
+  <div class="hero-copy">
+    <h1 data-i18n-html="h1">Websites and apps, <em>end to end.</em></h1>
+    <p data-i18n="lead">Fast, with a demo before you pay. Spin the carousel to explore twelve projects.</p>
+  </div>
+  <span class="hint" data-i18n="hint">drag to spin</span>
+  <div class="info" id="info" aria-live="polite">
+    <button class="nav" id="prev" aria-label="Previous project">←</button>
+    <div class="body">
+      <div class="meta"><span id="iMeta"></span><span id="iOrigin"></span></div>
+      <h2 id="iTitle"></h2>
+      <p id="iText"></p>
+      <div class="links" id="iLinks"></div>
     </div>
-    <div>
-      <p data-i18n="lead">Twelve demo projects: landing pages, WebGL scroll stories, web apps, a mobile app for iOS and Android, and a desktop app for macOS, Windows and Linux.</p>
-      <div class="facts" style="margin-top:1.25rem">
-        <span><b>12</b> <span data-i18n="f1">projects</span></span><span><b>9</b> <span data-i18n="f2">stacks</span></span><span><b>3</b> <span data-i18n="f3">rebuilt from specs</span></span>
+    <button class="nav" id="next" aria-label="Next project">→</button>
+  </div>
+</section>
+
+<section class="block" id="projects">
+  <div class="wrap">
+    <p class="eyebrow" data-rv data-i18n="projEyebrow">All projects</p>
+    <h2 class="title" data-rv style="--d:80ms" data-i18n="projTitle">Twelve demos, nine stacks.</h2>
+    <p class="lead" data-rv style="--d:160ms" data-i18n="projLead">Every project is a demo with a fictional brand and a DEMO notice. Source code for each is on GitHub.</p>
+    <nav class="filters" aria-label="Filter projects" data-rv style="--d:220ms">
+      <button data-f="all" aria-pressed="true" data-i18n="all">All</button>
+      <button data-f="site" data-i18n="sites">Websites</button>
+      <button data-f="webgl">WebGL</button>
+      <button data-f="app" data-i18n="apps">Web apps</button>
+      <button data-f="native" data-i18n="native">Mobile and desktop</button>
+    </nav>
+    <div class="rows" id="rows"></div>
+  </div>
+</section>
+
+<section class="block pricing" id="pricing">
+  <div class="wrap">
+    <p class="eyebrow" data-rv data-i18n="priceEyebrow">Pricing</p>
+    <h2 class="title" data-rv style="--d:80ms" data-i18n="priceTitle">Five packages, fixed prices.</h2>
+    <p class="lead" data-rv style="--d:160ms" data-i18n="priceLead">Starter prices while I collect first reviews. Every project starts with a free demo.</p>
+    <div class="plans" id="plans"></div>
+    <div class="terms">
+      <div>
+        <h3 class="sr" data-i18n="termsTitle">Terms</h3>
+        <ol id="terms"></ol>
+      </div>
+      <div class="extra" data-rv>
+        <h4 data-i18n="extraTitle">Paid separately</h4>
+        <ul id="extras"></ul>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <nav class="filters" aria-label="Filter projects">
-    <button data-f="all" aria-pressed="true" data-i18n="all">All</button>
-    <button data-f="site" data-i18n="sites">Websites</button>
-    <button data-f="webgl">WebGL</button>
-    <button data-f="app" data-i18n="apps">Web apps</button>
-    <button data-f="native" data-i18n="native">Mobile and desktop</button>
-  </nav>
+<footer>
+  <div class="wrap">
+    <span data-i18n="foot1">All projects are demos with fictional brands.</span>
+    <span><a href="https://t.me/lilbunnych">@lilbunnych</a> · <a href="https://t.me/lilbunnych_dev">@lilbunnych_dev</a> · <a href="https://github.com/lilbunnych/Portfolio">GitHub</a></span>
+  </div>
+</footer>
 
-  <main class="grid" id="grid"></main>
+<script type="importmap">
+{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+</script>
+<script type="module">
+import * as THREE from 'three';
 
-  <footer>
-    <span data-i18n="foot1">Every project here is a demo with a fictional brand. Each page carries a "DEMO" notice.</span>
-    <span data-i18n="foot2">Source for every project is in its own folder of this repository.</span>
-    <span><a href="https://t.me/lilbunnych">@lilbunnych</a> · <a href="https://t.me/lilbunnych_dev">@lilbunnych_dev</a> · <a href="https://github.com/lilbunnych">GitHub</a></span>
-  </footer>
-</div>
+const REPO = 'https://github.com/lilbunnych/Portfolio';
+const TG = 'https://t.me/lilbunnych';
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 
-<script>
+/* ---------------- Content ---------------- */
 const UI = {
-  en: { brand:'Portfolio', contact:'Get in touch', channel:'Telegram channel', h1:'Websites and apps, built end to end.',
-    lead:'Twelve demo projects: landing pages, WebGL scroll stories, web apps, a mobile app for iOS and Android, and a desktop app for macOS, Windows and Linux.',
-    f1:'projects', f2:'stacks', f3:'rebuilt from specs', all:'All', sites:'Websites', apps:'Web apps', native:'Mobile and desktop',
-    foot1:'Every project here is a demo with a fictional brand. Each page carries a "DEMO" notice.', foot2:'Source for every project is in its own folder of this repository.',
-    open:'Open demo', source:'Source', spec:'Rebuilt from spec', original:'Original', phone:'Run on your phone', downloads:'Downloads and build', shot:'Screenshot of',
-    title:'Portfolio | Websites and apps' },
-  ru: { brand:'Портфолио', contact:'Написать в Telegram', channel:'Telegram-канал', h1:'Сайты и приложения под ключ.',
-    lead:'Двенадцать демо-проектов: лендинги, WebGL-истории со скроллом, веб-приложения, мобильное приложение для iOS и Android и десктопное для macOS, Windows и Linux.',
-    f1:'проектов', f2:'стеков', f3:'повторены по ТЗ', all:'Все', sites:'Сайты', apps:'Веб-приложения', native:'Мобильные и десктоп',
-    foot1:'Все проекты здесь демо с вымышленными брендами. На каждой странице есть пометка «DEMO».', foot2:'Исходный код каждого проекта лежит в отдельной папке репозитория.',
-    open:'Открыть демо', source:'Код', spec:'По ТЗ', original:'Своя разработка', phone:'Запуск на телефоне', downloads:'Скачать и собрать', shot:'Скриншот',
-    title:'Портфолио | Сайты и приложения' },
+  en: { title:'lilbunnych | Websites and apps', contact:'Get in touch', channel:'Telegram channel', navPrice:'Pricing',
+    h1:'Websites and apps, <em>end to end.</em>', lead:'Fast, with a demo before you pay. Spin the carousel to explore twelve projects.', hint:'drag to spin',
+    projEyebrow:'All projects', projTitle:'Twelve demos, nine stacks.', projLead:'Every project is a demo with a fictional brand and a DEMO notice. Source code for each is on GitHub.',
+    all:'All', sites:'Websites', apps:'Web apps', native:'Mobile and desktop',
+    open:'Open demo', source:'Code', spec:'Rebuilt from spec', original:'Original', phone:'Run on your phone', downloads:'Download', view:'Open',
+    priceEyebrow:'Pricing', priceTitle:'Five packages, fixed prices.', priceLead:'Starter prices while I collect first reviews. Every project starts with a free demo.',
+    fixed:'fixed price', more:'Show everything included', less:'Show less', order:'Discuss a project', example:'In the portfolio:', forLabel:'Good for',
+    termsTitle:'Terms', extraTitle:'Paid separately', foot1:'All projects are demos with fictional brands.' },
+  ru: { title:'lilbunnych | Сайты и приложения', contact:'Написать', channel:'Telegram-канал', navPrice:'Цены',
+    h1:'Сайты и приложения <em>под ключ.</em>', lead:'Быстро, с демо до оплаты. Покрутите карусель: здесь двенадцать проектов.', hint:'крутите мышью',
+    projEyebrow:'Все проекты', projTitle:'Двенадцать демо, девять стеков.', projLead:'Все проекты демо с вымышленными брендами и пометкой DEMO. Код каждого лежит на GitHub.',
+    all:'Все', sites:'Сайты', apps:'Веб-приложения', native:'Мобильные и десктоп',
+    open:'Открыть демо', source:'Код', spec:'По ТЗ', original:'Своя разработка', phone:'Запуск на телефоне', downloads:'Скачать', view:'Открыть',
+    priceEyebrow:'Цены', priceTitle:'Пять пакетов, фиксированные цены.', priceLead:'Стартовые цены, пока собираю первые отзывы. Каждый проект начинается с бесплатного демо.',
+    fixed:'фиксированная цена', more:'Показать всё, что входит', less:'Свернуть', order:'Обсудить проект', example:'В портфолио:', forLabel:'Подходит для',
+    termsTitle:'Условия', extraTitle:'Оплачивается отдельно', foot1:'Все проекты демо с вымышленными брендами.' },
 };
 
 const PROJECTS = [
-  { id:'01', dir:'first-demo', title:'Lumora', tags:['HTML','CSS','JS','Lenis'], f:['site'], spec:true, open:'first-demo/',
+  { id:'01', dir:'first-demo', title:'Lumora', tags:'HTML · CSS · JS · Lenis', f:['site'], spec:true, open:'first-demo/',
     en:{ kind:'Studio landing page', text:'Liquid cursor reveal over a photo hero, spring physics, intro loader and a request modal.' },
     ru:{ kind:'Лендинг студии', text:'«Жидкое» проявление фото под курсором, пружинная анимация, прелоадер и форма заявки.' } },
-  { id:'02', dir:'second-demo', title:'Tessel', tags:['HTML','CSS','JS','Lenis'], f:['site'], open:'second-demo/',
+  { id:'02', dir:'second-demo', title:'Tessel', tags:'HTML · CSS · JS · Lenis', f:['site'], open:'second-demo/',
     en:{ kind:'Studio landing page', text:'Pixel mosaic hero, pinned horizontal process, cursor image preview and a project drawer.' },
-    ru:{ kind:'Лендинг студии', text:'Пиксельная мозаика в hero, горизонтальный скролл этапов, превью работ за курсором и форма в боковой панели.' } },
-  { id:'03', dir:'third-demo', title:'Laocoön', tags:['Three.js','GLSL'], f:['site','webgl'], spec:true, open:'third-demo/',
+    ru:{ kind:'Лендинг студии', text:'Пиксельная мозаика, горизонтальный скролл этапов, превью работ за курсором и форма в боковой панели.' } },
+  { id:'03', dir:'third-demo', title:'Laocoön', tags:'Three.js · GLSL', f:['site','webgl'], spec:true, open:'third-demo/',
     en:{ kind:'WebGL scroll story', text:'Camera orbits a bronze horse over a liquid metal shader while you scroll.' },
-    ru:{ kind:'WebGL-история', text:'Камера облетает бронзовую статую коня на фоне шейдера «жидкого металла» по мере прокрутки.' } },
-  { id:'04', dir:'fourth-demo', title:'Vitrea', tags:['Three.js','Lenis'], f:['site','webgl'], open:'fourth-demo/',
+    ru:{ kind:'WebGL-история', text:'Камера облетает бронзовую статую коня на фоне шейдера «жидкого металла».' } },
+  { id:'04', dir:'fourth-demo', title:'Vitrea', tags:'Three.js · Lenis', f:['site','webgl'], open:'fourth-demo/',
     en:{ kind:'WebGL scroll story', text:'Procedural glass that morphs from sand to a fluted vase, refracting caustic light.' },
-    ru:{ kind:'WebGL-история', text:'Стекло, созданное кодом, превращается из песка в витую вазу и преломляет блики света.' } },
-  { id:'05', dir:'fifth-demo', title:'Loopstack', tags:['HTML','CSS','JS'], f:['site'], spec:true, open:'fifth-demo/',
+    ru:{ kind:'WebGL-история', text:'Стекло, созданное кодом, превращается из песка в витую вазу и преломляет свет.' } },
+  { id:'05', dir:'fifth-demo', title:'Loopstack', tags:'HTML · CSS · JS', f:['site'], spec:true, open:'fifth-demo/',
     en:{ kind:'Single-screen hero', text:'Video hero with masked word and letter reveals and a glass cursor pill.' },
-    ru:{ kind:'Одноэкранный hero', text:'Видео-фон, появление слов и букв из маски и стеклянная плашка за курсором.' } },
-  { id:'06', dir:'sixth-demo', title:'Driftnote', tags:['Canvas 2D','JS'], f:['site'], open:'sixth-demo/',
+    ru:{ kind:'Одноэкранный hero', text:'Видео-фон, появление слов и букв из маски, стеклянная плашка за курсором.' } },
+  { id:'06', dir:'sixth-demo', title:'Driftnote', tags:'Canvas 2D · JS', f:['site'], open:'sixth-demo/',
     en:{ kind:'Waitlist page', text:'Halftone sound field that ripples with your cursor and typing, plus a live countdown.' },
     ru:{ kind:'Страница предзапуска', text:'Звуковая волна из точек реагирует на курсор и набор текста, живой таймер до запуска.' } },
-  { id:'07', dir:'seventh-demo', title:'Fjordhus', tags:['Astro','Tailwind'], f:['site','app'], open:'seventh-demo/dist/',
+  { id:'07', dir:'seventh-demo', title:'Fjordhus', tags:'Astro · Tailwind', f:['site','app'], open:'seventh-demo/dist/',
     en:{ kind:'Booking site', text:'Cabin booking with live price calculation, capacity checks and validation.' },
-    ru:{ kind:'Сайт бронирования', text:'Бронирование домиков: живой расчёт цены, проверка вместимости и валидация формы.' } },
-  { id:'08', dir:'eighth-demo', title:'Ledgerly', tags:['React','TypeScript','Recharts'], f:['app'], open:'eighth-demo/dist/',
+    ru:{ kind:'Сайт бронирования', text:'Бронирование домиков: живой расчёт цены, проверка вместимости и формы.' } },
+  { id:'08', dir:'eighth-demo', title:'Ledgerly', tags:'React · TypeScript · Recharts', f:['app'], open:'eighth-demo/dist/',
     en:{ kind:'Finance dashboard', text:'Charts, budgets and a searchable, sortable transactions table with dark mode.' },
     ru:{ kind:'Финансовый дашборд', text:'Графики, бюджеты, таблица операций с поиском и сортировкой, тёмная тема.' } },
-  { id:'09', dir:'ninth-demo', title:'Tempo', tags:['Svelte 5','PWA'], f:['app','native'], open:'ninth-demo/dist/',
-    en:{ kind:'Installable PWA', text:'Focus timer with tasks and stats. Installs on any phone or computer and works offline.' },
-    ru:{ kind:'Устанавливаемое PWA', text:'Таймер фокуса с задачами и статистикой. Ставится на любой телефон и компьютер, работает офлайн.' } },
-  { id:'10', dir:'tenth-demo', title:'Understory', tags:['HTML','CSS','JS'], f:['site'], open:'tenth-demo/',
+  { id:'09', dir:'ninth-demo', title:'Tempo', tags:'Svelte 5 · PWA', f:['app','native'], open:'ninth-demo/dist/',
+    en:{ kind:'Installable PWA', text:'Focus timer with tasks and stats. Installs on any phone or computer, works offline.' },
+    ru:{ kind:'Устанавливаемое PWA', text:'Таймер фокуса с задачами и статистикой. Ставится на любое устройство, работает офлайн.' } },
+  { id:'10', dir:'tenth-demo', title:'Understory', tags:'HTML · CSS · JS', f:['site'], open:'tenth-demo/',
     en:{ kind:'Editorial long read', text:'Reading progress, live contents, footnote popovers and three reading themes.' },
-    ru:{ kind:'Журнальный лонгрид', text:'Прогресс чтения, живое оглавление, всплывающие сноски и три темы для чтения.' } },
-  { id:'11', dir:'eleventh-demo', title:'Sprout', tags:['Expo','React Native','TypeScript'], f:['native'], open:'eleventh-demo/dist/', phone:true, extra:{ key:'phone', href:'https://github.com/lilbunnych/Portfolio/tree/main/eleventh-demo#run-on-your-phone-no-build-needed' },
+    ru:{ kind:'Журнальный лонгрид', text:'Прогресс чтения, живое оглавление, всплывающие сноски и три темы.' } },
+  { id:'11', dir:'eleventh-demo', title:'Sprout', tags:'Expo · React Native · TypeScript', f:['native'], open:'eleventh-demo/dist/',
+    extra:{ key:'phone', href:REPO + '/tree/main/eleventh-demo#run-on-your-phone-no-build-needed' },
     en:{ kind:'Mobile app, iOS and Android', text:'Habit tracker with streaks, a 12-week heatmap and haptics. One codebase, also runs on the web.' },
-    ru:{ kind:'Мобильное приложение, iOS и Android', text:'Трекер привычек: серии, тепловая карта за 12 недель, вибро-отклик. Один код, работает и в браузере.' } },
-  { id:'12', dir:'twelfth-demo', title:'Jot', tags:['Electron','JS'], f:['native'], open:null, extra:{ key:'downloads', href:'https://github.com/lilbunnych/Portfolio/releases/latest' },
-    en:{ kind:'Desktop app', text:'Markdown notes with live preview and autosave. Builds for macOS, Windows and Linux on x64 and ARM64.' },
-    ru:{ kind:'Десктопное приложение', text:'Заметки в Markdown с живым превью и автосохранением. Сборки для macOS, Windows и Linux, x64 и ARM64.' } },
+    ru:{ kind:'Мобильное приложение', text:'Трекер привычек: серии, тепловая карта, вибро-отклик. Один код для iOS, Android и браузера.' } },
+  { id:'12', dir:'twelfth-demo', title:'Jot', tags:'Electron · JS', f:['native'], open:null,
+    extra:{ key:'downloads', href:REPO + '/releases/latest' },
+    en:{ kind:'Desktop app', text:'Markdown notes with live preview and autosave. macOS, Windows and Linux, x64 and ARM64.' },
+    ru:{ kind:'Десктопное приложение', text:'Заметки в Markdown с превью и автосохранением. macOS, Windows, Linux, x64 и ARM64.' } },
 ];
 
-const grid = document.getElementById('grid');
-let filter = 'all';
+const PLANS = [
+  { price:290, ex:'Lumora, Tessel, Driftnote',
+    en:{ name:'Landing page / business card site', time:'2–3 days', for:'presenting a service, product, person or event.',
+      items:['Design in your brand: colours, fonts, style','Up to 6–8 content blocks: hero, about, services, benefits, reviews, contacts','Responsive layout for phone, tablet and desktop','Scroll animations and hover effects','Request form with validation, sent to Telegram or email','Basic SEO: titles, search description, social preview','Publishing online and connecting your domain'] },
+    ru:{ name:'Лендинг / сайт-визитка', time:'2–3 дня', for:'презентации услуги, продукта, специалиста, мероприятия.',
+      items:['Дизайн под ваш бренд: цвета, шрифты, стиль','До 6–8 блоков: первый экран, о вас, услуги, преимущества, отзывы, контакты','Адаптивная вёрстка: телефон, планшет, компьютер','Анимации появления и эффекты при наведении','Форма заявки с проверкой полей, заявки в Telegram или на почту','Базовое SEO: заголовки, описание для поиска, превью для соцсетей','Размещение сайта в интернете и подключение вашего домена'] } },
+  { price:490, ex:'Fjordhus',
+    en:{ name:'Website with logic', time:'4–7 days', for:'businesses where a client picks, calculates or books something.',
+      items:['Everything in package 1','Several pages or sections','One interactive feature: online booking with a calendar, catalogue with filters and search, price calculator or user account','Automatic price calculation and data checks: dates, quantities, capacity','New request notifications to Telegram or email','Edit texts and prices without a developer'] },
+    ru:{ name:'Сайт с логикой', time:'4–7 дней', for:'бизнеса, где клиент выбирает, считает или бронирует.',
+      items:['Всё из пакета 1','Несколько страниц или разделов','Одна интерактивная функция на выбор: бронирование с календарём, каталог с фильтрами и поиском, калькулятор стоимости или личный кабинет','Автоматический расчёт цены и проверка данных: даты, количество, вместимость','Уведомления о заявках в Telegram или на почту','Можно менять тексты и цены без программиста'] } },
+  { price:690, ex:'Ledgerly, Tempo',
+    en:{ name:'Web app / dashboard', time:'1–2 weeks', for:'internal tools, CRMs, admin panels, client-facing services.',
+      items:['Interface designed around your workflow','Charts and reports','Tables with search, filters and sorting','Light and dark theme','Comfortable on phones','Optional: installs as an app on phone and computer (PWA), works offline','Connection to your data or services through an API'] },
+    ru:{ name:'Веб-приложение / дашборд', time:'1–2 недели', for:'внутренних инструментов, CRM, админ-панелей, сервисов для клиентов.',
+      items:['Проектирование интерфейса под ваши процессы','Графики и отчёты','Таблицы с поиском, фильтрами и сортировкой','Светлая и тёмная тема','Удобная работа с телефона','По желанию: установка как приложения на телефон и компьютер (PWA), работа без интернета','Подключение к вашим данным или сервисам через API'] } },
+  { price:890, ex:'Sprout',
+    en:{ name:'Mobile app', time:'2–3 weeks', for:'services, trackers, apps for a business’s customers.',
+      items:['One app for iPhone and Android, one codebase','Screens in your brand, app icon and launch screen','Navigation, forms, lists, data saved on the device','Light and dark theme, haptic feedback','Test build to try on your own phone before release','Store release included: builds for both stores','Store listing: name, description, keywords, screenshots','Privacy policy page (required by both stores)','Submission for review through your developer accounts','Fixes if Apple or Google send the app back'],
+      note:'Store review takes 1–7 days and is outside our control.' },
+    ru:{ name:'Мобильное приложение', time:'2–3 недели', for:'сервисов, трекеров, приложений для клиентов бизнеса.',
+      items:['Одно приложение сразу для iPhone и Android, общий код','Дизайн экранов под бренд, иконка и заставка при запуске','Навигация, формы, списки, сохранение данных на устройстве','Светлая и тёмная тема, вибро-отклик','Тестовая версия, чтобы проверить на своём телефоне до публикации','Публикация в сторах входит: сборка файлов для обоих магазинов','Страница в магазине: название, описание, ключевые слова, скриншоты','Политика конфиденциальности (её требуют оба магазина)','Отправка на проверку через ваши аккаунты разработчика','Исправление замечаний, если Apple или Google вернут на доработку'],
+      note:'Проверка в магазинах занимает от 1 до 7 дней и от нас не зависит.' } },
+  { price:990, ex:'Jot',
+    en:{ name:'Desktop app', time:'1–2 weeks', for:'tools for staff, apps that work with files and data.',
+      items:['Windows, macOS and Linux','Builds for x64 and ARM: Apple silicon, Windows on ARM','Native menu and shortcuts, autosave','Working with files: open, save, export','Light and dark theme from system settings','Ready installers and a download page'] },
+    ru:{ name:'Десктопная программа', time:'1–2 недели', for:'программ для сотрудников, инструментов для работы с файлами и данными.',
+      items:['Windows, macOS и Linux','Сборки под x64 и ARM: Apple Silicon, Windows на ARM','Привычное меню, горячие клавиши, автосохранение','Работа с файлами: открыть, сохранить, экспорт','Светлая и тёмная тема по настройкам системы','Готовые установочные файлы и страница для скачивания'] } },
+];
 
-function render(lang) {
+const TERMS = {
+  en:[['Demo before payment','I show the first screen or a prototype for free, so you see the direction first.'],['50/50 payment','Half after you approve the demo, half on delivery.'],['2 rounds of revisions','Included in the price.'],['14 days of free support','After delivery I fix any bugs that turn up.'],['Ongoing work by agreement','Updates, new features and support after launch can be arranged.'],['Deadlines start with materials','Timelines count from the day I receive texts, photos and access.']],
+  ru:[['Демо до оплаты','Бесплатно показываю первый экран или прототип, чтобы вы увидели направление.'],['Оплата 50/50','Половина после согласования демо, половина при сдаче.'],['2 круга правок','Входят в цену.'],['14 дней бесплатной поддержки','После сдачи исправляю ошибки, если они найдутся.'],['Ведение проекта по согласованию','Обновления, новые функции и поддержка после запуска обсуждаются отдельно.'],['Сроки с получения материалов','Срок считается с момента, когда получены тексты, фото и доступы.']],
+};
+const EXTRAS = {
+  en:['Domain and hosting, if paid ones are needed','Developer accounts: Apple ($99 a year), Google Play ($25 once), registered to you','Texts and photos, if you do not have them'],
+  ru:['Домен и хостинг, если нужны платные','Аккаунты разработчика: Apple (99 $ в год), Google Play (25 $ разово), оформляются на вас','Тексты и фото, если у вас их нет'],
+};
+
+/* ---------------- Language + DOM rendering ---------------- */
+let lang = (() => { try { const s = localStorage.getItem('portfolio-lang'); if (s === 'ru' || s === 'en') return s; } catch {} return (navigator.language || '').toLowerCase().startsWith('ru') ? 'ru' : 'en'; })();
+let filter = 'all';
+let active = 0;
+
+const $ = s => document.querySelector(s);
+const ext = h => h.startsWith('http') ? 'target="_blank" rel="noopener"' : '';
+const linksFor = (p, t) => [
+  p.open ? `<a class="primary" href="${p.open}">${t.open}</a>` : '',
+  p.extra ? `<a ${p.open ? '' : 'class="primary"'} href="${p.extra.href}" ${ext(p.extra.href)}>${t[p.extra.key]}</a>` : '',
+  `<a href="${REPO}/tree/main/${p.dir}" target="_blank" rel="noopener">${t.source}</a>`,
+].join('');
+
+function renderInfo(swap = false) {
+  const t = UI[lang], p = PROJECTS[active], c = p[lang], box = $('#info');
+  const apply = () => {
+    $('#iMeta').textContent = `${p.id} / 12 · ${c.kind}`;
+    $('#iOrigin').textContent = p.spec ? t.spec : t.original;
+    $('#iTitle').textContent = p.title;
+    $('#iText').textContent = c.text;
+    $('#iLinks').innerHTML = linksFor(p, t);
+    box.classList.remove('swap');
+  };
+  if (swap && !RM) { box.classList.add('swap'); setTimeout(apply, 180); } else apply();
+}
+
+function renderRows() {
+  const t = UI[lang];
+  $('#rows').innerHTML = PROJECTS.map(p => {
+    const href = p.open || p.extra.href;
+    return `<a class="row" href="${href}" ${ext(href)} data-f="${p.f.join(' ')}" ${filter !== 'all' && !p.f.includes(filter) ? 'hidden' : ''}>
+      <span class="n">${p.id}</span><span class="t">${p.title}</span><span class="k">${p[lang].kind}</span><span class="s">${p.tags}</span><span class="go">${t.view} →</span>
+    </a>`;
+  }).join('');
+}
+
+function renderPricing() {
+  const t = UI[lang];
+  const SHOWN = 4;
+  $('#plans').innerHTML = PLANS.map((pl, i) => {
+    const c = pl[lang];
+    return `<article class="plan" data-rv style="--d:${i * 90}ms">
+      <span class="num">0${i + 1}</span>
+      <h3>${c.name}</h3>
+      <div class="price"><b data-to="${pl.price}">$${pl.price}</b><span>${t.fixed}</span></div>
+      <span class="time"><i></i>${c.time}</span>
+      <p class="for">${t.forLabel} ${c.for}</p>
+      <ul>${c.items.map((it, k) => `<li class="${k >= SHOWN ? 'x' : ''}">${it}</li>`).join('')}</ul>
+      ${c.items.length > SHOWN ? `<button class="more" aria-expanded="false">${t.more}</button>` : ''}
+      ${c.note ? `<p class="note">${c.note}</p>` : ''}
+      <p class="ex">${t.example} <b>${pl.ex}</b></p>
+      <a class="order" href="${TG}" target="_blank" rel="noopener">${t.order}</a>
+    </article>`;
+  }).join('');
+  $('#terms').innerHTML = TERMS[lang].map(([b, s], i) => `<li data-rv style="--d:${i * 60}ms"><div><b>${b}</b><span>${s}</span></div></li>`).join('');
+  $('#extras').innerHTML = EXTRAS[lang].map(x => `<li>· ${x}</li>`).join('');
+  wirePlans();
+  observeReveals();
+}
+
+function renderAll() {
   const t = UI[lang];
   document.documentElement.lang = lang;
   document.title = t.title;
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t[el.dataset.i18n]; });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = t[el.dataset.i18nHtml]; });
   document.querySelectorAll('[data-lang]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
-  grid.innerHTML = PROJECTS.map(p => {
-    const c = p[lang];
-    return `
-    <article class="card" data-f="${p.f.join(' ')}" ${filter !== 'all' && !p.f.includes(filter) ? 'hidden' : ''}>
-      <div class="shot${p.phone ? ' phone' : ''}">
-        <img src="_hub/shots/${p.id}.jpg" alt="${t.shot} ${p.title}" loading="lazy">
-        <span class="demo-tag">DEMO</span>
-      </div>
-      <div class="body">
-        <div class="meta"><span>${p.id} · ${c.kind}</span><span>${p.spec ? t.spec : t.original}</span></div>
-        <h2>${p.title}</h2>
-        <p>${c.text}</p>
-        <ul class="tags">${p.tags.map(x => `<li>${x}</li>`).join('')}</ul>
-        <div class="links">
-          ${p.open ? `<a class="primary" href="${p.open}">${t.open}</a>` : ''}
-          ${p.extra ? `<a ${p.open ? '' : 'class="primary"'} href="${p.extra.href}">${t[p.extra.key]}</a>` : ''}
-          <a href="https://github.com/lilbunnych/Portfolio/tree/main/${p.dir}">${t.source}</a>
-        </div>
-      </div>
-    </article>`;
-  }).join('');
+  renderInfo(); renderRows(); renderPricing();
 }
 
-function pickLang() {
-  try { const saved = localStorage.getItem('portfolio-lang'); if (saved === 'ru' || saved === 'en') return saved; } catch {}
-  return (navigator.language || '').toLowerCase().startsWith('ru') ? 'ru' : 'en';
+/* Reveal on scroll + price count-up */
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (!e.isIntersecting) return;
+  e.target.classList.add('in'); io.unobserve(e.target);
+  const b = e.target.querySelector?.('[data-to]');
+  if (b && !RM) {
+    const to = +b.dataset.to, t0 = performance.now(), dur = 1100;
+    const step = now => { const k = clamp((now - t0) / dur, 0, 1), eased = 1 - Math.pow(1 - k, 3); b.textContent = '$' + Math.round(to * eased); if (k < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  }
+}), { rootMargin: '0px 0px -10% 0px' });
+function observeReveals() { document.querySelectorAll('[data-rv]:not(.in)').forEach(el => io.observe(el)); }
+
+/* Plan cards: tilt + cursor spotlight + expand */
+function wirePlans() {
+  document.querySelectorAll('.plan').forEach(card => {
+    const more = card.querySelector('.more');
+    more?.addEventListener('click', () => {
+      const open = card.classList.toggle('open');
+      more.setAttribute('aria-expanded', String(open));
+      more.textContent = open ? UI[lang].less : UI[lang].more;
+    });
+    if (RM || !matchMedia('(hover: hover)').matches) return;
+    card.addEventListener('pointermove', e => {
+      const r = card.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+      card.style.setProperty('--mx', `${x * 100}%`); card.style.setProperty('--my', `${y * 100}%`);
+      card.style.transform = `rotateX(${(0.5 - y) * 7}deg) rotateY(${(x - 0.5) * 9}deg)`;
+    });
+    card.addEventListener('pointerleave', () => { card.style.transform = ''; });
+  });
 }
-let lang = pickLang();
-render(lang);
 
 document.querySelectorAll('[data-lang]').forEach(b => b.addEventListener('click', () => {
-  lang = b.dataset.lang;
-  try { localStorage.setItem('portfolio-lang', lang); } catch {}
-  render(lang);
+  lang = b.dataset.lang; try { localStorage.setItem('portfolio-lang', lang); } catch {}
+  renderAll();
 }));
 document.querySelectorAll('.filters button').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('.filters button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
   filter = b.dataset.f;
-  grid.querySelectorAll('.card').forEach(c => { c.hidden = filter !== 'all' && !c.dataset.f.split(' ').includes(filter); });
+  document.querySelectorAll('.row').forEach(r => { r.hidden = filter !== 'all' && !r.dataset.f.split(' ').includes(filter); });
 }));
+
+renderAll();
+
+const headerEl = $('header.top');
+const onScroll = () => headerEl.classList.toggle('scrolled', scrollY > 40);
+addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+/* ---------------- 3D: bunny + orbiting project carousel ---------------- */
+const canvas = $('#scene');
+let renderer = null;
+try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true }); }
+catch { canvas.insertAdjacentHTML('afterend', '<div class="stage-fallback">3D is not available in this browser. Scroll down for the project list.</div>'); }
+
+const N = PROJECTS.length, STEP = (Math.PI * 2) / N, TAU = Math.PI * 2;
+let theta = 0, target = 0, vel = 0;           // carousel angle, snap target, drag velocity
+let idleAt = performance.now();
+const bumpIdle = () => { idleAt = performance.now(); };
+const go = i => {
+  active = ((i % N) + N) % N;
+  const want = -active * STEP;
+  target = theta + ((((want - theta) % TAU) + TAU * 1.5) % TAU) - Math.PI;   // shortest way round
+  renderInfo(true);
+};
+$('#prev').addEventListener('click', () => { bumpIdle(); go(active - 1); });
+$('#next').addEventListener('click', () => { bumpIdle(); go(active + 1); });
+addEventListener('keydown', e => {
+  if (e.target.closest?.('input, textarea')) return;
+  const r = $('.stage').getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return;
+  if (e.key === 'ArrowLeft') { bumpIdle(); go(active - 1); }
+  if (e.key === 'ArrowRight') { bumpIdle(); go(active + 1); }
+});
+
+if (renderer) {
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.setClearColor(0x000000, 0);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 60);
+
+  scene.add(new THREE.HemisphereLight(0xfff8e0, 0x2a2620, 1.4));
+  const key = new THREE.DirectionalLight(0xffffff, 2.2); key.position.set(3, 5, 4); scene.add(key);
+  const rim = new THREE.DirectionalLight(0xffd400, 1.2); rim.position.set(-4, 3, -3); scene.add(rim);
+
+  // Toon ramp + black inverted-hull outline for a cartoon look
+  const ramp = new THREE.DataTexture(new Uint8Array([90, 170, 255]), 3, 1, THREE.RedFormat);
+  ramp.minFilter = ramp.magFilter = THREE.NearestFilter; ramp.needsUpdate = true;
+  const toon = c => new THREE.MeshToonMaterial({ color: c, gradientMap: ramp });
+  const outlineMat = new THREE.MeshBasicMaterial({ color: 0x111111, side: THREE.BackSide });
+  const S = new THREE.SphereGeometry(1, 48, 32);
+
+  const bunny = new THREE.Group(); scene.add(bunny);
+  const part = (geo, mat, pos, scale = [1, 1, 1], rot = [0, 0, 0], parent = bunny, outline = 1.06) => {
+    const m = new THREE.Mesh(geo, mat); m.position.set(...pos); m.scale.set(...scale); m.rotation.set(...rot); parent.add(m);
+    if (outline) { const o = new THREE.Mesh(geo, outlineMat); o.scale.setScalar(outline); m.add(o); }
+    return m;
+  };
+  const white = toon(0xf6f3ec), pink = toon(0xff9fb4), yellow = toon(0xffd400);
+  const black = new THREE.MeshBasicMaterial({ color: 0x141414 });
+
+  const body = part(S, white, [0, 0.62, 0], [0.78, 0.82, 0.72]);
+  part(S, white, [-0.36, 0.1, 0.32], [0.26, 0.16, 0.34]);                    // feet
+  part(S, white, [0.36, 0.1, 0.32], [0.26, 0.16, 0.34]);
+  part(S, white, [0, 0.55, -0.72], [0.2, 0.2, 0.2]);                          // tail
+  part(S, white, [-0.62, 0.72, 0.28], [0.17, 0.3, 0.17], [0.4, 0, 0.5]);      // arms
+  part(S, white, [0.62, 0.72, 0.28], [0.17, 0.3, 0.17], [0.4, 0, -0.5]);
+  const bow = new THREE.Group(); bow.position.set(0, 1.28, 0.5); bunny.add(bow);      // brand bow tie
+  part(S, yellow, [-0.17, 0, 0], [0.18, 0.12, 0.06], [0, 0, 0.3], bow, 1.12);
+  part(S, yellow, [0.17, 0, 0], [0.18, 0.12, 0.06], [0, 0, -0.3], bow, 1.12);
+  part(S, yellow, [0, 0, 0.03], [0.07, 0.07, 0.07], [0, 0, 0], bow, 1.15);
+
+  const head = new THREE.Group(); head.position.set(0, 1.78, 0.05); bunny.add(head);
+  part(S, white, [0, 0, 0], [0.64, 0.58, 0.6], [0, 0, 0], head);
+  part(S, white, [-0.26, -0.14, 0.44], [0.2, 0.16, 0.14], [0, 0, 0], head, 0);  // cheeks
+  part(S, white, [0.26, -0.14, 0.44], [0.2, 0.16, 0.14], [0, 0, 0], head, 0);
+  part(S, pink, [0, -0.06, 0.585], [0.075, 0.055, 0.05], [0, 0, 0], head, 0);   // nose
+  part(S, pink, [-0.36, -0.2, 0.47], [0.08, 0.04, 0.02], [0, 0.6, 0], head, 0); // blush
+  part(S, pink, [0.36, -0.2, 0.47], [0.08, 0.04, 0.02], [0, -0.6, 0], head, 0);
+  const eyes = [];
+  [-0.2, 0.2].forEach(x => {
+    const e = part(S, black, [x, 0.07, 0.53], [0.075, 0.1, 0.05], [0, 0, 0], head, 0);
+    const shine = new THREE.Mesh(S, new THREE.MeshBasicMaterial({ color: 0xffffff })); shine.position.set(0.35, 0.4, 0.7); shine.scale.setScalar(0.32); e.add(shine);
+    eyes.push(e);
+  });
+  const ears = [];
+  const cap = new THREE.CapsuleGeometry(0.15, 0.72, 8, 24);
+  [[-0.24, 0.12], [0.24, -0.12]].forEach(([x, rz]) => {
+    const ear = new THREE.Group(); ear.position.set(x, 0.45, -0.05); ear.rotation.z = rz; head.add(ear);
+    part(cap, white, [0, 0.5, 0], [1, 1, 0.75], [0, 0, 0], ear, 1.08);
+    part(cap, pink, [0, 0.5, 0.075], [0.55, 0.85, 0.3], [0, 0, 0], ear, 0);
+    ears.push(ear);
+  });
+
+  // Soft contact shadow + yellow orbit ring
+  const shadowTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d'); const r = g.createRadialGradient(64, 64, 0, 64, 64, 64); r.addColorStop(0, 'rgba(0,0,0,.6)'); r.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = r; g.fillRect(0, 0, 128, 128); return new THREE.CanvasTexture(c); })();
+  const shadow = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 2.6), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }));
+  shadow.rotation.x = -Math.PI / 2; shadow.position.y = 0.01; scene.add(shadow);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(1, 0.008, 8, 160), new THREE.MeshBasicMaterial({ color: 0xffd400, transparent: true, opacity: 0.35 }));
+  ring.rotation.x = Math.PI / 2; scene.add(ring);
+
+  // Project cards (rounded screenshots drawn into canvas textures)
+  const carousel = new THREE.Group(); scene.add(carousel);
+  const cards = PROJECTS.map((p, i) => {
+    const W = 800, H = 500;
+    const c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
+    const round = (x, y, w, h, r) => { g.beginPath(); g.roundRect(x, y, w, h, r); };
+    round(0, 0, W, H, 34); g.fillStyle = '#1b1d21'; g.fill();
+    g.fillStyle = '#ffd400'; g.font = '700 64px Geist, system-ui, sans-serif'; g.fillText(p.title, 40, 280);
+    const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    const img = new Image();
+    img.onload = () => {
+      g.clearRect(0, 0, W, H); g.save(); round(0, 0, W, H, 34); g.clip();
+      const s = Math.max(W / img.width, H / img.height); g.drawImage(img, 0, 0, img.width * s, img.height * s);
+      g.restore(); g.lineWidth = 6; g.strokeStyle = 'rgba(255,255,255,.14)'; round(3, 3, W - 6, H - 6, 32); g.stroke();
+      tex.needsUpdate = true;
+    };
+    img.src = `_hub/shots/${p.id}.jpg`;
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 1.0), new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide }));
+    mesh.userData.index = i;
+    carousel.add(mesh);
+    return mesh;
+  });
+
+  let R = 4.2, cardBase = 1;
+  function layout() {
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    const narrow = w < 720;
+    R = narrow ? 2.6 : 4.4;
+    cardBase = narrow ? 0.72 : 1;
+    camera.fov = narrow ? 50 : 34;
+    camera.position.set(narrow ? 0 : -1.2, narrow ? 4.2 : 3.3, narrow ? 8.4 : 10.6);
+    camera.lookAt(narrow ? 0 : -1.2, narrow ? 1.45 : 1.3, 0);
+    camera.updateProjectionMatrix();
+    ring.scale.setScalar(R);
+    bunny.scale.setScalar(narrow ? 0.95 : 1.2);
+  }
+  addEventListener('resize', layout); layout();
+
+  // Pointer: drag to spin, tap a card to bring it forward, tap the front card to open it
+  const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+  let dragging = false, moved = 0, lastX = 0, lastT = 0, px = 0, py = 0;
+  canvas.addEventListener('pointerdown', e => { dragging = true; moved = 0; lastX = e.clientX; lastT = performance.now(); vel = 0; canvas.classList.add('drag'); canvas.setPointerCapture(e.pointerId); bumpIdle(); });
+  addEventListener('pointermove', e => {
+    const r = canvas.getBoundingClientRect(); px = ((e.clientX - r.left) / r.width) * 2 - 1; py = ((e.clientY - r.top) / r.height) * 2 - 1;
+    bumpIdle();
+    if (!dragging) return;
+    const dx = e.clientX - lastX, now = performance.now();
+    theta += dx * 0.006; target = theta; vel = (dx * 0.006) / Math.max(1, now - lastT) * 16;
+    moved += Math.abs(dx); lastX = e.clientX; lastT = now;
+  }, { passive: true });
+  const release = e => {
+    if (!dragging) return; dragging = false; canvas.classList.remove('drag');
+    if (moved < 6) {
+      const r = canvas.getBoundingClientRect();
+      ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+      ray.setFromCamera(ndc, camera);
+      const hit = ray.intersectObjects(cards)[0];
+      if (hit) {
+        const i = hit.object.userData.index;
+        if (i === active) { const p = PROJECTS[i], url = p.open || p.extra.href; url.startsWith('http') ? window.open(url, '_blank', 'noopener') : (location.href = url); }
+        else go(i);
+      }
+      return;
+    }
+    go(Math.round(-(theta + vel * 12) / STEP));
+  };
+  canvas.addEventListener('pointerup', release);
+  canvas.addEventListener('pointercancel', release);
+  addEventListener('keydown', bumpIdle);
+
+  // Pause rendering when the stage is off screen
+  let visible = true;
+  new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(canvas);
+
+  const clock = new THREE.Clock(), tmp = new THREE.Vector3();
+  let nextBlink = 2, headX = 0, headY = 0;
+  function frame() {
+    requestAnimationFrame(frame);
+    const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
+    if (!visible) return;
+    if (!RM && !dragging && performance.now() - idleAt > 5000) { go(active + 1); bumpIdle(); }
+    if (!dragging) theta += (target - theta) * (RM ? 1 : 1 - Math.pow(0.001, dt));
+
+    cards.forEach((m, i) => {
+      const a = i * STEP + theta;
+      m.position.set(Math.sin(a) * R, 0.55 + (RM ? 0 : Math.sin(t * 0.8 + i) * 0.04), Math.cos(a) * R);
+      m.rotation.x = -0.18;
+      m.rotation.y = a;
+      m.rotation.order = 'YXZ';
+      const front = Math.cos(a);                                  // 1 = facing the camera
+      const s = cardBase * (i === active ? (cardBase < 1 ? 1.18 : 1.06) : 0.9 + 0.1 * Math.max(0, front));
+      m.scale.lerp(tmp.set(s, s, s), 0.15);
+      m.material.opacity = 0.3 + 0.7 * ((front + 1) / 2);
+    });
+
+    // Bunny idle: bob, ear wiggle, blink, head follows the pointer
+    if (!RM) {
+      bunny.position.y = Math.sin(t * 2) * 0.03;
+      body.scale.y = 0.82 + Math.sin(t * 2) * 0.012;
+      ears[0].rotation.z = 0.12 + Math.sin(t * 2.6) * 0.06;
+      ears[1].rotation.z = -0.12 - Math.sin(t * 2.6 + 0.8) * 0.06;
+      if (t > nextBlink) {
+        const k = (t - nextBlink) / 0.16;
+        const s = k < 1 ? Math.max(0.08, Math.abs(1 - 2 * k)) : 1;
+        eyes.forEach(e => (e.scale.y = 0.1 * s));
+        if (k >= 1) nextBlink = t + 2.5 + Math.random() * 3;
+      }
+      headX += (px * 0.45 - headX) * 0.06; headY += (py * 0.25 - headY) * 0.06;
+      head.rotation.y = headX; head.rotation.x = headY;
+    }
+    renderer.render(scene, camera);
+  }
+  frame();
+}
 </script>
 </body>
 </html>
