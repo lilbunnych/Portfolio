@@ -103,46 +103,70 @@ section.block{ padding:6rem 0; scroll-margin-top:4.5rem }
 /* Pricing */
 .pricing{ position:relative; overflow:hidden }
 .pricing::before{ content:""; position:absolute; inset:-20% -10% auto; height:70%; background:radial-gradient(50% 50% at 50% 0%, rgba(255,212,0,.12), transparent 70%); pointer-events:none }
-.plans{ position:relative; margin-top:3rem; display:grid; gap:1rem; perspective:1200px; align-items:start }
+.plans{ position:relative; margin-top:3rem; display:grid; gap:1rem; perspective:1200px; grid-template-columns:1fr }
 @media (min-width:720px){ .plans{ grid-template-columns:repeat(2,1fr) } }
 @media (min-width:1180px){ .plans{ grid-template-columns:repeat(5,1fr) } }
-.plan{ --mx:50%; --my:0%; position:relative; border-radius:1.25rem; padding:1.4rem 1.25rem 1.25rem; background:var(--card); border:1px solid var(--line); display:flex; flex-direction:column; gap:.9rem; transform-style:preserve-3d; transition:transform .5s var(--ease), opacity .9s var(--ease); will-change:transform }
+/* Every card spans the same 8 rows; subgrid keeps titles, prices and lists aligned across cards */
+.plan{ --mx:50%; --my:0%; position:relative; display:grid; grid-row:span 8; grid-template-rows:subgrid; row-gap:.8rem; border-radius:1.25rem; padding:1.4rem 1.25rem 1.25rem; background:var(--card); border:1px solid var(--line); transform-style:preserve-3d; transition:transform .5s var(--ease), opacity .9s var(--ease); will-change:transform }
 .plan::before{ content:""; position:absolute; inset:-1px; border-radius:inherit; padding:1px; background:radial-gradient(260px circle at var(--mx) var(--my), var(--y), transparent 55%); -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude; opacity:0; transition:opacity .3s; pointer-events:none }
 .plan::after{ content:""; position:absolute; inset:0; border-radius:inherit; background:radial-gradient(320px circle at var(--mx) var(--my), rgba(255,212,0,.07), transparent 60%); opacity:0; transition:opacity .3s; pointer-events:none }
 .plan:hover::before, .plan:hover::after{ opacity:1 }
 .plan .num{ font-family:var(--mono); font-size:.75rem; color:var(--faint) }
-.plan h3{ font-size:1.15rem; letter-spacing:-.02em; line-height:1.2; min-height:2.4em }
+.plan h3{ font-size:1.12rem; letter-spacing:-.02em; line-height:1.2; align-self:start }
 .price{ display:flex; flex-direction:column; gap:.3rem }
 .price b{ font-size:2.6rem; letter-spacing:-.05em; font-weight:800; color:var(--y); font-variant-numeric:tabular-nums; line-height:1 }
-.price span{ color:var(--faint); font-size:.75rem; font-family:var(--mono); text-transform:uppercase; letter-spacing:.06em }
-.time{ display:inline-flex; align-items:center; gap:.45rem; font-size:.85rem; color:var(--ink); background:var(--bg2); border:1px solid var(--line); border-radius:999px; padding:.3rem .75rem; width:fit-content }
+.price span{ color:var(--faint); font-size:.72rem; font-family:var(--mono); text-transform:uppercase; letter-spacing:.06em }
+.time{ display:inline-flex; align-items:center; gap:.45rem; font-size:.85rem; color:var(--ink); background:var(--bg2); border:1px solid var(--line); border-radius:999px; padding:.3rem .75rem; width:fit-content; height:fit-content }
 .time i{ width:.45rem; height:.45rem; border-radius:50%; background:var(--y); box-shadow:0 0 10px var(--y); animation:pulse 2s ease-in-out infinite }
 @keyframes pulse{ 50%{ opacity:.35 } }
-.for{ font-size:.88rem; color:var(--muted) }
-.plan ul{ list-style:none; display:grid; gap:.45rem; font-size:.88rem }
+.for{ font-size:.86rem; color:var(--muted) }
+.plan ul{ list-style:none; display:grid; gap:.5rem; font-size:.88rem; align-content:start }
 .plan li{ display:grid; grid-template-columns:1rem 1fr; gap:.45rem; color:#d6d6d1 }
 .plan li::before{ content:"+"; color:var(--y); font-family:var(--mono); font-weight:600 }
-.plan li.x{ display:none }
-.plan.open li.x{ display:grid; animation:fadeIn .4s var(--ease) both }
-@keyframes fadeIn{ from{ opacity:0; transform:translateY(-4px) } }
-.more{ text-align:left; font-size:.82rem; color:var(--y); padding:0 }
-.plan .note{ font-size:.78rem; color:var(--faint) }
-.plan .ex{ margin-top:auto; padding-top:.75rem; border-top:1px dashed var(--line); font-size:.8rem; color:var(--muted) }
+.plan .ex{ padding-top:.75rem; border-top:1px dashed var(--line); font-size:.8rem; color:var(--muted); align-self:end }
 .plan .ex b{ color:var(--ink); font-weight:600 }
-.plan .order{ text-align:center; text-decoration:none; font-weight:600; font-size:.9rem; padding:.7rem; border-radius:.8rem; background:var(--bg2); border:1px solid var(--line); transition:all .25s }
-.plan .order:hover{ background:var(--y); color:var(--y-ink); border-color:var(--y) }
+.plan .act{ display:grid; gap:.5rem; align-self:end }
+.plan .act button, .plan .act a{ text-align:center; text-decoration:none; font-weight:600; font-size:.88rem; padding:.65rem; border-radius:.8rem; border:1px solid var(--line); transition:all .25s }
+.plan .act button{ color:var(--y); background:transparent }
+.plan .act button:hover{ border-color:var(--y) }
+.plan .act a{ background:var(--bg2) }
+.plan .act a:hover{ background:var(--y); color:var(--y-ink); border-color:var(--y) }
 
-.terms{ position:relative; margin-top:3rem; display:grid; gap:1rem }
-@media (min-width:900px){ .terms{ grid-template-columns:1.4fr 1fr } }
-.terms ol{ list-style:none; display:grid; gap:.75rem; counter-reset:t }
-@media (min-width:640px){ .terms ol{ grid-template-columns:1fr 1fr } }
-.terms li{ counter-increment:t; display:grid; grid-template-columns:2.4rem 1fr; gap:.8rem; align-items:start; padding:1rem; border-radius:1rem; background:var(--card); border:1px solid var(--line) }
-.terms li::before{ content:counter(t); display:grid; place-items:center; width:2.4rem; height:2.4rem; border-radius:.7rem; background:var(--y); color:var(--y-ink); font-weight:800 }
-.terms li b{ display:block }
-.terms li span{ color:var(--muted); font-size:.9rem }
-.extra{ padding:1.25rem; border-radius:1rem; border:1px dashed var(--line); color:var(--muted); font-size:.9rem; align-self:start }
-.extra h4{ color:var(--ink); font-size:1rem; margin-bottom:.6rem }
-.extra ul{ list-style:none; display:grid; gap:.4rem }
+/* Package details dialog */
+dialog.pkg{ margin:auto; width:min(38rem, calc(100% - 2rem)); max-height:calc(100dvh - 2rem); padding:0; border:1px solid var(--line); border-radius:1.25rem; background:var(--card); color:var(--ink) }
+dialog.pkg::backdrop{ background:rgba(0,0,0,.6); backdrop-filter:blur(6px) }
+dialog.pkg[open]{ animation:pop .35s var(--ease) }
+@keyframes pop{ from{ opacity:0; transform:translateY(12px) scale(.98) } }
+.pkg-in{ padding:1.6rem; display:grid; gap:1rem }
+.pkg-top{ display:flex; justify-content:space-between; gap:1rem; align-items:start }
+.pkg-top h3{ font-size:1.5rem; letter-spacing:-.03em; line-height:1.15 }
+.pkg-x{ width:2.4rem; height:2.4rem; flex-shrink:0; border-radius:999px; border:1px solid var(--line); color:var(--muted); font-size:1.1rem }
+.pkg-x:hover{ color:var(--ink); border-color:var(--ink) }
+.pkg-meta{ display:flex; flex-wrap:wrap; gap:.6rem; align-items:center }
+.pkg-meta b{ font-size:2rem; color:var(--y); letter-spacing:-.04em }
+.pkg ul{ list-style:none; display:grid; gap:.55rem; font-size:.95rem }
+.pkg li{ display:grid; grid-template-columns:1.1rem 1fr; gap:.5rem; color:#d6d6d1 }
+.pkg li::before{ content:"+"; color:var(--y); font-family:var(--mono); font-weight:700 }
+.pkg h4{ font-size:.8rem; font-family:var(--mono); text-transform:uppercase; letter-spacing:.06em; color:var(--faint); margin-top:.4rem }
+.pkg .note{ font-size:.85rem; color:var(--muted); padding:.8rem 1rem; border-radius:.8rem; background:var(--bg2) }
+.pkg .go{ text-align:center; text-decoration:none; font-weight:700; padding:.85rem; border-radius:.9rem; background:var(--y); color:var(--y-ink) }
+
+/* Terms: three groups */
+.groups{ position:relative; margin-top:3.5rem; display:grid; gap:1rem }
+@media (min-width:980px){ .groups{ grid-template-columns:1.25fr 1fr 1fr } }
+.group{ border-radius:1.25rem; padding:1.4rem; background:var(--card); border:1px solid var(--line) }
+.group h3{ font-size:1.1rem; letter-spacing:-.02em; margin-bottom:1rem; padding-left:.8rem; border-left:3px solid var(--y) }
+.group h3 i{ font-style:normal; display:grid; place-items:center; width:1.9rem; height:1.9rem; border-radius:.6rem; background:var(--y); color:var(--y-ink); font-size:.95rem }
+.group ol, .group ul{ list-style:none; display:grid; gap:.85rem }
+.group li b{ display:block; font-size:.95rem }
+.group li span{ display:block; color:var(--muted); font-size:.87rem; margin-top:.15rem }
+.group ol{ counter-reset:s }
+.group ol li{ counter-increment:s; display:grid; grid-template-columns:1.6rem 1fr; gap:.6rem }
+.group ol li::before{ content:counter(s); font-family:var(--mono); color:var(--y); font-weight:600; padding-top:.05rem }
+.group ul li{ display:grid; grid-template-columns:1.2rem 1fr; gap:.5rem }
+.group.you ul li::before{ content:"→"; color:var(--y) }
+.group.out ul li::before{ content:"—"; color:var(--faint) }
+.group.out{ border-style:dashed; background:transparent }
 
 footer{ border-top:1px solid var(--line); padding:2rem 0 3rem; color:var(--muted); font-size:.875rem }
 footer .wrap{ display:flex; flex-wrap:wrap; justify-content:space-between; gap:1rem }
@@ -205,18 +229,11 @@ footer .wrap{ display:flex; flex-wrap:wrap; justify-content:space-between; gap:1
     <h2 class="title" data-rv style="--d:80ms" data-i18n="priceTitle">Five packages, fixed prices.</h2>
     <p class="lead" data-rv style="--d:160ms" data-i18n="priceLead">Starter prices while I collect first reviews. Every project starts with a free demo.</p>
     <div class="plans" id="plans"></div>
-    <div class="terms">
-      <div>
-        <h3 class="sr" data-i18n="termsTitle">Terms</h3>
-        <ol id="terms"></ol>
-      </div>
-      <div class="extra" data-rv>
-        <h4 data-i18n="extraTitle">Paid separately</h4>
-        <ul id="extras"></ul>
-      </div>
-    </div>
+    <div class="groups" id="groups"></div>
   </div>
 </section>
+
+<dialog class="pkg" id="pkg" aria-labelledby="pkgTitle"><div class="pkg-in" id="pkgIn"></div></dialog>
 
 <footer>
   <div class="wrap">
@@ -244,7 +261,7 @@ const UI = {
     all:'All', sites:'Websites', apps:'Web apps', native:'Mobile and desktop',
     open:'Open demo', source:'Code', spec:'Rebuilt from spec', original:'Original', phone:'Run on your phone', downloads:'Download', view:'Open',
     priceEyebrow:'Pricing', priceTitle:'Five packages, fixed prices.', priceLead:'Starter prices while I collect first reviews. Every project starts with a free demo.',
-    fixed:'fixed price', more:'Show everything included', less:'Show less', order:'Discuss a project', example:'In the portfolio:', forLabel:'Good for',
+    fixed:'fixed price', details:'What’s included', order:'Discuss a project', included:'Included', close:'Close', example:'In the portfolio:', forLabel:'Good for',
     termsTitle:'Terms', extraTitle:'Paid separately', foot1:'All projects are demos with fictional brands.' },
   ru: { title:'lilbunnych | Сайты и приложения', contact:'Написать', channel:'Telegram-канал', navPrice:'Цены',
     h1:'Сайты и приложения <em>под ключ.</em>', lead:'Быстро, с демо до оплаты. Покрутите карусель: здесь двенадцать проектов.', hint:'крутите мышью',
@@ -252,7 +269,7 @@ const UI = {
     all:'Все', sites:'Сайты', apps:'Веб-приложения', native:'Мобильные и десктоп',
     open:'Открыть демо', source:'Код', spec:'По ТЗ', original:'Своя разработка', phone:'Запуск на телефоне', downloads:'Скачать', view:'Открыть',
     priceEyebrow:'Цены', priceTitle:'Пять пакетов, фиксированные цены.', priceLead:'Стартовые цены, пока собираю первые отзывы. Каждый проект начинается с бесплатного демо.',
-    fixed:'фиксированная цена', more:'Показать всё, что входит', less:'Свернуть', order:'Обсудить проект', example:'В портфолио:', forLabel:'Подходит для',
+    fixed:'фиксированная цена', details:'Что входит', order:'Обсудить проект', included:'Что входит', close:'Закрыть', example:'В портфолио:', forLabel:'Подходит для',
     termsTitle:'Условия', extraTitle:'Оплачивается отдельно', foot1:'Все проекты демо с вымышленными брендами.' },
 };
 
@@ -298,42 +315,74 @@ const PROJECTS = [
 ];
 
 const PLANS = [
-  { price:290, ex:'Lumora, Tessel, Driftnote',
+  { price:290, key:{ en:["Design in your brand", "Up to 8 content blocks", "Works on every screen", "Request form to Telegram or email"], ru:["Дизайн под ваш бренд", "До 8 смысловых блоков", "Удобно на любом экране", "Заявки в Telegram или на почту"] }, ex:'Lumora, Tessel, Driftnote',
     en:{ name:'Landing page / business card site', time:'2–3 days', for:'presenting a service, product, person or event.',
       items:['Design in your brand: colours, fonts, style','Up to 6–8 content blocks: hero, about, services, benefits, reviews, contacts','Responsive layout for phone, tablet and desktop','Scroll animations and hover effects','Request form with validation, sent to Telegram or email','Basic SEO: titles, search description, social preview','Publishing online and connecting your domain'] },
     ru:{ name:'Лендинг / сайт-визитка', time:'2–3 дня', for:'презентации услуги, продукта, специалиста, мероприятия.',
       items:['Дизайн под ваш бренд: цвета, шрифты, стиль','До 6–8 блоков: первый экран, о вас, услуги, преимущества, отзывы, контакты','Адаптивная вёрстка: телефон, планшет, компьютер','Анимации появления и эффекты при наведении','Форма заявки с проверкой полей, заявки в Telegram или на почту','Базовое SEO: заголовки, описание для поиска, превью для соцсетей','Размещение сайта в интернете и подключение вашего домена'] } },
-  { price:490, ex:'Fjordhus',
+  { price:490, key:{ en:["Everything in the landing page", "Several pages", "Booking, catalogue, calculator or account", "Edit texts and prices yourself"], ru:["Всё из лендинга", "Несколько страниц", "Бронирование, каталог, калькулятор или кабинет", "Тексты и цены меняете сами"] }, ex:'Fjordhus',
     en:{ name:'Website with logic', time:'4–7 days', for:'businesses where a client picks, calculates or books something.',
       items:['Everything in package 1','Several pages or sections','One interactive feature: online booking with a calendar, catalogue with filters and search, price calculator or user account','Automatic price calculation and data checks: dates, quantities, capacity','New request notifications to Telegram or email','Edit texts and prices without a developer'] },
     ru:{ name:'Сайт с логикой', time:'4–7 дней', for:'бизнеса, где клиент выбирает, считает или бронирует.',
       items:['Всё из пакета 1','Несколько страниц или разделов','Одна интерактивная функция на выбор: бронирование с календарём, каталог с фильтрами и поиском, калькулятор стоимости или личный кабинет','Автоматический расчёт цены и проверка данных: даты, количество, вместимость','Уведомления о заявках в Telegram или на почту','Можно менять тексты и цены без программиста'] } },
-  { price:690, ex:'Ledgerly, Tempo',
+  { price:690, key:{ en:["Interface around your workflow", "Charts, reports, smart tables", "Installs as an app, works offline", "Connects to your data via API"], ru:["Интерфейс под ваши процессы", "Графики, отчёты, умные таблицы", "Ставится как приложение, работает офлайн", "Подключение к вашим данным по API"] }, ex:'Ledgerly, Tempo',
     en:{ name:'Web app / dashboard', time:'1–2 weeks', for:'internal tools, CRMs, admin panels, client-facing services.',
       items:['Interface designed around your workflow','Charts and reports','Tables with search, filters and sorting','Light and dark theme','Comfortable on phones','Optional: installs as an app on phone and computer (PWA), works offline','Connection to your data or services through an API'] },
     ru:{ name:'Веб-приложение / дашборд', time:'1–2 недели', for:'внутренних инструментов, CRM, админ-панелей, сервисов для клиентов.',
       items:['Проектирование интерфейса под ваши процессы','Графики и отчёты','Таблицы с поиском, фильтрами и сортировкой','Светлая и тёмная тема','Удобная работа с телефона','По желанию: установка как приложения на телефон и компьютер (PWA), работа без интернета','Подключение к вашим данным или сервисам через API'] } },
-  { price:890, ex:'Sprout',
+  { price:890, key:{ en:["One app for iPhone and Android", "Design, icon and launch screen", "Test build on your phone", "Release to App Store and Google Play"], ru:["Одно приложение для iPhone и Android", "Дизайн, иконка и заставка", "Тестовая версия на вашем телефоне", "Публикация в App Store и Google Play"] }, ex:'Sprout',
     en:{ name:'Mobile app', time:'2–3 weeks', for:'services, trackers, apps for a business’s customers.',
       items:['One app for iPhone and Android, one codebase','Screens in your brand, app icon and launch screen','Navigation, forms, lists, data saved on the device','Light and dark theme, haptic feedback','Test build to try on your own phone before release','Store release included: builds for both stores','Store listing: name, description, keywords, screenshots','Privacy policy page (required by both stores)','Submission for review through your developer accounts','Fixes if Apple or Google send the app back'],
       note:'Store review takes 1–7 days and is outside our control.' },
     ru:{ name:'Мобильное приложение', time:'2–3 недели', for:'сервисов, трекеров, приложений для клиентов бизнеса.',
       items:['Одно приложение сразу для iPhone и Android, общий код','Дизайн экранов под бренд, иконка и заставка при запуске','Навигация, формы, списки, сохранение данных на устройстве','Светлая и тёмная тема, вибро-отклик','Тестовая версия, чтобы проверить на своём телефоне до публикации','Публикация в сторах входит: сборка файлов для обоих магазинов','Страница в магазине: название, описание, ключевые слова, скриншоты','Политика конфиденциальности (её требуют оба магазина)','Отправка на проверку через ваши аккаунты разработчика','Исправление замечаний, если Apple или Google вернут на доработку'],
       note:'Проверка в магазинах занимает от 1 до 7 дней и от нас не зависит.' } },
-  { price:990, ex:'Jot',
+  { price:990, key:{ en:["Windows, macOS and Linux", "x64 and ARM builds", "Menus, shortcuts, autosave, files", "Installers and a download page"], ru:["Windows, macOS и Linux", "Сборки под x64 и ARM", "Меню, горячие клавиши, автосохранение, файлы", "Установщики и страница загрузки"] }, ex:'Jot',
     en:{ name:'Desktop app', time:'1–2 weeks', for:'tools for staff, apps that work with files and data.',
       items:['Windows, macOS and Linux','Builds for x64 and ARM: Apple silicon, Windows on ARM','Native menu and shortcuts, autosave','Working with files: open, save, export','Light and dark theme from system settings','Ready installers and a download page'] },
     ru:{ name:'Десктопная программа', time:'1–2 недели', for:'программ для сотрудников, инструментов для работы с файлами и данными.',
       items:['Windows, macOS и Linux','Сборки под x64 и ARM: Apple Silicon, Windows на ARM','Привычное меню, горячие клавиши, автосохранение','Работа с файлами: открыть, сохранить, экспорт','Светлая и тёмная тема по настройкам системы','Готовые установочные файлы и страница для скачивания'] } },
 ];
 
-const TERMS = {
-  en:[['Demo before payment','I show the first screen or a prototype for free, so you see the direction first.'],['50/50 payment','Half after you approve the demo, half on delivery.'],['2 rounds of revisions','Included in the price.'],['14 days of free support','After delivery I fix any bugs that turn up.'],['Ongoing work by agreement','Updates, new features and support after launch can be arranged.'],['Deadlines start with materials','Timelines count from the day I receive texts, photos and access.']],
-  ru:[['Демо до оплаты','Бесплатно показываю первый экран или прототип, чтобы вы увидели направление.'],['Оплата 50/50','Половина после согласования демо, половина при сдаче.'],['2 круга правок','Входят в цену.'],['14 дней бесплатной поддержки','После сдачи исправляю ошибки, если они найдутся.'],['Ведение проекта по согласованию','Обновления, новые функции и поддержка после запуска обсуждаются отдельно.'],['Сроки с получения материалов','Срок считается с момента, когда получены тексты, фото и доступы.']],
-};
-const EXTRAS = {
-  en:['Domain and hosting, if paid ones are needed','Developer accounts: Apple ($99 a year), Google Play ($25 once), registered to you','Texts and photos, if you do not have them'],
-  ru:['Домен и хостинг, если нужны платные','Аккаунты разработчика: Apple (99 $ в год), Google Play (25 $ разово), оформляются на вас','Тексты и фото, если у вас их нет'],
+const GROUPS = {
+  en: {
+    how: { title:'How we work', items:[
+      ['Free demo first','You describe the task, I show the first screen or a prototype. You pay only if you like the direction.'],
+      ['50% to start, 50% on delivery','The first half after you approve the demo, the second when the project is finished.'],
+      ['Two rounds of revisions','Included in the price. Collect edits into one list per round.'],
+      ['Delivery and 14 days of support','I hand over the finished project and fix any bugs for free for two weeks.'],
+      ['Ongoing work by agreement','Updates, new features and maintenance after launch are priced separately.'] ] },
+    you: { title:'What I need from you', items:[
+      ['Materials before we start','Texts, logo, photos and brand colours. Timelines start when they arrive.'],
+      ['Replies within 1–2 days','Slow feedback shifts the deadline by the same amount.'],
+      ['Access and accounts','Domain, hosting and developer accounts are registered to you; I set them up.'],
+      ['One contact person','One person gives feedback and approves the work, so edits do not conflict.'] ] },
+    out: { title:'Not included in the price', items:[
+      ['Domain and paid hosting','Usually $10–30 a year; I help you pick and set them up.'],
+      ['Developer accounts','Apple: $99 a year. Google Play: $25 once. Only for mobile apps.'],
+      ['Content creation','Copywriting, photos and illustrations, if you do not have them.'],
+      ['Paid services','Subscriptions to payment systems, maps, email or other APIs.'],
+      ['New features after approval','Big changes to an agreed scope are estimated separately.'] ] },
+  },
+  ru: {
+    how: { title:'Как мы работаем', items:[
+      ['Сначала бесплатное демо','Вы описываете задачу, я показываю первый экран или прототип. Платите, только если направление нравится.'],
+      ['50% в начале, 50% при сдаче','Первая половина после согласования демо, вторая, когда проект готов.'],
+      ['Два круга правок','Входят в цену. Правки собираем одним списком на каждый круг.'],
+      ['Сдача и 14 дней поддержки','Передаю готовый проект и две недели бесплатно исправляю ошибки, если найдутся.'],
+      ['Дальнейшая работа по договорённости','Обновления, новые функции и сопровождение после запуска оцениваются отдельно.'] ] },
+    you: { title:'Что нужно от вас', items:[
+      ['Материалы до старта','Тексты, логотип, фото и фирменные цвета. Срок начинается, когда они получены.'],
+      ['Ответы в течение 1–2 дней','Если обратная связь задерживается, срок сдвигается на столько же.'],
+      ['Доступы и аккаунты','Домен, хостинг и аккаунты разработчика оформляются на вас, я всё настраиваю.'],
+      ['Один ответственный','Правки и согласование от одного человека, чтобы они не противоречили друг другу.'] ] },
+    out: { title:'Не входит в стоимость', items:[
+      ['Домен и платный хостинг','Обычно 10–30 $ в год. Помогу выбрать и подключить.'],
+      ['Аккаунты разработчика','Apple: 99 $ в год. Google Play: 25 $ разово. Только для мобильных приложений.'],
+      ['Создание контента','Тексты, фото и иллюстрации, если их нет.'],
+      ['Платные сервисы','Подписки на платёжные системы, карты, рассылки и другие API.'],
+      ['Новые функции после согласования','Крупные изменения утверждённого объёма оцениваются отдельно.'] ] },
+  },
 };
 
 /* ---------------- Language + DOM rendering ---------------- */
@@ -374,7 +423,6 @@ function renderRows() {
 
 function renderPricing() {
   const t = UI[lang];
-  const SHOWN = 4;
   $('#plans').innerHTML = PLANS.map((pl, i) => {
     const c = pl[lang];
     return `<article class="plan" data-rv style="--d:${i * 90}ms">
@@ -383,18 +431,36 @@ function renderPricing() {
       <div class="price"><b data-to="${pl.price}">$${pl.price}</b><span>${t.fixed}</span></div>
       <span class="time"><i></i>${c.time}</span>
       <p class="for">${t.forLabel} ${c.for}</p>
-      <ul>${c.items.map((it, k) => `<li class="${k >= SHOWN ? 'x' : ''}">${it}</li>`).join('')}</ul>
-      ${c.items.length > SHOWN ? `<button class="more" aria-expanded="false">${t.more}</button>` : ''}
-      ${c.note ? `<p class="note">${c.note}</p>` : ''}
+      <ul>${pl.key[lang].map(it => `<li>${it}</li>`).join('')}</ul>
       <p class="ex">${t.example} <b>${pl.ex}</b></p>
-      <a class="order" href="${TG}" target="_blank" rel="noopener">${t.order}</a>
+      <div class="act"><button data-pkg="${i}">${t.details}</button><a href="${TG}" target="_blank" rel="noopener">${t.order}</a></div>
     </article>`;
   }).join('');
-  $('#terms').innerHTML = TERMS[lang].map(([b, s], i) => `<li data-rv style="--d:${i * 60}ms"><div><b>${b}</b><span>${s}</span></div></li>`).join('');
-  $('#extras').innerHTML = EXTRAS[lang].map(x => `<li>· ${x}</li>`).join('');
+  const g = GROUPS[lang];
+  const li = ([b, s]) => `<li><div><b>${b}</b><span>${s}</span></div></li>`;
+  $('#groups').innerHTML = `
+    <div class="group" data-rv><h3>${g.how.title}</h3><ol>${g.how.items.map(li).join('')}</ol></div>
+    <div class="group you" data-rv style="--d:90ms"><h3>${g.you.title}</h3><ul>${g.you.items.map(li).join('')}</ul></div>
+    <div class="group out" data-rv style="--d:180ms"><h3>${g.out.title}</h3><ul>${g.out.items.map(li).join('')}</ul></div>`;
   wirePlans();
   observeReveals();
 }
+
+function openPkg(i) {
+  const t = UI[lang], pl = PLANS[i], c = pl[lang], d = $('#pkg');
+  $('#pkgIn').innerHTML = `
+    <div class="pkg-top"><h3 id="pkgTitle">${c.name}</h3><button class="pkg-x" aria-label="${t.close}">✕</button></div>
+    <div class="pkg-meta"><b>$${pl.price}</b><span class="time"><i></i>${c.time}</span></div>
+    <p class="for">${t.forLabel} ${c.for}</p>
+    <h4>${t.included}</h4>
+    <ul>${c.items.map(x => `<li>${x}</li>`).join('')}</ul>
+    ${c.note ? `<p class="note">${c.note}</p>` : ''}
+    <p class="for">${t.example} <b>${pl.ex}</b></p>
+    <a class="go" href="${TG}" target="_blank" rel="noopener">${t.order}</a>`;
+  d.querySelector('.pkg-x').addEventListener('click', () => d.close());
+  d.showModal();
+}
+$('#pkg').addEventListener('click', e => { if (e.target.id === 'pkg') e.target.close(); });
 
 function renderAll() {
   const t = UI[lang];
@@ -419,20 +485,15 @@ const io = new IntersectionObserver(es => es.forEach(e => {
 }), { rootMargin: '0px 0px -10% 0px' });
 function observeReveals() { document.querySelectorAll('[data-rv]:not(.in)').forEach(el => io.observe(el)); }
 
-/* Plan cards: tilt + cursor spotlight + expand */
+/* Plan cards: tilt + cursor spotlight, details open in a dialog */
 function wirePlans() {
+  document.querySelectorAll('[data-pkg]').forEach(b => b.addEventListener('click', () => openPkg(+b.dataset.pkg)));
+  if (RM || !matchMedia('(hover: hover)').matches) return;
   document.querySelectorAll('.plan').forEach(card => {
-    const more = card.querySelector('.more');
-    more?.addEventListener('click', () => {
-      const open = card.classList.toggle('open');
-      more.setAttribute('aria-expanded', String(open));
-      more.textContent = open ? UI[lang].less : UI[lang].more;
-    });
-    if (RM || !matchMedia('(hover: hover)').matches) return;
     card.addEventListener('pointermove', e => {
       const r = card.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
       card.style.setProperty('--mx', `${x * 100}%`); card.style.setProperty('--my', `${y * 100}%`);
-      card.style.transform = `rotateX(${(0.5 - y) * 7}deg) rotateY(${(x - 0.5) * 9}deg)`;
+      card.style.transform = `rotateX(${(0.5 - y) * 6}deg) rotateY(${(x - 0.5) * 8}deg)`;
     });
     card.addEventListener('pointerleave', () => { card.style.transform = ''; });
   });
@@ -486,8 +547,8 @@ if (renderer) {
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 60);
 
-  scene.add(new THREE.HemisphereLight(0xfff8e0, 0x2a2620, 1.4));
-  const key = new THREE.DirectionalLight(0xffffff, 2.2); key.position.set(3, 5, 4); scene.add(key);
+  scene.add(new THREE.HemisphereLight(0xfff8e0, 0x2a2620, 0.9));
+  const key = new THREE.DirectionalLight(0xffffff, 2.0); key.position.set(3, 5, 4); scene.add(key);
   const rim = new THREE.DirectionalLight(0xffd400, 1.2); rim.position.set(-4, 3, -3); scene.add(rim);
 
   // Toon ramp + black inverted-hull outline for a cartoon look
@@ -496,52 +557,112 @@ if (renderer) {
   const toon = c => new THREE.MeshToonMaterial({ color: c, gradientMap: ramp });
   const outlineMat = new THREE.MeshBasicMaterial({ color: 0x111111, side: THREE.BackSide });
   const S = new THREE.SphereGeometry(1, 48, 32);
+  const Y = new THREE.Vector3(0, 1, 0);
 
-  const bunny = new THREE.Group(); scene.add(bunny);
-  const part = (geo, mat, pos, scale = [1, 1, 1], rot = [0, 0, 0], parent = bunny, outline = 1.06) => {
+  // rig = cloud + bunny + laptop, floats as one piece
+  const rig = new THREE.Group(); scene.add(rig);
+  const part = (geo, mat, pos, scale = [1, 1, 1], rot = [0, 0, 0], parent = rig, outline = 1.06) => {
     const m = new THREE.Mesh(geo, mat); m.position.set(...pos); m.scale.set(...scale); m.rotation.set(...rot); parent.add(m);
     if (outline) { const o = new THREE.Mesh(geo, outlineMat); o.scale.setScalar(outline); m.add(o); }
     return m;
   };
-  const white = toon(0xf6f3ec), pink = toon(0xff9fb4), yellow = toon(0xffd400);
+  const white = toon(0xf6f3ec), pink = toon(0xff9fb4), cloudMat = toon(0xdfe6f4);
   const black = new THREE.MeshBasicMaterial({ color: 0x141414 });
 
-  const body = part(S, white, [0, 0.62, 0], [0.78, 0.82, 0.72]);
-  part(S, white, [-0.36, 0.1, 0.32], [0.26, 0.16, 0.34]);                    // feet
-  part(S, white, [0.36, 0.1, 0.32], [0.26, 0.16, 0.34]);
-  part(S, white, [0, 0.55, -0.72], [0.2, 0.2, 0.2]);                          // tail
-  part(S, white, [-0.62, 0.72, 0.28], [0.17, 0.3, 0.17], [0.4, 0, 0.5]);      // arms
-  part(S, white, [0.62, 0.72, 0.28], [0.17, 0.3, 0.17], [0.4, 0, -0.5]);
-  const bow = new THREE.Group(); bow.position.set(0, 1.28, 0.5); bunny.add(bow);      // brand bow tie
-  part(S, yellow, [-0.17, 0, 0], [0.18, 0.12, 0.06], [0, 0, 0.3], bow, 1.12);
-  part(S, yellow, [0.17, 0, 0], [0.18, 0.12, 0.06], [0, 0, -0.3], bow, 1.12);
-  part(S, yellow, [0, 0, 0.03], [0.07, 0.07, 0.07], [0, 0, 0], bow, 1.15);
+  // Cloud
+  const cloud = new THREE.Group(); rig.add(cloud);
+  [[0, .55, 0, .62], [-.55, .5, .1, .45], [.55, .5, .05, .48], [-.25, .72, -.2, .45], [.3, .72, -.15, .42], [0, .45, .35, .42], [-.88, .45, -.05, .3], [.88, .45, 0, .3], [-.45, .42, .42, .28], [.45, .42, .4, .3]]
+    .forEach(([x, y, z, r]) => part(S, cloudMat, [x, y, z], [r, r * .72, r], [0, 0, 0], cloud, 1.05));
 
-  const head = new THREE.Group(); head.position.set(0, 1.78, 0.05); bunny.add(head);
-  part(S, white, [0, 0, 0], [0.64, 0.58, 0.6], [0, 0, 0], head);
-  part(S, white, [-0.26, -0.14, 0.44], [0.2, 0.16, 0.14], [0, 0, 0], head, 0);  // cheeks
-  part(S, white, [0.26, -0.14, 0.44], [0.2, 0.16, 0.14], [0, 0, 0], head, 0);
-  part(S, pink, [0, -0.06, 0.585], [0.075, 0.055, 0.05], [0, 0, 0], head, 0);   // nose
-  part(S, pink, [-0.36, -0.2, 0.47], [0.08, 0.04, 0.02], [0, 0.6, 0], head, 0); // blush
-  part(S, pink, [0.36, -0.2, 0.47], [0.08, 0.04, 0.02], [0, -0.6, 0], head, 0);
+  // Bunny (slim, sitting)
+  const bunny = new THREE.Group(); rig.add(bunny);
+  const capsule = (r, len) => new THREE.CapsuleGeometry(r, len, 8, 20);
+  part(capsule(.25, .4), white, [0, 1.36, -.02], [1, 1, .9], [.1, 0, 0], bunny);                    // torso
+  part(S, white, [0, 1.08, -.26], [.11, .11, .11], [0, 0, 0], bunny);                                // tail
+  [-1, 1].forEach(sx => {
+    part(capsule(.11, .3), white, [sx * .15, 1.06, .2], [1, 1, 1], [Math.PI / 2 - .15, 0, sx * -.12], bunny); // thighs
+    part(S, white, [sx * .19, 1.04, .44], [.11, .08, .15], [0, 0, 0], bunny);                          // feet
+  });
+  // Arms are re-aimed every frame so the paws can type
+  const arms = [-1, 1].map(sx => {
+    const arm = part(capsule(.07, 1), white, [0, 0, 0], [1, 1, 1], [0, 0, 0], bunny, 1.1);
+    const paw = part(S, white, [0, 0, 0], [.075, .06, .085], [0, 0, 0], bunny);
+    return { arm, paw, sx, shoulder: new THREE.Vector3(sx * .24, 1.56, .02), rest: new THREE.Vector3(sx * .17, 1.19, .47) };
+  });
+  const aim = (mesh, a, b, r = .07) => {
+    const d = new THREE.Vector3().subVectors(b, a), len = d.length();
+    mesh.position.copy(a).addScaledVector(d, .5);
+    mesh.quaternion.setFromUnitVectors(Y, d.normalize());
+    mesh.scale.set(1, Math.max(.01, (len - r * 2) / 1 + .0001), 1);
+  };
+
+  const head = new THREE.Group(); head.position.set(0, 1.92, .02); bunny.add(head);
+  part(S, white, [0, 0, 0], [.42, .38, .4], [0, 0, 0], head);
+  part(S, white, [-.17, -.1, .29], [.13, .1, .09], [0, 0, 0], head, 0);   // cheeks
+  part(S, white, [.17, -.1, .29], [.13, .1, .09], [0, 0, 0], head, 0);
+  part(S, pink, [0, -.04, .385], [.05, .037, .033], [0, 0, 0], head, 0); // nose
+  part(S, pink, [-.24, -.13, .31], [.05, .026, .014], [0, .6, 0], head, 0);
+  part(S, pink, [.24, -.13, .31], [.05, .026, .014], [0, -.6, 0], head, 0);
   const eyes = [];
-  [-0.2, 0.2].forEach(x => {
-    const e = part(S, black, [x, 0.07, 0.53], [0.075, 0.1, 0.05], [0, 0, 0], head, 0);
-    const shine = new THREE.Mesh(S, new THREE.MeshBasicMaterial({ color: 0xffffff })); shine.position.set(0.35, 0.4, 0.7); shine.scale.setScalar(0.32); e.add(shine);
+  [-.13, .13].forEach(x => {
+    const e = part(S, black, [x, .05, .35], [.05, .068, .034], [0, 0, 0], head, 0);
+    const shine = new THREE.Mesh(S, new THREE.MeshBasicMaterial({ color: 0xffffff })); shine.position.set(.35, .4, .7); shine.scale.setScalar(.32); e.add(shine);
     eyes.push(e);
   });
   const ears = [];
-  const cap = new THREE.CapsuleGeometry(0.15, 0.72, 8, 24);
-  [[-0.24, 0.12], [0.24, -0.12]].forEach(([x, rz]) => {
-    const ear = new THREE.Group(); ear.position.set(x, 0.45, -0.05); ear.rotation.z = rz; head.add(ear);
-    part(cap, white, [0, 0.5, 0], [1, 1, 0.75], [0, 0, 0], ear, 1.08);
-    part(cap, pink, [0, 0.5, 0.075], [0.55, 0.85, 0.3], [0, 0, 0], ear, 0);
+  [[-.15, .16], [.15, -.16]].forEach(([x, rz]) => {
+    const ear = new THREE.Group(); ear.position.set(x, .28, -.04); ear.rotation.z = rz; head.add(ear);
+    part(capsule(.1, .6), white, [0, .38, 0], [1, 1, .72], [0, 0, 0], ear, 1.1);
+    part(capsule(.1, .6), pink, [0, .38, .05], [.52, .82, .3], [0, 0, 0], ear, 0);
     ears.push(ear);
   });
 
+  // Laptop with a glowing pear on the lid (screen faces the bunny)
+  const laptop = new THREE.Group(); laptop.position.set(0, 1.12, .5); rig.add(laptop);
+  const alu = toon(0xc9ccd3), dark = new THREE.MeshBasicMaterial({ color: 0x1c1e22 });
+  part(new THREE.BoxGeometry(.82, .035, .5), alu, [0, 0, 0], [1, 1, 1], [0, 0, 0], laptop, 1.03);
+  part(new THREE.BoxGeometry(.7, .006, .26), dark, [0, .02, -.06], [1, 1, 1], [0, 0, 0], laptop, 0);   // keyboard
+  const lid = new THREE.Group(); lid.position.set(0, .02, .25); lid.rotation.x = .22; laptop.add(lid);
+  part(new THREE.BoxGeometry(.82, .54, .03), alu, [0, .27, 0], [1, 1, 1], [0, 0, 0], lid, 1.03);
+  const screen = new THREE.Mesh(new THREE.PlaneGeometry(.74, .46), new THREE.MeshBasicMaterial({ color: 0x9fd6ff }));
+  screen.position.set(0, .28, -.017); screen.rotation.y = Math.PI; lid.add(screen);
+  const pearShape = new THREE.Shape();
+  pearShape.moveTo(0, -.09);
+  pearShape.bezierCurveTo(.075, -.09, .085, -.02, .05, .02);
+  pearShape.bezierCurveTo(.03, .045, .035, .075, 0, .08);
+  pearShape.bezierCurveTo(-.035, .075, -.03, .045, -.05, .02);
+  pearShape.bezierCurveTo(-.085, -.02, -.075, -.09, 0, -.09);
+  const pearMat = new THREE.MeshBasicMaterial({ color: 0xffd400 });
+  const pear = new THREE.Mesh(new THREE.ShapeGeometry(pearShape, 24), pearMat);
+  pear.position.set(0, .29, .017); lid.add(pear);
+  const leaf = new THREE.Mesh(S, pearMat); leaf.scale.set(.026, .012, .002); leaf.position.set(.025, .39, .017); leaf.rotation.z = .6; lid.add(leaf);
+  const stem = new THREE.Mesh(new THREE.BoxGeometry(.008, .03, .002), pearMat); stem.position.set(.004, .385, .017); stem.rotation.z = -.2; lid.add(stem);
+  const glow = new THREE.PointLight(0x8fd0ff, .35, 1.1, 2); glow.position.set(0, 1.45, .3); rig.add(glow);
+
+  // Little code glyphs that float up from the laptop
+  const glyphTex = ['</>', '{ }', '( )', '=>', ';', '#'].map(txt => {
+    const c = document.createElement('canvas'); c.width = 128; c.height = 64; const g = c.getContext('2d');
+    g.font = '700 44px Geist Mono, ui-monospace, monospace'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#ffd400'; g.fillText(txt, 64, 34);
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+  });
+  const glyphs = Array.from({ length: 8 }, () => {
+    const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: glyphTex[0], transparent: true, depthWrite: false, opacity: 0 }));
+    s.scale.set(.32, .16, 1); s.userData.life = 1; rig.add(s); return s;
+  });
+  let nextGlyph = 0, glyphIdx = 0;
+
+  // Three-quarter view: the bunny, laptop and screen glow turn together so the body and typing paws show
+  const sitter = new THREE.Group(); rig.add(sitter);
+  sitter.add(bunny); sitter.add(laptop); sitter.add(glow);
+  sitter.rotation.y = -0.62;
+  laptop.scale.setScalar(.86);
+
+  // Shared names used by the render loop
+  const bunnyRoot = rig;
+
   // Soft contact shadow + yellow orbit ring
   const shadowTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d'); const r = g.createRadialGradient(64, 64, 0, 64, 64, 64); r.addColorStop(0, 'rgba(0,0,0,.6)'); r.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = r; g.fillRect(0, 0, 128, 128); return new THREE.CanvasTexture(c); })();
-  const shadow = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 2.6), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }));
+  const shadow = new THREE.Mesh(new THREE.PlaneGeometry(2.8, 2.8), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }));
   shadow.rotation.x = -Math.PI / 2; shadow.position.y = 0.01; scene.add(shadow);
   const ring = new THREE.Mesh(new THREE.TorusGeometry(1, 0.008, 8, 160), new THREE.MeshBasicMaterial({ color: 0xffd400, transparent: true, opacity: 0.35 }));
   ring.rotation.x = Math.PI / 2; scene.add(ring);
@@ -578,11 +699,11 @@ if (renderer) {
     R = narrow ? 2.6 : 4.4;
     cardBase = narrow ? 0.72 : 1;
     camera.fov = narrow ? 50 : 34;
-    camera.position.set(narrow ? 0 : -1.2, narrow ? 4.2 : 3.3, narrow ? 8.4 : 10.6);
-    camera.lookAt(narrow ? 0 : -1.2, narrow ? 1.45 : 1.3, 0);
+    camera.position.set(narrow ? 0 : -1.2, narrow ? 4.4 : 3.7, narrow ? 8.8 : 10.8);
+    camera.lookAt(narrow ? 0 : -1.2, narrow ? 1.75 : 1.7, 0);
     camera.updateProjectionMatrix();
     ring.scale.setScalar(R);
-    bunny.scale.setScalar(narrow ? 0.95 : 1.2);
+    bunnyRoot.scale.setScalar(narrow ? 1.05 : 1.35);
   }
   addEventListener('resize', layout); layout();
 
@@ -643,21 +764,41 @@ if (renderer) {
       m.material.opacity = 0.3 + 0.7 * ((front + 1) / 2);
     });
 
-    // Bunny idle: bob, ear wiggle, blink, head follows the pointer
-    if (!RM) {
-      bunny.position.y = Math.sin(t * 2) * 0.03;
-      body.scale.y = 0.82 + Math.sin(t * 2) * 0.012;
-      ears[0].rotation.z = 0.12 + Math.sin(t * 2.6) * 0.06;
-      ears[1].rotation.z = -0.12 - Math.sin(t * 2.6 + 0.8) * 0.06;
-      if (t > nextBlink) {
-        const k = (t - nextBlink) / 0.16;
-        const s = k < 1 ? Math.max(0.08, Math.abs(1 - 2 * k)) : 1;
-        eyes.forEach(e => (e.scale.y = 0.1 * s));
-        if (k >= 1) nextBlink = t + 2.5 + Math.random() * 3;
-      }
-      headX += (px * 0.45 - headX) * 0.06; headY += (py * 0.25 - headY) * 0.06;
-      head.rotation.y = headX; head.rotation.x = headY;
+    // Cloud floats, bunny types, glances at the pointer, code glyphs drift up
+    const k = RM ? 0 : 1;
+    rig.position.y = .12 + Math.sin(t * 1.2) * .08 * k;
+    rig.rotation.z = Math.sin(t * .7) * .025 * k;
+    shadow.scale.setScalar(1 - Math.sin(t * 1.2) * .06 * k);
+    shadow.material.opacity = .8 - Math.sin(t * 1.2) * .15 * k;
+    arms.forEach(({ arm, paw, sx, shoulder, rest }, j) => {
+      const tap = k * Math.max(0, Math.sin(t * 16 + j * 1.7 + Math.sin(t * 3) * 2)) * .035;
+      const p = rest.clone(); p.y += tap; p.x += Math.sin(t * 2.3 + j) * .03 * k;
+      paw.position.copy(p); aim(arm, shoulder, p);
+    });
+    ears[0].rotation.z = .16 + Math.sin(t * 2.2) * .07 * k;
+    ears[1].rotation.z = -.16 - Math.sin(t * 2.2 + .9) * .07 * k;
+    if (!RM && t > nextBlink) {
+      const q = (t - nextBlink) / .16, s2 = q < 1 ? Math.max(.08, Math.abs(1 - 2 * q)) : 1;
+      eyes.forEach(e => (e.scale.y = .068 * s2));
+      if (q >= 1) nextBlink = t + 2.5 + Math.random() * 3;
     }
+    headX += ((px * .3) - headX) * .05; headY += ((.22 + py * .12) - headY) * .05;   // mostly looking down at the screen
+    head.rotation.y = .12 + headX * k; head.rotation.x = RM ? .22 : headY;
+    glow.intensity = .35 + Math.sin(t * 7) * .08 * k;
+    if (!RM && t > nextGlyph) {
+      const g = glyphs[glyphIdx++ % glyphs.length];
+      g.material.map = glyphTex[(Math.random() * glyphTex.length) | 0];
+      const side = Math.random() < .5 ? -1 : 1;
+      g.position.set(side * (.55 + Math.random() * .35), 1.5 + Math.random() * .3, .5); g.userData.life = 0; g.userData.dx = side * (.05 + Math.random() * .15);
+      nextGlyph = t + .55 + Math.random() * .5;
+    }
+    glyphs.forEach(g => {
+      if (g.userData.life >= 1) { g.material.opacity = 0; return; }
+      g.userData.life = Math.min(1, g.userData.life + dt / 2.2);
+      const L = g.userData.life;
+      g.position.y += dt * .45; g.position.x += g.userData.dx * dt;
+      g.material.opacity = Math.sin(L * Math.PI) * .95;
+    });
     renderer.render(scene, camera);
   }
   frame();
