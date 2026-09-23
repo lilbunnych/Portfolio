@@ -33,6 +33,8 @@ header.top{ display:flex; justify-content:space-between; align-items:center; pad
 .mark i{ width:.75rem; height:.75rem; border-radius:3px; background:var(--accent); display:inline-block }
 .top a.cta{ font-size:.9rem; text-decoration:none; padding:.55rem 1rem; border:1px solid var(--line); border-radius:999px }
 .top a.cta:hover{ border-color:var(--ink) }
+.top a.cta:not(.ghost){ background:var(--ink); color:var(--bg); border-color:var(--ink) }
+@media (max-width:640px){ .top a.cta.ghost{ display:none } }
 .top-r{ display:flex; align-items:center; gap:.75rem }
 .lang{ display:flex; padding:.2rem; border-radius:999px; background:var(--chip) }
 .lang button{ font-family:var(--mono); font-size:.8rem; padding:.35rem .7rem; border-radius:999px; color:var(--muted) }
@@ -83,7 +85,8 @@ footer{ border-top:1px solid var(--line); padding:2rem 0 3rem; color:var(--muted
     <div class="mark"><i aria-hidden="true"></i><span data-i18n="brand">Portfolio</span></div>
     <div class="top-r">
       <div class="lang" role="group" aria-label="Language"><button data-lang="ru">RU</button><button data-lang="en">EN</button></div>
-      <a class="cta" href="mailto:hello@example.com" data-i18n="contact">Get in touch</a>
+      <a class="cta ghost" href="https://t.me/lilbunnych_dev" target="_blank" rel="noopener" data-i18n="channel">Telegram channel</a>
+      <a class="cta" href="https://t.me/lilbunnych" target="_blank" rel="noopener" data-i18n="contact">Get in touch</a>
     </div>
   </header>
 
@@ -112,18 +115,19 @@ footer{ border-top:1px solid var(--line); padding:2rem 0 3rem; color:var(--muted
   <footer>
     <span data-i18n="foot1">Every project here is a demo with a fictional brand. Each page carries a "DEMO" notice.</span>
     <span data-i18n="foot2">Source for every project is in its own folder of this repository.</span>
+    <span><a href="https://t.me/lilbunnych">@lilbunnych</a> · <a href="https://t.me/lilbunnych_dev">@lilbunnych_dev</a> · <a href="https://github.com/lilbunnych">GitHub</a></span>
   </footer>
 </div>
 
 <script>
 const UI = {
-  en: { brand:'Portfolio', contact:'Get in touch', h1:'Websites and apps, built end to end.',
+  en: { brand:'Portfolio', contact:'Get in touch', channel:'Telegram channel', h1:'Websites and apps, built end to end.',
     lead:'Twelve demo projects: landing pages, WebGL scroll stories, web apps, a mobile app for iOS and Android, and a desktop app for macOS, Windows and Linux.',
     f1:'projects', f2:'stacks', f3:'rebuilt from specs', all:'All', sites:'Websites', apps:'Web apps', native:'Mobile and desktop',
     foot1:'Every project here is a demo with a fictional brand. Each page carries a "DEMO" notice.', foot2:'Source for every project is in its own folder of this repository.',
     open:'Open demo', source:'Source', spec:'Rebuilt from spec', original:'Original', phone:'Run on your phone', downloads:'Downloads and build', shot:'Screenshot of',
     title:'Portfolio | Websites and apps' },
-  ru: { brand:'Портфолио', contact:'Связаться', h1:'Сайты и приложения под ключ.',
+  ru: { brand:'Портфолио', contact:'Написать в Telegram', channel:'Telegram-канал', h1:'Сайты и приложения под ключ.',
     lead:'Двенадцать демо-проектов: лендинги, WebGL-истории со скроллом, веб-приложения, мобильное приложение для iOS и Android и десктопное для macOS, Windows и Linux.',
     f1:'проектов', f2:'стеков', f3:'повторены по ТЗ', all:'Все', sites:'Сайты', apps:'Веб-приложения', native:'Мобильные и десктоп',
     foot1:'Все проекты здесь демо с вымышленными брендами. На каждой странице есть пометка «DEMO».', foot2:'Исходный код каждого проекта лежит в отдельной папке репозитория.',
