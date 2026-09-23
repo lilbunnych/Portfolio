@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Driftnote | Voice journal, coming soon</title>
+<meta name="description" content="Driftnote turns one minute of voice a day into a searchable, private journal. Launching this winter.">
+<meta name="theme-color" content="#f3f3f0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121413" media="(prefers-color-scheme: dark)">
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&f[]=switzer@400,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/regular/style.css">
+<style>
+/*
+  One screen on desktop, natural scroll on small screens.
+  Shape rule: controls full pill, panels 1rem.
+  Z-index: field 0, content 10.
+*/
+:root{
+  color-scheme: light dark;
+  --bg:#f3f3f0; --ink:#121413; --muted:#5e625f; --faint:#8f938f; --line:rgba(18,20,19,.14);
+  --field:#121413; --accent:#c8553d; --accent-ink:#ffffff; --panel:rgba(243,243,240,.78);
+  --display:'Cabinet Grotesk', system-ui, sans-serif; --sans:'Switzer', system-ui, sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#121413; --ink:#eeefeb; --muted:#a4a8a3; --faint:#6f746f; --line:rgba(238,239,235,.14); --field:#eeefeb; --accent:#e2735b; --accent-ink:#121413; --panel:rgba(18,20,19,.78) }
+}
+*{ margin:0; padding:0; box-sizing:border-box }
+html{ -webkit-font-smoothing:antialiased }
+body{ min-height:100dvh; background:var(--bg); color:var(--ink); font-family:var(--sans); line-height:1.5; overflow-x:clip }
+a{ color:inherit; text-decoration:none }
+button, input{ font:inherit; color:inherit }
+:focus-visible{ outline:2px solid var(--accent); outline-offset:3px }
+
+#field{ position:fixed; inset:0; width:100%; height:100%; z-index:0; display:block }
+
+.page{ position:relative; z-index:10; min-height:100dvh; display:grid; grid-template-rows:auto 1fr auto; padding:1.25rem; gap:2rem }
+@media (min-width:900px){ .page{ height:100dvh; padding:1.75rem 2.5rem } }
+
+/* Header */
+.top{ display:flex; justify-content:space-between; align-items:center; gap:1rem }
+.logo{ display:flex; align-items:center; gap:.6rem; font-family:var(--display); font-weight:800; font-size:1.375rem; letter-spacing:-.02em }
+.logo svg{ width:1.6rem; height:1.6rem; color:var(--accent) }
+.beta{ display:inline-flex; align-items:center; gap:.5rem; font-size:.875rem; color:var(--muted) }
+.beta i{ font-size:1rem; color:var(--accent) }
+
+/* Main */
+.main{ display:grid; grid-template-columns:minmax(0,1fr); gap:2.5rem; align-content:end }
+@media (max-width:899px){ .main{ margin-top:24vh } .beta{ display:none } }
+@media (min-width:900px){ .main{ grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr); align-items:end } }
+.pitch{ max-width:40rem }
+h1{ font-family:var(--display); font-weight:800; font-size:clamp(3rem,7.4vw,6.5rem); line-height:.95; letter-spacing:-.04em }
+h1 .accent{ color:var(--accent) }
+.scr{ display:inline-block; min-width:.3em }
+.sub{ margin-top:1.5rem; max-width:34ch; font-size:1.125rem; color:var(--muted) }
+
+.join{ margin-top:2rem; max-width:32rem }
+.join__row{ display:flex; gap:.5rem; padding:.375rem; border-radius:999px; background:var(--panel); border:1px solid var(--line); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); transition:border-color .2s, box-shadow .2s }
+.join__row:focus-within{ border-color:var(--ink); box-shadow:0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent) }
+.join input{ flex:1; min-width:0; border:0; background:transparent; padding:0 1rem; font-size:1rem; outline:none }
+.join input::placeholder{ color:var(--faint) }
+.join button{ height:3rem; padding:0 1.35rem; border:0; border-radius:999px; background:var(--accent); color:var(--accent-ink); font-weight:500; white-space:nowrap; cursor:pointer; display:inline-flex; align-items:center; gap:.5rem; transition:transform .15s, filter .2s }
+.join button:hover{ filter:brightness(1.07) }
+.join button:active{ transform:scale(.97) }
+.join__msg{ margin-top:.75rem; min-height:1.25rem; font-size:.875rem; color:var(--muted) }
+.join.bad .join__row{ border-color:#c0392b }
+.join.bad .join__msg{ color:#c0392b }
+@media (prefers-color-scheme: dark){ .join.bad .join__row{ border-color:#ff7b6b } .join.bad .join__msg{ color:#ff7b6b } }
+.join.ok .join__row{ display:none }
+.done{ display:none; align-items:center; gap:.75rem; font-size:1.0625rem }
+.done i{ font-size:1.5rem; color:var(--accent) }
+.join.ok .done{ display:flex }
+
+/* Countdown */
+.count{ justify-self:start; display:flex; flex-direction:column; gap:1rem }
+@media (min-width:900px){ .count{ justify-self:end; text-align:right; align-items:flex-end } }
+.count p{ font-size:.875rem; color:var(--muted) }
+.count ol{ list-style:none; display:flex; gap:1.25rem }
+.count li{ display:flex; flex-direction:column; align-items:center; gap:.25rem }
+.count b{ font-family:var(--display); font-weight:700; font-size:clamp(2.25rem,4vw,3.5rem); line-height:1; letter-spacing:-.03em; font-variant-numeric:tabular-nums; min-width:2ch; text-align:center }
+.count span{ font-size:.75rem; color:var(--faint) }
+
+/* Facts */
+.facts{ display:grid; gap:1rem; padding-top:1.25rem; border-top:1px solid var(--line); font-size:.9375rem }
+.facts li{ list-style:none; display:flex; align-items:center; gap:.6rem; color:var(--muted) }
+.facts i{ font-size:1.2rem; color:var(--ink) }
+.facts .kit{ margin-left:auto }
+.facts a{ color:var(--muted); font-size:.875rem }
+.facts a:hover{ color:var(--ink) }
+@media (min-width:900px){ .facts{ grid-template-columns:repeat(3,auto) 1fr; gap:2.5rem; align-items:center } .facts .kit{ justify-self:end } }
+
+[data-in]{ opacity:0; transform:translateY(16px); transition:opacity .9s var(--ease), transform .9s var(--ease); transition-delay:var(--d,0ms) }
+.ready [data-in]{ opacity:1; transform:none }
+@media (prefers-reduced-motion: reduce){ *{ transition:none !important } [data-in]{ opacity:1; transform:none } }
+</style>
+</head>
+<body>
+
+<canvas id="field" aria-hidden="true"></canvas>
+
+<div class="page">
+  <header class="top" data-in>
+    <a class="logo" href="#" aria-label="Driftnote">
+      <svg viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><rect x="3" y="12" width="3" height="8" rx="1.5"/><rect x="9" y="7" width="3" height="18" rx="1.5"/><rect x="15" y="3" width="3" height="26" rx="1.5"/><rect x="21" y="9" width="3" height="14" rx="1.5"/><rect x="27" y="13" width="3" height="6" rx="1.5"/></svg>
+      Driftnote
+    </a>
+    <span class="beta"><i class="ph ph-envelope-simple"></i>Beta invites go out every Friday</span>
+  </header>
+
+  <main class="main">
+    <div class="pitch">
+      <h1 id="headline" aria-label="Say it out loud. Read it back tomorrow."><span data-scramble>Say it out loud.</span><br><span class="accent" data-scramble>Read it back tomorrow.</span></h1>
+      <p class="sub" data-in style="--d:500ms">Driftnote turns one minute of voice a day into a searchable, private journal. Launching this winter.</p>
+      <form class="join" id="join" novalidate data-in style="--d:650ms">
+        <div class="join__row">
+          <label class="sr-only" for="email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Email address</label>
+          <input id="email" type="email" autocomplete="email" placeholder="you@email.com" required>
+          <button type="submit" id="joinBtn">Join the waitlist <i class="ph ph-arrow-right"></i></button>
+        </div>
+        <p class="done" role="status"><i class="ph ph-check-circle"></i>You are on the list. We will write once, on launch day.</p>
+        <p class="join__msg" id="joinMsg">No spam. One email when we launch.</p>
+      </form>
+    </div>
+
+    <div class="count" data-in style="--d:800ms" aria-live="off">
+      <p>Public launch, 1 December 2026</p>
+      <ol id="count">
+        <li><b data-u="d">00</b><span>days</span></li>
+        <li><b data-u="h">00</b><span>hours</span></li>
+        <li><b data-u="m">00</b><span>min</span></li>
+        <li><b data-u="s">00</b><span>sec</span></li>
+      </ol>
+    </div>
+  </main>
+
+  <ul class="facts" data-in style="--d:950ms">
+    <li><i class="ph ph-cpu"></i>Transcribed on your phone</li>
+    <li><i class="ph ph-lock-simple"></i>End-to-end encrypted</li>
+    <li><i class="ph ph-device-mobile"></i>iOS and Android</li>
+    <li class="kit"><a href="#">Press kit</a></li>
+  </ul>
+</div>
+
+<script>
+(() => {
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+
+  /* ---------- Entrance: fade blocks, decode headline ---------- */
+  requestAnimationFrame(() => document.body.classList.add('ready'));
+  const GLYPHS = 'abcdefghijklmnopqrstuvwxyz';
+  document.querySelectorAll('[data-scramble]').forEach((el, lineIdx) => {
+    const target = el.textContent;
+    el.setAttribute('aria-hidden', 'true');
+    if (RM) return;
+    const start = performance.now() + 150 + lineIdx * 280;
+    const perChar = 32, settle = 260;
+    const tick = now => {
+      let out = '', done = true;
+      for (let i = 0; i < target.length; i++){
+        const ch = target[i];
+        const t = now - start - i * perChar;
+        if (ch === ' ' || t >= settle) out += ch;
+        else if (t < 0){ out += ' '; done = false; }
+        else { out += GLYPHS[(Math.random() * GLYPHS.length) | 0]; done = false; }
+      }
+      el.textContent = out;
+      if (!done) requestAnimationFrame(tick);
+    };
+    el.textContent = ' '.repeat(target.length);
+    requestAnimationFrame(tick);
+  });
+
+  /* ---------- Countdown ---------- */
+  const LAUNCH = new Date('2026-12-01T09:00:00Z').getTime();
+  const units = { d: 0, h: 0, m: 0, s: 0 };
+  const nodes = {};
+  document.querySelectorAll('#count [data-u]').forEach(n => nodes[n.dataset.u] = n);
+  const pad = n => String(n).padStart(2, '0');
+  function tickCount(){
+    let left = Math.max(0, LAUNCH - Date.now()) / 1000;
+    units.d = Math.floor(left / 86400); left -= units.d * 86400;
+    units.h = Math.floor(left / 3600);  left -= units.h * 3600;
+    units.m = Math.floor(left / 60);
+    units.s = Math.floor(left - units.m * 60);
+    for (const k in units) nodes[k].textContent = pad(units[k]);
+  }
+  tickCount(); setInterval(tickCount, 1000);
+
+  /* ---------- Halftone sound field ---------- */
+  const canvas = document.getElementById('field');
+  const ctx = canvas.getContext('2d');
+  const css = getComputedStyle(document.documentElement);
+  let ink = css.getPropertyValue('--field').trim(), accent = css.getPropertyValue('--accent').trim();
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    const c = getComputedStyle(document.documentElement);
+    ink = c.getPropertyValue('--field').trim(); accent = c.getPropertyValue('--accent').trim();
+  });
+  let W = 0, H = 0, dpr = 1, GAP = 14, cols = 0, rows = 0, desktop = true;
+  const ripples = [];
+  function resize(){
+    dpr = Math.min(devicePixelRatio || 1, 2);
+    W = innerWidth; H = innerHeight;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    desktop = W >= 900;
+    GAP = desktop ? 14 : 12;
+    cols = Math.ceil(W / GAP) + 1; rows = Math.ceil(H / GAP) + 1;
+  }
+  addEventListener('resize', resize); resize();
+
+  function ripple(x, y, power = 1){
+    ripples.push({ x, y, t: 0, power });
+    if (ripples.length > 24) ripples.shift();
+  }
+  let lastRipple = 0;
+  addEventListener('pointermove', e => {
+    const now = performance.now();
+    if (now - lastRipple > 90){ ripple(e.clientX, e.clientY, .55); lastRipple = now; }
+  }, { passive: true });
+  addEventListener('pointerdown', e => ripple(e.clientX, e.clientY, 1.2), { passive: true });
+
+  // Typing in the email field sends a pulse from the field's caret side.
+  const email = document.getElementById('email');
+  email.addEventListener('input', () => {
+    const r = email.getBoundingClientRect();
+    ripple(r.left + Math.min(r.width - 10, 16 + email.value.length * 8.5), r.top + r.height / 2, .9);
+  });
+
+  // Where the field is allowed to be loud: fade it out behind the text on the left.
+  function weight(x, y){
+    if (desktop){
+      const fx = clamp((x / W - .28) / .32, 0, 1);
+      const fy = clamp(1 - Math.abs(y / H - .5) * 1.35, 0, 1);
+      return fx * fx * (3 - 2 * fx) * (.35 + .65 * fy);
+    }
+    // mobile: the field lives in the open band above the headline
+    const top = H * .34;
+    return y > top ? 0 : clamp(1 - Math.pow(y / top, 3), 0, 1) * .9;
+  }
+
+  let t0 = performance.now();
+  function frame(now){
+    const t = RM ? 0 : (now - t0) / 1000;
+    ctx.clearRect(0, 0, W, H);
+    for (let i = ripples.length - 1; i >= 0; i--){
+      ripples[i].t += 1 / 60;
+      if (ripples[i].t > 2.4) ripples.splice(i, 1);
+    }
+    const bandY = desktop ? H * .46 : H * .17;
+    const inkPath = new Path2D(), accPath = new Path2D();
+    const maxR = GAP * .46;
+    for (let j = 0; j < rows; j++){
+      const y = j * GAP;
+      for (let i = 0; i < cols; i++){
+        const x = i * GAP;
+        const w = weight(x, y);
+        if (w < .02) continue;
+        // voice waveform: a travelling band whose height breathes like speech
+        const env = .55 + .45 * Math.sin(t * 1.3 + x * .004) * Math.sin(t * .7 + x * .0017);
+        const wave = Math.sin(x * .018 - t * 2.2) * 38 * env + Math.sin(x * .041 + t * 1.6) * 14;
+        const d = Math.abs(y - (bandY + wave));
+        let v = Math.exp(-(d * d) / (2 * 60 * 60)) * (.55 + .45 * env);
+        v += .08 * (Math.sin(x * .06 + y * .05 + t) * .5 + .5);
+        // ripples from pointer and typing
+        for (const r of ripples){
+          const dist = Math.hypot(x - r.x, y - r.y);
+          const front = r.t * 520;
+          const ring = Math.exp(-Math.pow((dist - front) / 26, 2));
+          v += ring * r.power * (1 - r.t / 2.4) * .9;
+        }
+        const rad = clamp(v * w, 0, 1) * maxR;
+        if (rad < .45) continue;
+        const target = (v * w > .72) ? accPath : inkPath;
+        target.moveTo(x + rad, y);
+        target.arc(x, y, rad, 0, Math.PI * 2);
+      }
+    }
+    ctx.fillStyle = ink; ctx.globalAlpha = .9; ctx.fill(inkPath);
+    ctx.fillStyle = accent; ctx.globalAlpha = 1; ctx.fill(accPath);
+    if (!RM) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  /* ---------- Waitlist form ---------- */
+  const form = document.getElementById('join'), msg = document.getElementById('joinMsg'), btn = document.getElementById('joinBtn');
+  const DEFAULT_MSG = msg.textContent;
+  email.addEventListener('input', () => { form.classList.remove('bad'); msg.textContent = DEFAULT_MSG; });
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const v = email.value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)){
+      form.classList.add('bad');
+      msg.textContent = v ? 'That email looks incomplete. Check it and try again.' : 'Add your email to join the waitlist.';
+      email.focus();
+      return;
+    }
+    btn.disabled = true; btn.firstChild.textContent = 'Joining… ';
+    const r = email.getBoundingClientRect();
+    setTimeout(() => {
+      form.classList.add('ok'); msg.textContent = '';
+      ripple(r.left + r.width / 2, r.top + r.height / 2, 2);
+    }, 700);
+  });
+})();
+</script>
+</body>
+</html>

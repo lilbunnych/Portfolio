@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tessel | Product engineering studio</title>
+<meta name="description" content="Tessel is a product engineering studio. We design, build and scale web and mobile software with small senior teams." />
+<meta name="theme-color" content="#f5f6f7" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#0c0d0f" media="(prefers-color-scheme: dark)" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/regular/style.css">
+<link rel="preload" as="image" href="https://picsum.photos/seed/tessel-hero/1200/1500?grayscale">
+<style>
+/*
+  Shape rule: containers 1.25rem, interactive controls full pill, inputs .75rem.
+  Z-index scale: header 40, work preview 45, menu sheet 50, drawer 60, loader 80.
+*/
+:root{
+  color-scheme: light dark;
+  --bg:#f5f6f7; --fg:#0f1113; --muted:#5b6068; --faint:#8a9098;
+  --line:#dfe2e6; --surface:#ffffff; --surface-2:#eceef1;
+  --accent:#2f55d4; --accent-fg:#ffffff; --accent-soft:rgba(47,85,212,.1);
+  --scrim:rgba(15,17,19,.4);
+  --shadow:0 24px 60px -24px rgba(24,34,60,.25);
+  --r-box:1.25rem; --r-input:.75rem;
+  --font:'Geist', system-ui, sans-serif; --mono:'Geist Mono', ui-monospace, monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0c0d0f; --fg:#eef0f2; --muted:#9aa0a8; --faint:#6b717a;
+    --line:#23262b; --surface:#14161a; --surface-2:#1b1e23;
+    --accent:#7b96ff; --accent-fg:#0c0d0f; --accent-soft:rgba(123,150,255,.12);
+    --scrim:rgba(0,0,0,.55);
+    --shadow:0 24px 60px -24px rgba(0,0,0,.7);
+  }
+}
+*{ box-sizing:border-box; margin:0; padding:0 }
+html{ -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility }
+body{ background:var(--bg); color:var(--fg); font-family:var(--font); font-size:1rem; line-height:1.5; overflow-x:clip }
+a{ color:inherit; text-decoration:none }
+button{ font:inherit; color:inherit; background:none; border:0; cursor:pointer }
+ul{ list-style:none }
+img{ display:block; max-width:100% }
+input,textarea{ font:inherit; color:inherit }
+:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:.25rem }
+.sr-only{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap }
+.wrap{ width:100%; max-width:84rem; margin-inline:auto; padding-inline:1.25rem }
+@media (min-width:768px){ .wrap{ padding-inline:2.5rem } }
+.skip{ position:fixed; left:1rem; top:-4rem; z-index:90; background:var(--fg); color:var(--bg); padding:.6rem 1rem; border-radius:999px; font-size:.875rem; transition:top .2s }
+.skip:focus{ top:1rem }
+
+html.lenis, html.lenis body{ height:auto }
+.lenis.lenis-smooth{ scroll-behavior:auto !important }
+.lenis.lenis-stopped{ overflow:clip }
+
+/* Buttons */
+.btn{ display:inline-flex; align-items:center; gap:.625rem; height:3rem; padding:0 1.375rem; border-radius:999px; font-size:.9375rem; font-weight:500; white-space:nowrap; transition:background .25s, color .25s, border-color .25s, transform .15s }
+.btn:active{ transform:scale(.98) }
+.btn i{ font-size:1.05rem; transition:transform .3s var(--ease) }
+.btn:hover i{ transform:translate(2px,-2px) }
+.btn--primary{ background:var(--accent); color:var(--accent-fg) }
+.btn--primary:hover{ background:color-mix(in srgb, var(--accent) 86%, var(--fg)) }
+.btn--ghost{ border:1px solid var(--line); color:var(--fg) }
+.btn--ghost:hover{ border-color:var(--fg) }
+.btn--sm{ height:2.5rem; padding:0 1.1rem; font-size:.875rem }
+.magnet{ display:inline-block; will-change:transform }
+
+/* Reveal primitives */
+[data-reveal]{ opacity:0; transform:translateY(28px); transition:opacity .9s var(--ease), transform .9s var(--ease); transition-delay:var(--d,0ms) }
+[data-reveal].in{ opacity:1; transform:none }
+.word{ display:inline-block; overflow:hidden; vertical-align:top; padding-bottom:.08em; margin-bottom:-.08em }
+.word > span{ display:inline-block; transform:translateY(105%); transition:transform 1s var(--ease); transition-delay:var(--d,0ms) }
+.in .word > span, .word.in > span{ transform:none }
+@media (prefers-reduced-motion: reduce){
+  *{ animation:none !important; transition:none !important }
+  [data-reveal]{ opacity:1; transform:none }
+  .word > span{ transform:none }
+}
+
+/* ---------- Loader ---------- */
+.loader{ position:fixed; inset:0; z-index:80; display:grid; grid-template-columns:repeat(6,1fr); pointer-events:none }
+.loader__col{ background:var(--fg); transform-origin:top; transition:transform .8s var(--ease) }
+.loader__mark{ position:absolute; inset:0; display:grid; place-items:center; color:var(--bg); font-size:clamp(2.5rem,7vw,5.5rem); font-weight:600; letter-spacing:-.04em; transition:opacity .35s }
+.loader__mark span{ display:inline-block; transform:translateY(40%); opacity:0; transition:transform .7s var(--ease), opacity .7s var(--ease) }
+.loader.show .loader__mark span{ transform:none; opacity:1 }
+.loader.out .loader__mark{ opacity:0 }
+.loader.out .loader__col{ transform:scaleY(0) }
+
+/* ---------- Header ---------- */
+.header{ position:fixed; top:0; inset-inline:0; z-index:40; transition:transform .5s var(--ease) }
+.header.hidden{ transform:translateY(-120%) }
+.header__bar{ margin-top:.875rem; height:3.75rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:0 .5rem 0 1.25rem; border-radius:999px; background:color-mix(in srgb, var(--bg) 78%, transparent); border:1px solid color-mix(in srgb, var(--line) 80%, transparent); backdrop-filter:blur(14px) saturate(160%); -webkit-backdrop-filter:blur(14px) saturate(160%) }
+.logo{ display:flex; align-items:center; gap:.55rem; font-weight:600; font-size:1.125rem; letter-spacing:-.02em }
+.logo svg{ width:1.375rem; height:1.375rem; color:var(--accent) }
+.nav{ display:none; gap:2rem; font-size:.9375rem; color:var(--muted) }
+.nav a{ transition:color .2s }
+.nav a:hover{ color:var(--fg) }
+.header__right{ display:flex; align-items:center; gap:.5rem }
+.header__cta{ display:none }
+.burger{ width:2.75rem; height:2.75rem; display:grid; place-items:center; border-radius:999px; font-size:1.25rem; background:var(--surface-2) }
+@media (min-width:900px){
+  .nav{ display:flex }
+  .header__cta{ display:inline-flex }
+  .burger{ display:none }
+}
+.sheet{ position:fixed; inset:0; z-index:50; display:none; flex-direction:column; background:var(--bg); padding:1.25rem }
+.sheet.open{ display:flex }
+.sheet__top{ display:flex; justify-content:space-between; align-items:center; height:3.75rem; padding-left:1.25rem; margin-top:.875rem }
+.sheet nav{ flex:1; display:flex; flex-direction:column; justify-content:center; gap:.25rem; padding-left:1.25rem }
+.sheet nav a{ font-size:2.5rem; font-weight:600; letter-spacing:-.03em; opacity:0; transform:translateY(12px); transition:opacity .5s var(--ease), transform .5s var(--ease); transition-delay:var(--d) }
+.sheet.anim nav a{ opacity:1; transform:none }
+.sheet .btn{ align-self:flex-start; margin:0 0 1rem 1.25rem }
+
+/* ---------- Hero ---------- */
+.hero{ padding-top:7.5rem; padding-bottom:4rem; min-height:100dvh; display:flex; align-items:center }
+.hero__grid{ display:grid; gap:2.5rem; align-items:center }
+.status{ display:inline-flex; align-items:center; gap:.6rem; font-size:.875rem; color:var(--muted) }
+.status__dot{ position:relative; width:.5rem; height:.5rem; border-radius:50%; background:#2fb56a }
+.status__dot::after{ content:""; position:absolute; inset:-4px; border-radius:50%; border:1px solid #2fb56a; opacity:.5; animation:ping 2.2s var(--ease) infinite }
+@keyframes ping{ from{ transform:scale(.6); opacity:.7 } to{ transform:scale(1.6); opacity:0 } }
+.hero h1{ margin-top:1.5rem; font-size:clamp(2.6rem,6.2vw,5.25rem); line-height:1.02; letter-spacing:-.045em; font-weight:600; max-width:12ch }
+.hero h1 em{ font-style:normal; color:var(--accent) }
+.hero__sub{ margin-top:1.5rem; max-width:34ch; font-size:1.125rem; line-height:1.55; color:var(--muted) }
+.hero__ctas{ margin-top:2.25rem; display:flex; flex-wrap:wrap; gap:.75rem }
+.mosaic{ position:relative; aspect-ratio:4/5; max-height:78dvh; width:100%; border-radius:var(--r-box); overflow:hidden; background:var(--surface-2); clip-path:inset(100% 0 0 0 round var(--r-box)); transition:clip-path 1.3s var(--ease) .25s; touch-action:pan-y }
+.mosaic.in{ clip-path:inset(0 0 0 0 round var(--r-box)) }
+.mosaic img, .mosaic canvas{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover }
+.mosaic canvas{ opacity:0; transition:opacity .4s }
+.mosaic.ready canvas{ opacity:1 }
+.mosaic__hint{ position:absolute; left:1rem; bottom:1rem; display:inline-flex; align-items:center; gap:.4rem; padding:.4rem .75rem; border-radius:999px; font-size:.75rem; color:#fff; background:rgba(12,13,15,.55); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); transition:opacity .4s }
+.mosaic__hint.gone{ opacity:0 }
+@media (min-width:900px){
+  .hero__grid{ grid-template-columns:1.1fr .9fr; gap:4rem }
+  .mosaic{ justify-self:end; max-width:34rem }
+}
+
+/* ---------- Logos ---------- */
+.logos{ padding-block:3rem 5rem }
+.logos p{ font-size:.875rem; color:var(--muted); margin-bottom:1.75rem }
+.logos ul{ display:grid; grid-template-columns:repeat(2,1fr); gap:2rem 1.5rem; align-items:center }
+.logos li{ color:var(--faint); transition:color .3s }
+.logos li:hover{ color:var(--fg) }
+.logos svg{ height:1.75rem; width:auto; display:block }
+@media (min-width:768px){ .logos ul{ grid-template-columns:repeat(5,1fr) } }
+
+/* ---------- Manifesto ---------- */
+.manifesto{ padding-block:6rem 8rem }
+.manifesto p{ max-width:22ch; margin-inline:auto; text-align:center; font-size:clamp(1.9rem,4.6vw,3.75rem); line-height:1.12; letter-spacing:-.035em; font-weight:500 }
+.manifesto .mw{ opacity:.14; transition:opacity .25s linear }
+.manifesto .mw.hl{ color:var(--accent) }
+
+/* ---------- Work ---------- */
+.work{ padding-block:4rem 7rem }
+.eyebrow{ font-family:var(--mono); font-size:.8125rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted) }
+.section-title{ margin-top:1rem; font-size:clamp(2rem,4.5vw,3.5rem); line-height:1.05; letter-spacing:-.04em; font-weight:600; max-width:18ch }
+.work__list{ margin-top:3.5rem; border-top:1px solid var(--line) }
+.work__row{ display:grid; grid-template-columns:1fr auto; gap:.25rem 1rem; padding:1.75rem 0; border-bottom:1px solid var(--line); align-items:center; transition:padding .5s var(--ease), color .3s }
+.work__name{ font-size:clamp(1.5rem,3.2vw,2.5rem); font-weight:500; letter-spacing:-.03em }
+.work__what{ grid-column:1 / -1; color:var(--muted); font-size:.9375rem }
+.work__meta{ font-family:var(--mono); font-size:.8125rem; color:var(--muted); display:flex; gap:1.5rem }
+.work__thumb{ grid-column:1 / -1; margin-top:1rem; aspect-ratio:16/10; border-radius:var(--r-box); overflow:hidden; background:var(--surface-2) }
+.work__thumb img{ width:100%; height:100%; object-fit:cover }
+@media (min-width:900px){
+  .work__row{ grid-template-columns:1.2fr 1fr auto; padding:2.25rem 0 }
+  .work__what{ grid-column:auto }
+  .work__thumb{ display:none }
+  .work__list:hover .work__row{ color:var(--faint) }
+  .work__list .work__row:hover{ color:var(--fg); padding-left:1rem }
+}
+.preview{ position:fixed; left:0; top:0; z-index:45; width:22rem; aspect-ratio:4/3; border-radius:var(--r-box); overflow:hidden; pointer-events:none; opacity:0; transform:scale(.85); transition:opacity .3s, transform .4s var(--ease); box-shadow:var(--shadow); background:var(--surface-2) }
+.preview.on{ opacity:1; transform:scale(1) }
+.preview img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .35s }
+.preview img.on{ opacity:1 }
+
+/* ---------- Process (horizontal pan) ---------- */
+.process{ position:relative }
+.process__sticky{ position:sticky; top:0; height:100svh; overflow:hidden; display:flex; flex-direction:column; justify-content:center }
+.process__head{ margin-bottom:2rem; padding-inline:1.25rem }
+.process__track{ display:flex; gap:1rem; width:max-content; padding-inline:1.25rem; will-change:transform }
+.process__bar{ margin:2rem 1.25rem 0; height:2px; background:var(--line); border-radius:2px; overflow:hidden }
+.process__bar span{ display:block; height:100%; width:100%; background:var(--accent); transform-origin:left; transform:scaleX(0) }
+.step{ width:min(80vw, 22rem); flex-shrink:0; border-radius:var(--r-box); background:var(--surface); border:1px solid var(--line); overflow:hidden; display:flex; flex-direction:column }
+.step__img{ aspect-ratio:16/10; background:var(--surface-2) }
+.step__img img{ width:100%; height:100%; object-fit:cover }
+.step__body{ padding:1.5rem; display:flex; flex-direction:column; gap:.75rem; flex:1 }
+.step h3{ font-size:1.75rem; letter-spacing:-.03em; font-weight:600 }
+.step p{ color:var(--muted); max-width:36ch }
+.step__time{ margin-top:auto; font-family:var(--mono); font-size:.8125rem; color:var(--accent) }
+@media (min-width:768px){
+  .process__head, .process__track{ padding-inline:max(2.5rem, calc((100vw - 84rem) / 2 + 2.5rem)) }
+  .process__head{ max-width:none; margin-bottom:3rem }
+  .process__track{ gap:1.5rem }
+  .process__bar{ margin:2.5rem max(2.5rem, calc((100vw - 84rem) / 2 + 2.5rem)) 0 }
+  .step{ width:clamp(20rem, 34vw, 30rem) }
+}
+@media (max-height:640px){ .step__img{ aspect-ratio:16/7 } .process__head{ margin-bottom:1.25rem } }
+/* Reduced motion: no pinning, plain horizontal swipe instead */
+.process.static .process__sticky{ position:static; height:auto; padding-block:5rem }
+.process.static .process__track{ width:auto; overflow-x:auto; scroll-snap-type:x mandatory }
+.process.static .step{ scroll-snap-align:start }
+.process.static .process__bar{ display:none }
+
+/* ---------- Services (bento) ---------- */
+.services{ padding-block:7rem }
+.process + .services{ padding-top:2rem }
+.bento{ margin-top:3rem; display:grid; gap:1rem; grid-template-columns:1fr }
+.tile{ position:relative; border-radius:var(--r-box); padding:1.75rem; min-height:15rem; overflow:hidden; display:flex; flex-direction:column; justify-content:flex-end; gap:.5rem; background:var(--surface); border:1px solid var(--line) }
+.tile h3{ position:relative; font-size:1.5rem; letter-spacing:-.03em; font-weight:600 }
+.tile p{ position:relative; color:var(--muted); max-width:34ch }
+.tile i.ph{ position:relative; font-size:1.75rem; margin-bottom:auto; color:var(--accent) }
+.tile--img{ color:#fff; border:0; min-height:22rem }
+.tile--img img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:transform 1.2s var(--ease) }
+.tile--img:hover img{ transform:scale(1.04) }
+.tile--img::before{ content:""; position:absolute; inset:0; z-index:1; background:linear-gradient(to top, rgba(8,9,11,.85), rgba(8,9,11,.1) 60%) }
+.tile--img > *:not(img){ z-index:2 }
+.tile--img p{ color:rgba(255,255,255,.75) }
+.tile--img i.ph{ color:#fff }
+.tile--accent{ background:var(--accent); color:var(--accent-fg); border:0 }
+.tile--accent p{ color:color-mix(in srgb, var(--accent-fg) 78%, transparent) }
+.tile--accent i.ph{ color:var(--accent-fg) }
+.tile--grid{ background-color:var(--surface); background-image:linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size:1.75rem 1.75rem; background-position:-1px -1px }
+.tile--grid::after{ content:""; position:absolute; inset:0; background:linear-gradient(to top, var(--surface) 35%, transparent) }
+.tile--grid > *{ z-index:1 }
+@media (min-width:768px){
+  .bento{ grid-template-columns:repeat(6,1fr); grid-auto-rows:minmax(15rem,auto) }
+  .tile--a{ grid-column:span 4; grid-row:span 2 }
+  .tile--b{ grid-column:span 2 }
+  .tile--c{ grid-column:span 2 }
+  .tile--d{ grid-column:span 3 }
+  .tile--e{ grid-column:span 3 }
+}
+
+/* ---------- Testimonials (marquee) ---------- */
+.voices{ padding-block:6rem; overflow:hidden }
+.voices .wrap{ margin-bottom:3rem }
+.marquee{ display:flex; width:max-content; gap:1.25rem; animation:marquee 60s linear infinite }
+.voices:hover .marquee{ animation-play-state:paused }
+@keyframes marquee{ to{ transform:translateX(-50%) } }
+.quote{ width:min(24rem, 82vw); flex-shrink:0; border-radius:var(--r-box); background:var(--surface); border:1px solid var(--line); padding:1.75rem; display:flex; flex-direction:column; gap:1.5rem }
+.quote blockquote{ font-size:1.125rem; line-height:1.5; letter-spacing:-.01em }
+.quote figcaption{ display:flex; align-items:center; gap:.75rem; font-size:.875rem }
+.avatar{ width:2.5rem; height:2.5rem; border-radius:50%; display:grid; place-items:center; font-weight:600; font-size:.875rem; background:var(--accent-soft); color:var(--accent) }
+.quote small{ display:block; color:var(--muted); font-size:.8125rem }
+@media (prefers-reduced-motion: reduce){ .voices .marquee-wrap{ overflow-x:auto } }
+
+/* ---------- Engagement ---------- */
+.engage{ padding-block:6rem }
+.plans{ margin-top:3rem; display:grid; gap:1rem }
+.plan{ border-radius:var(--r-box); border:1px solid var(--line); background:var(--surface); padding:1.75rem; display:flex; flex-direction:column; gap:1rem }
+.plan h3{ font-size:1.5rem; letter-spacing:-.03em; font-weight:600 }
+.plan p{ color:var(--muted); max-width:40ch }
+.plan__term{ font-family:var(--mono); font-size:.8125rem; color:var(--muted) }
+.plan--main{ background:var(--fg); color:var(--bg); border:0; padding:2.25rem }
+.plan--main p, .plan--main .plan__term{ color:color-mix(in srgb, var(--bg) 70%, transparent) }
+.plan--main ul{ display:grid; gap:.6rem; margin-top:.5rem }
+.plan--main li{ display:flex; gap:.6rem; align-items:center }
+.plan--main li i{ color:var(--accent) }
+.plan--main .btn{ margin-top:auto; align-self:flex-start }
+@media (min-width:900px){
+  .plans{ grid-template-columns:1.4fr 1fr; grid-template-rows:auto auto }
+  .plan--main{ grid-row:span 2; min-height:28rem }
+}
+
+/* ---------- FAQ ---------- */
+.faq{ padding-block:5rem 8rem }
+.faq__grid{ display:grid; gap:2.5rem }
+.faq details{ border-bottom:1px solid var(--line) }
+.faq summary{ list-style:none; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:1rem; padding:1.5rem 0; font-size:1.25rem; font-weight:500; letter-spacing:-.02em }
+.faq summary::-webkit-details-marker{ display:none }
+.faq summary i{ font-size:1.25rem; transition:transform .4s var(--ease); flex-shrink:0 }
+.faq details[open] summary i{ transform:rotate(45deg) }
+.faq details p{ color:var(--muted); padding-bottom:1.5rem; max-width:56ch }
+@media (min-width:900px){ .faq__grid{ grid-template-columns:.8fr 1.2fr; gap:4rem } }
+
+/* ---------- Footer ---------- */
+.footer{ border-top:1px solid var(--line); padding-block:6rem 2rem }
+.footer__cta h2{ font-size:clamp(2.75rem,8vw,7rem); line-height:.98; letter-spacing:-.055em; font-weight:600 }
+.footer__actions{ margin-top:2.5rem; display:flex; flex-wrap:wrap; gap:.75rem; align-items:center }
+.copy{ font-family:var(--mono); font-size:.9375rem }
+.copy[data-copied] .copy__label::after{ content:" copied" ; color:var(--accent) }
+.footer__cols{ margin-top:6rem; display:grid; grid-template-columns:repeat(2,1fr); gap:2rem; font-size:.9375rem }
+.footer__cols h4{ font-family:var(--mono); font-size:.75rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); font-weight:400; margin-bottom:1rem }
+.footer__cols ul{ display:grid; gap:.5rem }
+.footer__cols a{ color:var(--muted); transition:color .2s }
+.footer__cols a:hover{ color:var(--fg) }
+.legal{ margin-top:4rem; display:flex; flex-wrap:wrap; justify-content:space-between; gap:1rem; font-size:.8125rem; color:var(--faint) }
+.legal div{ display:flex; gap:1.5rem }
+@media (min-width:768px){ .footer__cols{ grid-template-columns:2fr 1fr 1fr } }
+
+/* ---------- Drawer ---------- */
+.drawer{ position:fixed; inset:0; z-index:60; visibility:hidden }
+.drawer.open{ visibility:visible }
+.drawer__scrim{ position:absolute; inset:0; background:var(--scrim); opacity:0; transition:opacity .45s var(--ease) }
+.drawer.open .drawer__scrim{ opacity:1 }
+.drawer__panel{ position:absolute; top:0; right:0; bottom:0; width:min(34rem,100%); background:var(--bg); border-left:1px solid var(--line); transform:translateX(100%); transition:transform .6s var(--ease); display:flex; flex-direction:column; overflow-y:auto; overscroll-behavior:contain }
+.drawer.open .drawer__panel{ transform:none }
+.drawer__head{ display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; padding:2rem 2rem 1.5rem }
+.drawer__head h2{ font-size:1.875rem; letter-spacing:-.035em; font-weight:600; line-height:1.1 }
+.drawer__head p{ margin-top:.5rem; color:var(--muted); font-size:.9375rem }
+.icon-btn{ width:2.75rem; height:2.75rem; flex-shrink:0; display:grid; place-items:center; border-radius:999px; background:var(--surface-2); font-size:1.15rem; transition:background .2s }
+.icon-btn:hover{ background:var(--line) }
+.form{ padding:0 2rem 2rem; display:flex; flex-direction:column; gap:1.5rem }
+.fieldset{ border:0; display:flex; flex-direction:column; gap:.625rem }
+.label{ font-size:.875rem; font-weight:500 }
+.chips{ display:flex; flex-wrap:wrap; gap:.5rem }
+.chip{ height:2.5rem; padding:0 1rem; border-radius:999px; border:1px solid var(--line); font-size:.875rem; color:var(--muted); transition:all .2s }
+.chip:hover{ border-color:var(--fg); color:var(--fg) }
+.chip[aria-pressed="true"]{ background:var(--fg); border-color:var(--fg); color:var(--bg) }
+.input{ width:100%; border:1px solid var(--line); background:var(--surface); border-radius:var(--r-input); padding:.8rem 1rem; font-size:.9375rem; outline:none; transition:border-color .2s, box-shadow .2s }
+.input::placeholder{ color:var(--faint) }
+.input:focus{ border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft) }
+textarea.input{ resize:vertical; min-height:7rem }
+.help{ font-size:.8125rem; color:var(--muted) }
+.error{ font-size:.8125rem; color:#d6453d; display:none }
+@media (prefers-color-scheme: dark){ .error{ color:#ff7a70 } }
+.invalid .error{ display:block }
+.invalid .input{ border-color:#d6453d }
+.form__foot{ display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; padding-top:.5rem }
+.done{ display:none; padding:2rem; flex-direction:column; gap:1rem; align-items:flex-start }
+.done i{ font-size:2.5rem; color:var(--accent) }
+.done h3{ font-size:1.5rem; letter-spacing:-.03em }
+.done p{ color:var(--muted); max-width:34ch }
+.drawer.sent .form, .drawer.sent .drawer__head{ display:none }
+.drawer.sent .done{ display:flex }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="loader__col" style="transition-delay:0ms"></div>
+  <div class="loader__col" style="transition-delay:50ms"></div>
+  <div class="loader__col" style="transition-delay:100ms"></div>
+  <div class="loader__col" style="transition-delay:150ms"></div>
+  <div class="loader__col" style="transition-delay:200ms"></div>
+  <div class="loader__col" style="transition-delay:250ms"></div>
+  <div class="loader__mark"><span style="transition-delay:0ms">T</span><span style="transition-delay:40ms">e</span><span style="transition-delay:80ms">s</span><span style="transition-delay:120ms">s</span><span style="transition-delay:160ms">e</span><span style="transition-delay:200ms">l</span></div>
+</div>
+
+<header class="header" id="header">
+  <div class="wrap">
+    <div class="header__bar">
+      <a class="logo" href="#top" aria-label="Tessel home">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 2h9v9H2zM13 13h9v9h-9z"/><path d="M13 2h9v9h-9z" opacity=".35"/><path d="M2 13h9v9H2z" opacity=".35"/></svg>
+        Tessel
+      </a>
+      <nav class="nav" aria-label="Primary">
+        <a href="#work">Work</a>
+        <a href="#process">Process</a>
+        <a href="#services">Services</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <div class="header__right">
+        <button class="btn btn--primary btn--sm header__cta" data-open-drawer>Start a project</button>
+        <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="sheet"><i class="ph ph-list"></i></button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Menu">
+  <div class="sheet__top">
+    <span class="logo">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 2h9v9H2zM13 13h9v9h-9z"/><path d="M13 2h9v9h-9z" opacity=".35"/><path d="M2 13h9v9H2z" opacity=".35"/></svg>
+      Tessel
+    </span>
+    <button class="icon-btn" id="sheetClose" aria-label="Close menu"><i class="ph ph-x"></i></button>
+  </div>
+  <nav aria-label="Mobile">
+    <a href="#work" style="--d:60ms">Work</a>
+    <a href="#process" style="--d:110ms">Process</a>
+    <a href="#services" style="--d:160ms">Services</a>
+    <a href="#faq" style="--d:210ms">FAQ</a>
+  </nav>
+  <button class="btn btn--primary" data-open-drawer>Start a project <i class="ph ph-arrow-up-right"></i></button>
+</div>
+
+<main id="main" tabindex="-1">
+
+  <!-- Hero: asymmetric split -->
+  <section class="hero" id="top">
+    <div class="wrap hero__grid">
+      <div>
+        <p class="status" data-reveal data-gate style="--d:100ms"><span class="status__dot" aria-hidden="true"></span>Booking projects for Q1 2027</p>
+        <h1 data-split data-gate data-d="180">Software that feels <em>inevitable.</em></h1>
+        <p class="hero__sub" data-reveal data-gate style="--d:520ms">Tessel is a product engineering studio. We design, build and scale web and mobile software with small senior teams.</p>
+        <div class="hero__ctas" data-reveal data-gate style="--d:640ms">
+          <span class="magnet"><button class="btn btn--primary" data-open-drawer>Start a project <i class="ph ph-arrow-up-right"></i></button></span>
+          <a class="btn btn--ghost" href="#work">See the work</a>
+        </div>
+      </div>
+      <div class="mosaic" id="mosaic" data-gate-el>
+        <img src="https://picsum.photos/seed/tessel-hero/1200/1500?grayscale" alt="Monochrome photograph used as the studio hero image" fetchpriority="high" />
+        <canvas aria-hidden="true"></canvas>
+        <span class="mosaic__hint" id="mosaicHint"><i class="ph ph-hand-pointing"></i>Move to resolve</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Logos -->
+  <section class="logos" aria-label="Clients">
+    <div class="wrap">
+      <p data-reveal>Teams we have shipped with</p>
+      <ul>
+        <li data-reveal style="--d:0ms" aria-label="Halden Bank"><svg viewBox="0 0 150 28" fill="currentColor"><rect x="0" y="4" width="20" height="20" rx="4"/><rect x="6" y="10" width="8" height="8" fill="var(--bg)"/><text x="28" y="20" font-family="Geist, sans-serif" font-size="17" font-weight="600" letter-spacing="-0.5">Halden Bank</text></svg></li>
+        <li data-reveal style="--d:60ms" aria-label="Parcelwise"><svg viewBox="0 0 140 28" fill="currentColor"><path d="M2 24 12 4l10 20z"/><text x="30" y="20" font-family="Geist, sans-serif" font-size="17" font-weight="600" letter-spacing="-0.5">Parcelwise</text></svg></li>
+        <li data-reveal style="--d:120ms" aria-label="Mirro"><svg viewBox="0 0 100 28" fill="currentColor"><circle cx="11" cy="14" r="10"/><circle cx="11" cy="14" r="4" fill="var(--bg)"/><text x="28" y="20" font-family="Geist, sans-serif" font-size="18" font-weight="700" letter-spacing="-0.8">mirro</text></svg></li>
+        <li data-reveal style="--d:180ms" aria-label="Oakline"><svg viewBox="0 0 120 28" fill="currentColor"><path d="M2 14c0-6 4-10 10-10v20C6 24 2 20 2 14zm12-10c6 0 10 4 10 10s-4 10-10 10z" opacity=".9"/><text x="32" y="20" font-family="Geist, sans-serif" font-size="17" font-weight="500" letter-spacing="0.5">OAKLINE</text></svg></li>
+        <li data-reveal style="--d:240ms" aria-label="Veld"><svg viewBox="0 0 90 28" fill="currentColor"><path d="M2 6h6l5 14 5-14h6l-8 18h-6z"/><text x="32" y="20" font-family="Geist, sans-serif" font-size="18" font-weight="600" letter-spacing="-0.5">Veld</text></svg></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Manifesto: scroll-linked highlight -->
+  <section class="manifesto" id="manifesto" aria-label="How we think">
+    <div class="wrap">
+      <p id="manifestoText">Most software is built in pieces that never quite fit. We work the other way: one small senior team owns design, code and launch, so every part locks into the next.</p>
+    </div>
+  </section>
+
+  <!-- Work: index list with cursor preview -->
+  <section class="work" id="work">
+    <div class="wrap">
+      <p class="eyebrow" data-reveal>Selected work</p>
+      <h2 class="section-title" data-split data-d="80">Products we designed, built and still care about.</h2>
+      <ul class="work__list" id="workList">
+        <li><a class="work__row" href="#work" data-img="https://picsum.photos/id/3/880/660?grayscale" data-reveal>
+          <span class="work__name">Halden Bank</span>
+          <span class="work__what">Retail banking app rebuilt from scratch</span>
+          <span class="work__meta"><span>Fintech</span><span>2026</span></span>
+          <span class="work__thumb"><img loading="lazy" src="https://picsum.photos/id/3/880/550?grayscale" alt="Halden Bank project image" /></span>
+        </a></li>
+        <li><a class="work__row" href="#work" data-img="https://picsum.photos/id/367/880/660?grayscale" data-reveal>
+          <span class="work__name">Mirro</span>
+          <span class="work__what">Therapy companion app for iOS and Android</span>
+          <span class="work__meta"><span>Health</span><span>2025</span></span>
+          <span class="work__thumb"><img loading="lazy" src="https://picsum.photos/id/367/880/550?grayscale" alt="Mirro project image" /></span>
+        </a></li>
+        <li><a class="work__row" href="#work" data-img="https://picsum.photos/id/519/880/660?grayscale" data-reveal>
+          <span class="work__name">Parcelwise</span>
+          <span class="work__what">Dispatch platform for regional couriers</span>
+          <span class="work__meta"><span>Logistics</span><span>2025</span></span>
+          <span class="work__thumb"><img loading="lazy" src="https://picsum.photos/id/519/880/550?grayscale" alt="Parcelwise project image" /></span>
+        </a></li>
+        <li><a class="work__row" href="#work" data-img="https://picsum.photos/id/20/880/660?grayscale" data-reveal>
+          <span class="work__name">Oakline</span>
+          <span class="work__what">Design system shared by three product teams</span>
+          <span class="work__meta"><span>Retail</span><span>2024</span></span>
+          <span class="work__thumb"><img loading="lazy" src="https://picsum.photos/id/20/880/550?grayscale" alt="Oakline project image" /></span>
+        </a></li>
+        <li><a class="work__row" href="#work" data-img="https://picsum.photos/id/381/880/660?grayscale" data-reveal>
+          <span class="work__name">Veld</span>
+          <span class="work__what">Climate data dashboard for farm cooperatives</span>
+          <span class="work__meta"><span>Climate</span><span>2024</span></span>
+          <span class="work__thumb"><img loading="lazy" src="https://picsum.photos/id/381/880/550?grayscale" alt="Veld project image" /></span>
+        </a></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Process: horizontal pan -->
+  <section class="process" id="process">
+    <div class="process__sticky" id="processSticky">
+      <div class="process__head wrap">
+        <h2 class="section-title" data-split>From first call to launch in four moves.</h2>
+      </div>
+      <div class="process__track" id="processTrack">
+        <article class="step">
+          <div class="step__img"><img src="https://picsum.photos/id/7/900/560?grayscale" alt="Discovery workshop" /></div>
+          <div class="step__body"><h3>Discover</h3><p>Interviews, audits and a clickable prototype. You leave with a scoped plan and a direction you can test.</p><span class="step__time">2 weeks</span></div>
+        </article>
+        <article class="step">
+          <div class="step__img"><img src="https://picsum.photos/id/180/900/560?grayscale" alt="Design review" /></div>
+          <div class="step__body"><h3>Shape</h3><p>Design and engineering sit together. We lock the architecture and the core flows before scaling the team.</p><span class="step__time">3 to 4 weeks</span></div>
+        </article>
+        <article class="step">
+          <div class="step__img"><img src="https://picsum.photos/id/1/900/560?grayscale" alt="Engineers at work" /></div>
+          <div class="step__body"><h3>Build</h3><p>Weekly releases to a staging app you can hold. Demos every Friday, honest estimates every Monday.</p><span class="step__time">8 to 16 weeks</span></div>
+        </article>
+        <article class="step">
+          <div class="step__img"><img src="https://picsum.photos/id/452/900/560?grayscale" alt="Launch day" /></div>
+          <div class="step__body"><h3>Scale</h3><p>Launch, measure, harden. Then we train your team and hand over code you fully own.</p><span class="step__time">Ongoing</span></div>
+        </article>
+      </div>
+      <div class="process__bar" aria-hidden="true"><span id="processBar"></span></div>
+    </div>
+  </section>
+
+  <!-- Services: bento -->
+  <section class="services" id="services">
+    <div class="wrap">
+      <h2 class="section-title" data-split>What we build.</h2>
+      <div class="bento">
+        <article class="tile tile--img tile--a" data-reveal>
+          <img loading="lazy" src="https://picsum.photos/id/60/1400/1000?grayscale" alt="" />
+          <i class="ph ph-browsers"></i>
+          <h3>Web platforms</h3>
+          <p>Customer portals, marketplaces and internal tools that stay fast as they grow.</p>
+        </article>
+        <article class="tile tile--b" data-reveal style="--d:80ms">
+          <i class="ph ph-device-mobile"></i>
+          <h3>Mobile apps</h3>
+          <p>Native iOS and Android, or one codebase when it truly fits.</p>
+        </article>
+        <article class="tile tile--accent tile--c" data-reveal style="--d:160ms">
+          <i class="ph ph-sparkle"></i>
+          <h3>AI features</h3>
+          <p>LLM features shipped with evals and guardrails, not demos.</p>
+        </article>
+        <article class="tile tile--grid tile--d" data-reveal>
+          <i class="ph ph-squares-four"></i>
+          <h3>Design systems</h3>
+          <p>Tokens, components and docs that let every team ship the same product.</p>
+        </article>
+        <article class="tile tile--e" data-reveal style="--d:80ms">
+          <i class="ph ph-shield-check"></i>
+          <h3>Quality and reliability</h3>
+          <p>Test suites, monitoring and on-call playbooks, set up before launch day.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials: the one marquee -->
+  <section class="voices" aria-label="Testimonials">
+    <div class="wrap">
+      <p class="eyebrow" data-reveal>Testimonials</p>
+      <h2 class="section-title" data-split data-d="80">What partners say after launch.</h2>
+    </div>
+    <div class="marquee-wrap">
+      <div class="marquee" id="marquee">
+        <figure class="quote"><blockquote>“Tessel rebuilt our onboarding and support tickets dropped within the first month. The team felt like ours.”</blockquote><figcaption><span class="avatar">ML</span><span>Marta Lindqvist<small>Head of Product, Halden Bank</small></span></figcaption></figure>
+        <figure class="quote"><blockquote>“Senior people on every call. No handoff to a second team after the pitch.”</blockquote><figcaption><span class="avatar">DO</span><span>Daniel Okafor<small>CTO, Parcelwise</small></span></figcaption></figure>
+        <figure class="quote"><blockquote>“Their design system finally got our three apps speaking the same language.”</blockquote><figcaption><span class="avatar">PR</span><span>Priya Raman<small>Design Director, Oakline</small></span></figcaption></figure>
+        <figure class="quote"><blockquote>“They pushed back on scope when it mattered. We launched sooner because of it.”</blockquote><figcaption><span class="avatar">TF</span><span>Tomás Ferreira<small>Founder, Mirro</small></span></figcaption></figure>
+        <figure class="quote"><blockquote>“Clear weekly demos, honest estimates and clean code our team could take over.”</blockquote><figcaption><span class="avatar">HW</span><span>Hannah Weiss<small>VP Engineering, Veld</small></span></figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- Engagement: asymmetric -->
+  <section class="engage" id="engage">
+    <div class="wrap">
+      <h2 class="section-title" data-split>Three ways to work together.</h2>
+      <div class="plans">
+        <article class="plan plan--main" data-reveal>
+          <span class="plan__term">Monthly, from three months</span>
+          <h3>Product squad</h3>
+          <p>A designer, two engineers and a tech lead embedded with your team, owning a product area end to end.</p>
+          <ul>
+            <li><i class="ph ph-check"></i>Weekly releases and Friday demos</li>
+            <li><i class="ph ph-check"></i>Shared Slack, shared backlog</li>
+            <li><i class="ph ph-check"></i>Full code ownership from day one</li>
+          </ul>
+          <span class="magnet"><button class="btn btn--primary" data-open-drawer>Start a project <i class="ph ph-arrow-up-right"></i></button></span>
+        </article>
+        <article class="plan" data-reveal style="--d:100ms">
+          <span class="plan__term">Two weeks</span>
+          <h3>Discovery sprint</h3>
+          <p>Research, a tested prototype and a delivery plan before you commit a budget.</p>
+        </article>
+        <article class="plan" data-reveal style="--d:200ms">
+          <span class="plan__term">Four to eight weeks</span>
+          <h3>Rescue and scale</h3>
+          <p>An audit of an existing product, then fixes for speed, stability and a clean handover.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" id="faq">
+    <div class="wrap faq__grid">
+      <h2 class="section-title" data-split>Questions we hear first.</h2>
+      <div data-reveal>
+        <details><summary>How fast can you start?<i class="ph ph-plus"></i></summary><p>Usually two to three weeks after we agree on scope. Discovery sprints can often start sooner.</p></details>
+        <details><summary>Do you work alongside in-house teams?<i class="ph ph-plus"></i></summary><p>Most of the time, yes. We join your rituals, your tools and your code review, and pair with your engineers.</p></details>
+        <details><summary>Which stack do you use?<i class="ph ph-plus"></i></summary><p>Whatever fits the product. Most often TypeScript, React, Swift, Kotlin and Postgres.</p></details>
+        <details><summary>Who owns the code?<i class="ph ph-plus"></i></summary><p>You do, from the first commit. Repositories live in your organisation from day one.</p></details>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__cta">
+      <h2 data-split>Have something<br>to build?</h2>
+      <div class="footer__actions" data-reveal>
+        <span class="magnet"><button class="btn btn--primary" data-open-drawer>Start a project <i class="ph ph-arrow-up-right"></i></button></span>
+        <button class="btn btn--ghost copy" id="copyEmail" data-email="hello@tessel.studio"><i class="ph ph-copy"></i><span class="copy__label">hello@tessel.studio</span></button>
+      </div>
+    </div>
+    <div class="footer__cols">
+      <div>
+        <a class="logo" href="#top">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 2h9v9H2zM13 13h9v9h-9z"/><path d="M13 2h9v9h-9z" opacity=".35"/><path d="M2 13h9v9H2z" opacity=".35"/></svg>
+          Tessel
+        </a>
+      </div>
+      <div>
+        <h4>Studio</h4>
+        <ul><li><a href="#work">Work</a></li><li><a href="#process">Process</a></li><li><a href="#services">Services</a></li><li><a href="#faq">FAQ</a></li></ul>
+      </div>
+      <div>
+        <h4>Elsewhere</h4>
+        <ul><li><a href="#">LinkedIn</a></li><li><a href="#">GitHub</a></li><li><a href="#">Dribbble</a></li></ul>
+      </div>
+    </div>
+    <div class="legal">
+      <span>© 2026 Tessel Studio</span>
+      <div><a href="#">Privacy</a><a href="#">Terms</a></div>
+    </div>
+  </div>
+</footer>
+
+<!-- Project drawer -->
+<div class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawer__scrim" data-close-drawer></div>
+  <aside class="drawer__panel" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+    <div class="drawer__head">
+      <div>
+        <h2 id="drawerTitle">Start a project</h2>
+        <p>Tell us a little. A partner replies within two working days.</p>
+      </div>
+      <button class="icon-btn" data-close-drawer aria-label="Close"><i class="ph ph-x"></i></button>
+    </div>
+    <form class="form" id="form" novalidate>
+      <div class="fieldset" id="fType">
+        <span class="label" id="typeLabel">What do you need?</span>
+        <div class="chips" role="group" aria-labelledby="typeLabel" data-multi>
+          <button type="button" class="chip" aria-pressed="false">Web platform</button>
+          <button type="button" class="chip" aria-pressed="false">Mobile app</button>
+          <button type="button" class="chip" aria-pressed="false">Design system</button>
+          <button type="button" class="chip" aria-pressed="false">AI feature</button>
+          <button type="button" class="chip" aria-pressed="false">Something else</button>
+        </div>
+        <span class="error">Pick at least one option.</span>
+      </div>
+      <div class="fieldset">
+        <span class="label" id="budgetLabel">Budget</span>
+        <div class="chips" role="radiogroup" aria-labelledby="budgetLabel" data-single>
+          <button type="button" class="chip" role="radio" aria-pressed="false" aria-checked="false">Under $50k</button>
+          <button type="button" class="chip" role="radio" aria-pressed="false" aria-checked="false">$50k to $150k</button>
+          <button type="button" class="chip" role="radio" aria-pressed="false" aria-checked="false">$150k+</button>
+          <button type="button" class="chip" role="radio" aria-pressed="false" aria-checked="false">Not sure yet</button>
+        </div>
+        <span class="help">Optional. It helps us suggest the right team size.</span>
+      </div>
+      <label class="fieldset" id="fName">
+        <span class="label">Name</span>
+        <input class="input" name="name" autocomplete="name" placeholder="Alex Moreau" />
+        <span class="error">Please add your name.</span>
+      </label>
+      <label class="fieldset" id="fEmail">
+        <span class="label">Work email</span>
+        <input class="input" name="email" type="email" autocomplete="email" placeholder="alex@company.com" />
+        <span class="error">Enter a valid email address.</span>
+      </label>
+      <label class="fieldset" id="fMsg">
+        <span class="label">About the project</span>
+        <textarea class="input" name="message" placeholder="What are you building, and what does success look like?"></textarea>
+        <span class="error">A sentence or two helps us prepare. At least 20 characters.</span>
+      </label>
+      <div class="form__foot">
+        <span class="help">No newsletters. We only use this to reply.</span>
+        <button class="btn btn--primary" type="submit" id="submitBtn"><span id="submitLabel">Send</span> <i class="ph ph-paper-plane-tilt"></i></button>
+      </div>
+    </form>
+    <div class="done" role="status">
+      <i class="ph ph-check-circle"></i>
+      <h3>Thanks, it is in.</h3>
+      <p>A partner will read it and reply within two working days.</p>
+      <button class="btn btn--ghost" data-close-drawer>Back to the site</button>
+    </div>
+  </aside>
+</div>
+
+<script type="importmap">
+{ "imports": { "lenis": "https://unpkg.com/lenis@1.3.23/dist/lenis.mjs" } }
+</script>
+<script type="module">
+import Lenis from 'lenis';
+
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const canHover = matchMedia('(hover: hover) and (pointer: fine)').matches;
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+/* ---------- Smooth scroll ---------- */
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+window.scrollTo(0, 0);
+const lenis = new Lenis({ smoothWheel: true, lerp: 0.09 });
+const raf = t => { lenis.raf(t); requestAnimationFrame(raf); };
+requestAnimationFrame(raf);
+
+let locks = 0;
+const lock = () => { if (locks++ === 0) lenis.stop(); };
+const unlock = () => { if (locks > 0 && --locks === 0) lenis.start(); };
+
+/* ---------- Split headings into masked words ---------- */
+$$('[data-split]').forEach(el => {
+  const base = +(el.dataset.d || 0);
+  let i = 0;
+  const walk = node => {
+    [...node.childNodes].forEach(child => {
+      if (child.nodeType === 3){
+        const frag = document.createDocumentFragment();
+        child.textContent.split(/(\s+)/).forEach(part => {
+          if (!part) return;
+          if (/^\s+$/.test(part)){ frag.append(' '); return; }
+          const w = document.createElement('span'); w.className = 'word';
+          const inner = document.createElement('span'); inner.textContent = part;
+          inner.style.setProperty('--d', `${base + i++ * 55}ms`);
+          w.append(inner); frag.append(w);
+        });
+        child.replaceWith(frag);
+      } else if (child.nodeType === 1 && child.tagName !== 'BR') walk(child);
+    });
+  };
+  walk(el);
+});
+
+/* ---------- Reveal on view (gated ones wait for the loader) ---------- */
+let ready = false;
+const pending = new Set();
+const show = el => {
+  if (el.hasAttribute('data-gate') && !ready){ pending.add(el); return; }
+  el.classList.add('in');
+};
+const io = new IntersectionObserver(entries => entries.forEach(e => {
+  if (!e.isIntersecting) return;
+  io.unobserve(e.target); show(e.target);
+}), { rootMargin: '0px 0px -10% 0px' });
+$$('[data-reveal],[data-split]').forEach(el => io.observe(el));
+
+/* ---------- Loader ---------- */
+const loader = $('#loader');
+lock();
+const finishIntro = () => {
+  loader.remove();
+  unlock();
+  ready = true;
+  pending.forEach(el => el.classList.add('in'));
+  $('#mosaic').classList.add('in');
+  heroMosaic.intro();
+};
+if (RM){ finishIntro(); }
+else {
+  requestAnimationFrame(() => loader.classList.add('show'));
+  setTimeout(() => {
+    loader.classList.add('out');
+    setTimeout(finishIntro, 1050);
+  }, 1150);
+}
+
+/* ---------- Header: hide on scroll down, show on scroll up ---------- */
+const header = $('#header');
+lenis.on('scroll', ({ scroll, direction }) => {
+  header.classList.toggle('hidden', direction === 1 && scroll > 240 && !locks);
+});
+
+/* ---------- Anchor links through Lenis ---------- */
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[href^="#"]');
+  if (!a || a.classList.contains('skip')) return;
+  const id = a.getAttribute('href');
+  e.preventDefault();
+  if (id === '#') return;
+  if (sheet.classList.contains('open')) closeSheet();
+  const target = id === '#top' ? 0 : $(id);
+  if (target !== null) lenis.scrollTo(target, { offset: id === '#top' ? 0 : -20, duration: 1.4 });
+});
+
+/* ---------- Mobile menu sheet ---------- */
+const sheet = $('#sheet'), burger = $('#burger');
+function openSheet(){
+  sheet.classList.add('open'); burger.setAttribute('aria-expanded', 'true'); lock();
+  requestAnimationFrame(() => requestAnimationFrame(() => sheet.classList.add('anim')));
+  $('#sheetClose').focus();
+}
+function closeSheet(){
+  sheet.classList.remove('open', 'anim'); burger.setAttribute('aria-expanded', 'false'); unlock();
+  burger.focus({ preventScroll: true });
+}
+burger.addEventListener('click', openSheet);
+$('#sheetClose').addEventListener('click', closeSheet);
+
+/* ---------- Magnetic primary buttons ---------- */
+if (canHover && !RM){
+  $$('.magnet').forEach(m => {
+    let x = 0, y = 0, tx = 0, ty = 0, id = 0;
+    const loop = () => {
+      x += (tx - x) * 0.18; y += (ty - y) * 0.18;
+      m.style.transform = `translate(${x.toFixed(2)}px,${y.toFixed(2)}px)`;
+      id = (Math.abs(tx - x) > 0.05 || Math.abs(ty - y) > 0.05) ? requestAnimationFrame(loop) : 0;
+    };
+    const kick = () => { if (!id) id = requestAnimationFrame(loop); };
+    m.addEventListener('pointermove', e => {
+      const r = m.getBoundingClientRect();
+      tx = (e.clientX - (r.left + r.width / 2)) * 0.25;
+      ty = (e.clientY - (r.top + r.height / 2)) * 0.35;
+      kick();
+    });
+    m.addEventListener('pointerleave', () => { tx = 0; ty = 0; kick(); });
+  });
+}
+
+/* ---------- Hero mosaic: pixelated base, sharp tiles resolve under the pointer ---------- */
+const heroMosaic = (() => {
+  const box = $('#mosaic'), canvas = $('canvas', box), hint = $('#mosaicHint');
+  const ctx = canvas.getContext('2d');
+  const img = new Image();
+  const sharp = document.createElement('canvas'), sctx = sharp.getContext('2d');
+  const small = document.createElement('canvas'), mctx = small.getContext('2d');
+  const TILE = 28, RADIUS = 150, DECAY = 0.955;
+  let dpr = 1, W = 0, H = 0, cols = 0, rows = 0, tile = TILE, alpha = new Float32Array(0);
+  let loaded = false, running = 0, touched = false;
+
+  const coverDraw = (c, w, h) => {
+    const s = Math.max(w / img.naturalWidth, h / img.naturalHeight);
+    const iw = img.naturalWidth * s, ih = img.naturalHeight * s;
+    c.drawImage(img, (w - iw) / 2, (h - ih) / 2, iw, ih);
+  };
+  function measure(){
+    const r = box.getBoundingClientRect();
+    if (!r.width) return;
+    dpr = Math.min(devicePixelRatio || 1, 2);
+    W = Math.round(r.width * dpr); H = Math.round(r.height * dpr);
+    canvas.width = sharp.width = W; canvas.height = sharp.height = H;
+    tile = Math.round(TILE * dpr);
+    cols = Math.ceil(W / tile); rows = Math.ceil(H / tile);
+    alpha = new Float32Array(cols * rows);
+    small.width = cols; small.height = rows;
+    if (loaded){ coverDraw(sctx, W, H); coverDraw(mctx, cols, rows); }
+    draw();
+  }
+  function draw(){
+    if (!loaded) return;
+    ctx.imageSmoothingEnabled = false;
+    ctx.globalAlpha = 1;
+    ctx.drawImage(small, 0, 0, cols, rows, 0, 0, cols * tile, rows * tile);
+    let live = false;
+    for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++){
+      const a = alpha[j * cols + i];
+      if (a < 0.01) continue;
+      live = true;
+      ctx.globalAlpha = a;
+      ctx.drawImage(sharp, i * tile, j * tile, tile, tile, i * tile, j * tile, tile, tile);
+    }
+    ctx.globalAlpha = 1;
+    return live;
+  }
+  function frame(){
+    for (let k = 0; k < alpha.length; k++) alpha[k] *= DECAY;
+    running = draw() ? requestAnimationFrame(frame) : 0;
+  }
+  const start = () => { if (!running && !RM) running = requestAnimationFrame(frame); };
+  function paint(px, py, strength = 1){
+    const rad = RADIUS * dpr;
+    const i0 = Math.max(0, Math.floor((px - rad) / tile)), i1 = Math.min(cols - 1, Math.floor((px + rad) / tile));
+    const j0 = Math.max(0, Math.floor((py - rad) / tile)), j1 = Math.min(rows - 1, Math.floor((py + rad) / tile));
+    for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++){
+      const cx = (i + .5) * tile, cy = (j + .5) * tile;
+      const d = Math.hypot(cx - px, cy - py) / rad;
+      if (d >= 1) continue;
+      const k = j * cols + i;
+      alpha[k] = Math.max(alpha[k], (1 - d * d) * strength);
+    }
+    start();
+  }
+  box.addEventListener('pointermove', e => {
+    const r = box.getBoundingClientRect();
+    paint((e.clientX - r.left) * dpr, (e.clientY - r.top) * dpr);
+    if (!touched){ touched = true; hint.classList.add('gone'); }
+  });
+  function intro(){
+    if (!loaded || RM) return;
+    // One diagonal sweep so the effect is discoverable on touch devices too.
+    const t0 = performance.now(), dur = 1400;
+    const sweep = now => {
+      const t = clamp((now - t0) / dur, 0, 1);
+      paint(W * (0.1 + 0.8 * t), H * (0.85 - 0.7 * t), 0.9);
+      if (t < 1) requestAnimationFrame(sweep);
+    };
+    requestAnimationFrame(sweep);
+  }
+  let wantIntro = false;
+  img.onload = () => { loaded = true; measure(); box.classList.add('ready'); if (wantIntro) intro(); };
+  img.src = $('img', box).currentSrc || $('img', box).src;
+  new ResizeObserver(measure).observe(box);
+  return { intro(){ if (loaded) intro(); else wantIntro = true; } };
+})();
+
+/* ---------- Manifesto: words light up with scroll ---------- */
+(() => {
+  const p = $('#manifestoText');
+  const words = p.textContent.trim().split(/\s+/);
+  const HL = new Set(['one', 'small', 'senior', 'team']);
+  p.innerHTML = words.map(w => `<span class="mw${HL.has(w.replace(/[^a-z]/gi, '').toLowerCase()) ? ' hl' : ''}">${w}</span>`).join(' ');
+  const spans = $$('.mw', p);
+  const update = () => {
+    const r = p.getBoundingClientRect(), vh = innerHeight;
+    const prog = clamp((vh * 0.85 - r.top) / (r.height + vh * 0.35), 0, 1);
+    const lit = prog * spans.length;
+    spans.forEach((s, i) => { s.style.opacity = RM ? 1 : (0.14 + 0.86 * clamp(lit - i, 0, 1)).toFixed(3); });
+  };
+  lenis.on('scroll', update); addEventListener('resize', update); update();
+})();
+
+/* ---------- Work: floating preview follows the cursor ---------- */
+(() => {
+  if (!canHover) return;
+  const list = $('#workList');
+  const preview = document.createElement('div'); preview.className = 'preview'; preview.setAttribute('aria-hidden', 'true');
+  document.body.append(preview);
+  const imgs = new Map();
+  $$('.work__row', list).forEach(row => {
+    const im = new Image(); im.src = row.dataset.img; im.alt = ''; preview.append(im); imgs.set(row, im);
+  });
+  let x = 0, y = 0, tx = 0, ty = 0, id = 0, active = null;
+  const loop = () => {
+    x += (tx - x) * 0.15; y += (ty - y) * 0.15;
+    preview.style.translate = `${x}px ${y}px`;
+    id = requestAnimationFrame(loop);
+  };
+  list.addEventListener('pointermove', e => {
+    tx = e.clientX + 24; ty = e.clientY - preview.offsetHeight / 2;
+    if (!x && !y){ x = tx; y = ty; }
+    const row = e.target.closest('.work__row');
+    if (row && row !== active){
+      active = row;
+      imgs.forEach((im, r) => im.classList.toggle('on', r === row));
+    }
+  });
+  list.addEventListener('pointerenter', () => { preview.classList.add('on'); if (!id) id = requestAnimationFrame(loop); });
+  list.addEventListener('pointerleave', () => { preview.classList.remove('on'); active = null; cancelAnimationFrame(id); id = 0; });
+})();
+
+/* ---------- Process: page pins while vertical scroll pans the cards ---------- */
+(() => {
+  const section = $('#process'), sticky = $('#processSticky'), track = $('#processTrack'), bar = $('#processBar');
+  const SPEED = 1.6;   // px of vertical scroll per px of horizontal travel
+  const HOLD = 0.3;    // extra pinned scroll after "Scale" arrives, in viewport heights
+  let distance = 0, travel = 0, target = 0, cur = 0, id = 0;
+  if (RM){ section.classList.add('static'); return; }
+  const render = () => {
+    track.style.transform = `translate3d(${(-cur * distance).toFixed(2)}px,0,0)`;
+    bar.style.transform = `scaleX(${cur.toFixed(4)})`;
+  };
+  const loop = () => {
+    cur += (target - cur) * 0.14;
+    if (Math.abs(target - cur) < 0.0005) cur = target;
+    render();
+    id = cur === target ? 0 : requestAnimationFrame(loop);
+  };
+  const update = () => {
+    if (!distance) return;
+    target = clamp(-section.getBoundingClientRect().top / travel, 0, 1);
+    if (!id) id = requestAnimationFrame(loop);
+  };
+  const size = () => {
+    track.style.transform = '';
+    // Travel until the last card's right edge meets the page gutter.
+    const last = track.lastElementChild.getBoundingClientRect();
+    const gutter = parseFloat(getComputedStyle(track).paddingLeft) || 0;
+    distance = Math.max(0, Math.ceil(last.right + gutter - innerWidth));
+    travel = Math.max(1, distance * SPEED);
+    const vh = sticky.offsetHeight;
+    section.style.height = distance ? `${vh + travel + vh * HOLD}px` : '';
+    target = clamp(-section.getBoundingClientRect().top / travel, 0, 1);
+    cur = target; render();
+  };
+  lenis.on('scroll', update);
+  addEventListener('resize', size);
+  size();
+})();
+
+/* ---------- Marquee: duplicate content for a seamless loop ---------- */
+(() => {
+  const m = $('#marquee');
+  if (RM) return;
+  [...m.children].forEach(c => { const k = c.cloneNode(true); k.setAttribute('aria-hidden', 'true'); m.append(k); });
+})();
+
+/* ---------- Copy email ---------- */
+$('#copyEmail').addEventListener('click', async e => {
+  const b = e.currentTarget;
+  try { await navigator.clipboard.writeText(b.dataset.email); } catch { location.href = `mailto:${b.dataset.email}`; return; }
+  b.setAttribute('data-copied', '');
+  setTimeout(() => b.removeAttribute('data-copied'), 1800);
+});
+
+/* ---------- Drawer + form ---------- */
+const drawer = $('#drawer'), form = $('#form');
+let lastFocus = null;
+function openDrawer(){
+  if (sheet.classList.contains('open')) closeSheet();
+  lastFocus = document.activeElement;
+  drawer.classList.add('open'); drawer.setAttribute('aria-hidden', 'false'); lock();
+  setTimeout(() => $('.chip', drawer).focus({ preventScroll: true }), 80);
+}
+function closeDrawer(){
+  if (!drawer.classList.contains('open')) return;
+  drawer.classList.remove('open'); drawer.setAttribute('aria-hidden', 'true'); unlock();
+  lastFocus && lastFocus.focus({ preventScroll: true });
+  if (drawer.classList.contains('sent')) setTimeout(resetForm, 600);
+}
+function resetForm(){
+  form.reset(); drawer.classList.remove('sent');
+  $$('.chip', form).forEach(c => { c.setAttribute('aria-pressed', 'false'); c.hasAttribute('aria-checked') && c.setAttribute('aria-checked', 'false'); });
+  $$('.invalid', form).forEach(f => f.classList.remove('invalid'));
+  $('#submitLabel').textContent = 'Send'; $('#submitBtn').disabled = false;
+}
+$$('[data-open-drawer]').forEach(b => b.addEventListener('click', openDrawer));
+$$('[data-close-drawer]').forEach(b => b.addEventListener('click', closeDrawer));
+
+$$('.chips', form).forEach(group => {
+  const single = group.hasAttribute('data-single');
+  group.addEventListener('click', e => {
+    const chip = e.target.closest('.chip'); if (!chip) return;
+    const on = chip.getAttribute('aria-pressed') === 'true';
+    if (single) $$('.chip', group).forEach(c => { c.setAttribute('aria-pressed', 'false'); c.setAttribute('aria-checked', 'false'); });
+    chip.setAttribute('aria-pressed', String(!on));
+    if (single) chip.setAttribute('aria-checked', String(!on));
+    if (!single) $('#fType').classList.remove('invalid');
+  });
+});
+const rules = [
+  ['#fType', () => $$('#fType .chip[aria-pressed="true"]').length > 0],
+  ['#fName', () => form.name.value.trim().length > 1],
+  ['#fEmail', () => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(form.email.value.trim())],
+  ['#fMsg', () => form.message.value.trim().length >= 20],
+];
+form.addEventListener('input', e => { const f = e.target.closest('.fieldset'); f && f.classList.remove('invalid'); });
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  let first = null;
+  rules.forEach(([sel, ok]) => {
+    const f = $(sel), valid = ok();
+    f.classList.toggle('invalid', !valid);
+    if (!valid && !first) first = f;
+  });
+  if (first){ ($('input,textarea,.chip', first)).focus(); return; }
+  $('#submitLabel').textContent = 'Sending…'; $('#submitBtn').disabled = true;
+  setTimeout(() => drawer.classList.add('sent'), 900);
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (drawer.classList.contains('open')) closeDrawer();
+  else if (sheet.classList.contains('open')) closeSheet();
+});
+</script>
+</body>
+</html>

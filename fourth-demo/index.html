@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vitrea | Glass studio</title>
+<meta name="description" content="A small glass studio. Each piece begins as a handful of sand and ends as light you can hold.">
+<meta name="theme-color" content="#eef1f3">
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/*
+  Theme: locked light "ice" palette (the whole piece is one lit glass stage).
+  Shape rule: panels 1.5rem, controls full pill, inputs .875rem.
+  Z-index scale: canvas 0, content 10, chapter rail 20, header 30.
+*/
+:root{
+  --bg:#eef1f3; --ink:#101418; --muted:#56606a; --faint:#8b949c;
+  --line:rgba(16,20,24,.12); --panel:rgba(255,255,255,.62); --panel-solid:#ffffff;
+  --accent:#d9531c; --accent-ink:#ffffff;
+  --r-panel:1.5rem; --r-input:.875rem;
+  --sans:'Satoshi', system-ui, sans-serif; --mono:'JetBrains Mono', ui-monospace, monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{ margin:0; padding:0; box-sizing:border-box }
+html{ -webkit-font-smoothing:antialiased; background:var(--bg) }
+body{ font-family:var(--sans); color:var(--ink); background:var(--bg); overflow-x:clip; line-height:1.5 }
+a{ color:inherit; text-decoration:none }
+button{ font:inherit; color:inherit; background:none; border:0; cursor:pointer }
+input,textarea{ font:inherit; color:inherit }
+:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:.25rem }
+html.lenis, html.lenis body{ height:auto }
+.lenis.lenis-smooth{ scroll-behavior:auto !important }
+.lenis.lenis-stopped{ overflow:clip }
+
+#stage{ position:fixed; inset:0; width:100%; height:100%; z-index:0; display:block; touch-action:pan-y }
+.stage-fallback{ position:fixed; inset:0; z-index:0; background:radial-gradient(60% 50% at 70% 45%, #ffffff, var(--bg)) }
+
+/* Header */
+.header{ position:fixed; top:1rem; inset-inline:1rem; z-index:30; display:flex; justify-content:space-between; align-items:center; gap:1rem; padding:.5rem .5rem .5rem 1.25rem; border-radius:999px; background:var(--panel); border:1px solid rgba(255,255,255,.7); box-shadow:0 10px 30px -18px rgba(16,20,24,.35), inset 0 1px 0 rgba(255,255,255,.8); backdrop-filter:blur(16px) saturate(160%); -webkit-backdrop-filter:blur(16px) saturate(160%) }
+.logo{ display:flex; align-items:center; gap:.6rem; font-weight:700; letter-spacing:-.02em; font-size:1.125rem }
+.logo svg{ width:1.25rem; height:1.25rem }
+.nav{ display:none; gap:1.75rem; font-size:.9375rem; color:var(--muted) }
+.nav a:hover{ color:var(--ink) }
+.btn{ display:inline-flex; align-items:center; gap:.5rem; height:2.75rem; padding:0 1.25rem; border-radius:999px; font-weight:500; font-size:.9375rem; white-space:nowrap; transition:transform .15s, background .25s, color .25s, border-color .25s }
+.btn:active{ transform:scale(.98) }
+.btn--ink{ background:var(--ink); color:#fff }
+.btn--ink:hover{ background:#2a3139 }
+.btn--line{ border:1px solid var(--line); background:rgba(255,255,255,.4) }
+.btn--line:hover{ border-color:var(--ink) }
+.btn svg{ width:1rem; height:1rem }
+@media (min-width:900px){ .header{ top:1.25rem; inset-inline:2rem } .nav{ display:flex } }
+
+/* Chapter rail */
+.rail{ position:fixed; right:2rem; top:50%; transform:translateY(-50%); z-index:20; display:none; flex-direction:column; gap:1rem }
+.rail button{ display:flex; align-items:center; justify-content:flex-end; gap:.75rem; font-family:var(--mono); font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); transition:color .3s }
+.rail button::after{ content:""; width:1.25rem; height:1px; background:currentColor; transition:width .5s var(--ease) }
+.rail button.on{ color:var(--ink) }
+.rail button.on::after{ width:2.75rem; background:var(--accent) }
+.rail.gone{ opacity:0; pointer-events:none }
+.rail{ transition:opacity .4s }
+@media (min-width:900px){ .rail{ display:flex } }
+
+/* Chapters */
+main{ position:relative; z-index:10 }
+.chapter{ min-height:115vh; display:flex; align-items:center; padding:7rem 1.25rem 4rem }
+.chapter:first-child{ min-height:100vh }
+.copy{ width:100%; max-width:31rem }
+.chapter h1, .chapter h2{ font-weight:700; letter-spacing:-.045em; line-height:1.02 }
+.chapter h1{ font-size:clamp(3rem,7vw,6rem) }
+.chapter h2{ font-size:clamp(2.4rem,5vw,4.25rem) }
+.chapter p{ margin-top:1.5rem; font-size:1.125rem; color:var(--muted); max-width:30ch }
+.label{ display:block; margin-bottom:1.25rem; font-family:var(--mono); font-size:.8125rem; letter-spacing:.06em; text-transform:uppercase; color:var(--accent) }
+.ctas{ margin-top:2rem; display:flex; flex-wrap:wrap; gap:.75rem }
+.temp{ margin-top:2rem; display:inline-flex; align-items:baseline; gap:.5rem; font-family:var(--mono); color:var(--ink) }
+.temp b{ font-size:2.75rem; font-weight:500; letter-spacing:-.04em }
+.temp span{ color:var(--muted); font-size:.875rem }
+@media (min-width:900px){ .chapter{ padding-inline:max(2rem, calc((100vw - 80rem)/2 + 2rem)) } }
+@media (max-width:899px){
+  .chapter{ align-items:flex-end; padding-bottom:6rem }
+  .chapter .copy{ padding:1.5rem; border-radius:var(--r-panel); background:var(--panel); border:1px solid rgba(255,255,255,.7); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px) }
+  .chapter:first-child .copy{ background:none; border:0; backdrop-filter:none; -webkit-backdrop-filter:none; padding:0 }
+  .chapter:first-child{ align-items:flex-end }
+}
+
+/* Reveal */
+[data-reveal]{ opacity:0; transform:translateY(24px); transition:opacity 1s var(--ease), transform 1s var(--ease); transition-delay:var(--d,0ms) }
+[data-reveal].in{ opacity:1; transform:none }
+
+/* Visit / commission */
+.visit{ position:relative; z-index:10; background:var(--bg); border-radius:2rem 2rem 0 0; padding:6rem 1.25rem 3rem; box-shadow:0 -30px 60px -30px rgba(16,20,24,.18) }
+.visit__grid{ max-width:80rem; margin-inline:auto; display:grid; gap:3rem }
+.visit h2{ font-size:clamp(2.2rem,4.5vw,3.75rem); letter-spacing:-.045em; line-height:1.03; font-weight:700; max-width:14ch }
+.facts{ margin-top:2.5rem; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.5rem 2rem }
+.facts dt{ font-family:var(--mono); font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; color:var(--faint) }
+.facts dd{ margin-top:.35rem; font-size:1rem }
+.form{ border-radius:var(--r-panel); background:var(--panel-solid); padding:1.75rem; display:flex; flex-direction:column; gap:1.25rem; box-shadow:0 30px 60px -40px rgba(16,20,24,.35) }
+.field{ display:flex; flex-direction:column; gap:.5rem }
+.field > span:first-child{ font-size:.875rem; font-weight:500 }
+.input{ width:100%; border:1px solid var(--line); background:#f7f9fa; border-radius:var(--r-input); padding:.8rem 1rem; font-size:.9375rem; outline:none; transition:border-color .2s, box-shadow .2s, background .2s }
+.input::placeholder{ color:#7b858e }
+.input:focus{ border-color:var(--ink); background:#fff; box-shadow:0 0 0 3px rgba(16,20,24,.08) }
+textarea.input{ min-height:6.5rem; resize:vertical }
+.seg{ display:flex; flex-wrap:wrap; gap:.5rem }
+.seg button{ height:2.5rem; padding:0 1rem; border-radius:999px; border:1px solid var(--line); font-size:.875rem; color:var(--muted); transition:all .2s }
+.seg button:hover{ color:var(--ink); border-color:var(--ink) }
+.seg button[aria-checked="true"]{ background:var(--ink); border-color:var(--ink); color:#fff }
+.err{ display:none; font-size:.8125rem; color:#b3261e }
+.bad .err{ display:block }
+.bad .input{ border-color:#b3261e }
+.form__foot{ display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap }
+.hint{ font-size:.8125rem; color:var(--muted) }
+.sent{ display:none; flex-direction:column; gap:.75rem; padding:1rem 0 }
+.sent h3{ font-size:1.5rem; letter-spacing:-.03em }
+.sent p{ color:var(--muted) }
+.form.done .form-body{ display:none }
+.form.done .sent{ display:flex }
+@media (min-width:900px){ .visit{ padding:8rem 2rem 3rem } .visit__grid{ grid-template-columns:1fr 1fr; gap:5rem; align-items:start } }
+
+.footer{ position:relative; z-index:10; background:var(--bg); padding:3rem 1.25rem 2rem }
+.footer__in{ max-width:80rem; margin-inline:auto; display:flex; flex-wrap:wrap; justify-content:space-between; gap:1rem; font-size:.875rem; color:var(--muted); border-top:1px solid var(--line); padding-top:2rem }
+.footer__in div{ display:flex; gap:1.5rem }
+.footer a:hover{ color:var(--ink) }
+@media (min-width:900px){ .footer{ padding-inline:2rem } }
+
+@media (prefers-reduced-motion: reduce){
+  *{ transition:none !important; animation:none !important }
+  [data-reveal]{ opacity:1; transform:none }
+}
+</style>
+</head>
+<body>
+
+<canvas id="stage" aria-hidden="true"></canvas>
+
+<header class="header">
+  <a class="logo" href="#sand" aria-label="Vitrea home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M8 3h8M9 3v4c0 2-4 4-4 9a7 7 0 0 0 14 0c0-5-4-7-4-9V3"/></svg>
+    Vitrea
+  </a>
+  <nav class="nav" aria-label="Primary">
+    <a href="#heat">Process</a>
+    <a href="#visit">Studio</a>
+    <a href="#visit">Commissions</a>
+  </nav>
+  <a class="btn btn--ink" href="#visit">Book a visit</a>
+</header>
+
+<nav class="rail" id="rail" aria-label="Chapters">
+  <button data-go="sand">Sand</button>
+  <button data-go="heat">Heat</button>
+  <button data-go="breath">Breath</button>
+  <button data-go="still">Stillness</button>
+</nav>
+
+<main id="chapters">
+  <section class="chapter" id="sand">
+    <div class="copy">
+      <h1 data-reveal style="--d:150ms">Sand becomes light.</h1>
+      <p data-reveal style="--d:300ms">A small glass studio. Each piece begins as a handful of sand and ends as light you can hold.</p>
+      <div class="ctas" data-reveal style="--d:450ms">
+        <a class="btn btn--ink" href="#visit">Book a visit</a>
+        <a class="btn btn--line" href="#heat">Watch it form
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter" id="heat">
+    <div class="copy">
+      <span class="label" data-reveal>Heat</span>
+      <h2 data-reveal style="--d:80ms">At this heat, sand forgets it was ever solid.</h2>
+      <p data-reveal style="--d:180ms">The furnace runs day and night. Glass is gathered on a steel pipe, glowing and restless.</p>
+      <div class="temp" data-reveal style="--d:260ms"><b id="tempVal">20</b><span>°C in the furnace</span></div>
+    </div>
+  </section>
+
+  <section class="chapter" id="breath">
+    <div class="copy">
+      <span class="label" data-reveal>Breath</span>
+      <h2 data-reveal style="--d:80ms">One breath gives it room.</h2>
+      <p data-reveal style="--d:180ms">Shaped by breath, gravity and a wet wooden block. No two pieces ever take the same shape.</p>
+    </div>
+  </section>
+
+  <section class="chapter" id="still">
+    <div class="copy">
+      <span class="label" data-reveal>Stillness</span>
+      <h2 data-reveal style="--d:80ms">Then it cools, slowly, for a whole day.</h2>
+      <p data-reveal style="--d:180ms">Annealing overnight removes the stress inside. What is left is quiet, clear and made to outlast us.</p>
+    </div>
+  </section>
+</main>
+
+<section class="visit" id="visit">
+  <div class="visit__grid">
+    <div>
+      <h2 data-reveal>Visit the foundry, or commission a piece.</h2>
+      <dl class="facts" data-reveal style="--d:120ms">
+        <div><dt>Open studio</dt><dd>Thursday to Saturday</dd></div>
+        <div><dt>Demonstrations</dt><dd>11:00 and 15:00</dd></div>
+        <div><dt>Commissions</dt><dd>Six to ten weeks</dd></div>
+        <div><dt>Address</dt><dd>Harbour Road 12, Bergen</dd></div>
+      </dl>
+    </div>
+    <form class="form" id="form" novalidate data-reveal style="--d:200ms">
+      <div class="form-body" style="display:flex;flex-direction:column;gap:1.25rem">
+        <div class="field" id="fKind">
+          <span id="kindLabel">I would like to</span>
+          <div class="seg" role="radiogroup" aria-labelledby="kindLabel">
+            <button type="button" role="radio" aria-checked="true">Visit the studio</button>
+            <button type="button" role="radio" aria-checked="false">Commission a piece</button>
+            <button type="button" role="radio" aria-checked="false">Join a workshop</button>
+          </div>
+        </div>
+        <label class="field" id="fName"><span>Name</span><input class="input" name="name" autocomplete="name" placeholder="Ingrid Solberg"><span class="err">Please add your name.</span></label>
+        <label class="field" id="fEmail"><span>Email</span><input class="input" name="email" type="email" autocomplete="email" placeholder="ingrid@mail.com"><span class="err">Enter a valid email address.</span></label>
+        <label class="field"><span>Anything we should know?</span><textarea class="input" name="note" placeholder="Group size, a date you have in mind, or the piece you imagine."></textarea></label>
+        <div class="form__foot">
+          <span class="hint">We reply within two days.</span>
+          <button class="btn btn--ink" type="submit" id="send">Send request</button>
+        </div>
+      </div>
+      <div class="sent" role="status">
+        <h3>Thank you. The kiln is warm.</h3>
+        <p>We will reply within two days with times that suit you.</p>
+        <button class="btn btn--line" type="button" id="again">Send another</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer__in">
+    <span>© 2026 Vitrea Glass Studio</span>
+    <div><a href="#">Instagram</a><a href="#">Journal</a><a href="#">Privacy</a></div>
+  </div>
+</footer>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+    "lenis": "https://unpkg.com/lenis@1.3.23/dist/lenis.mjs"
+  }
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import Lenis from 'lenis';
+
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const smooth = t => t * t * (3 - 2 * t);
+const $ = s => document.querySelector(s);
+
+/* ---------- Smooth scroll ---------- */
+const lenis = new Lenis({ smoothWheel: true, lerp: 0.085 });
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[href^="#"], [data-go]');
+  if (!a) return;
+  const id = a.dataset.go || a.getAttribute('href').slice(1);
+  if (!id) return;
+  e.preventDefault();
+  lenis.scrollTo('#' + id, { duration: 1.6 });
+});
+
+/* ---------- Reveals ---------- */
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+}), { rootMargin: '0px 0px -12% 0px' });
+document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
+
+/* ---------- Stage ---------- */
+const canvas = $('#stage');
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
+} catch (err) {
+  canvas.replaceWith(Object.assign(document.createElement('div'), { className: 'stage-fallback' }));
+}
+
+// Chapter states the glass passes through: sand, heat, breath, stillness.
+const STATES = [
+  { amp: .20, freq: 2.4, wobble: .15, stretch: 0,   neck: 0,   twist: 0,   rib: 0,   color: '#d8c9ab', rough: .95, trans: 0,  emissive: '#000000', emi: 0,   irid: 0, bgA: '#f3f5f6', bgB: '#dde3e7', caustic: .15 },
+  { amp: .13, freq: 1.7, wobble: 1.1, stretch: .08, neck: 0,   twist: 0,   rib: 0,   color: '#ff8a3d', rough: .22, trans: .1, emissive: '#ff4a00', emi: 2.6, irid: 0, bgA: '#fbeee4', bgB: '#eab595', caustic: .45 },
+  { amp: .04, freq: 1.4, wobble: .45, stretch: .55, neck: .38, twist: 0,   rib: 0,   color: '#ffffff', rough: .06, trans: 1,  emissive: '#000000', emi: 0,   irid: .2, bgA: '#eef4f7', bgB: '#d3e2ea', caustic: .7 },
+  { amp: .015, freq: 1.2, wobble: .1, stretch: .7, neck: .5, twist: 1.6, rib: .075, color: '#ffffff', rough: 0,   trans: 1,  emissive: '#000000', emi: 0,   irid: 1,  bgA: '#f2f4f6', bgB: '#dfe4e9', caustic: .5 },
+];
+STATES.forEach(s => ['color', 'emissive', 'bgA', 'bgB'].forEach(k => s[k] = new THREE.Color(s[k])));
+
+if (renderer){
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(32, innerWidth / innerHeight, 0.1, 50);
+  camera.position.set(0, 0, 7);
+
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
+
+  /* Backdrop: soft gradient with drifting caustic light, refracted by the glass */
+  const bgUniforms = {
+    uTime: { value: 0 }, uA: { value: new THREE.Color() }, uB: { value: new THREE.Color() },
+    uCaustic: { value: 0 }, uAspect: { value: innerWidth / innerHeight },
+  };
+  const backdrop = new THREE.Mesh(
+    new THREE.PlaneGeometry(1, 1),
+    new THREE.ShaderMaterial({
+      uniforms: bgUniforms, depthWrite: false,
+      vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
+      fragmentShader: `
+        varying vec2 vUv;
+        uniform float uTime; uniform vec3 uA; uniform vec3 uB; uniform float uCaustic; uniform float uAspect;
+        // Warped sine web: bright caustic filaments, numerically stable.
+        float caustic(vec2 p, float t){
+          for (int n = 0; n < 3; n++){
+            p += .45 * vec2(sin(p.y * 1.3 + t * (1.0 + float(n) * .3)), cos(p.x * 1.1 - t * (.8 + float(n) * .25)));
+          }
+          return pow(1.0 - abs(sin(p.x) * sin(p.y)), 14.0);
+        }
+        void main(){
+          vec2 uv = vUv; uv.x *= uAspect;
+          vec3 col = mix(uA, uB, smoothstep(0.0, 1.0, length(vUv - vec2(.68, .55)) * 1.3));
+          float c = caustic(uv * 3.2, uTime * .22);
+          col += vec3(1.0) * c * .22 * uCaustic;
+          // soft window light stripes: gives the glass something to bend
+          float stripes = smoothstep(.55, 1.0, sin(uv.x * 9.0 - uv.y * 2.0));
+          col = mix(col, col * .9 + .1, stripes * .35 * uCaustic);
+          col -= stripes * .025;
+          gl_FragColor = vec4(col, 1.0);
+        }`,
+    })
+  );
+  backdrop.position.z = -6;
+  scene.add(backdrop);
+
+  /* Glass form */
+  const geo = new THREE.SphereGeometry(1, 180, 140);
+  const base = geo.attributes.position.array.slice();
+  const pos = geo.attributes.position;
+  const mat = new THREE.MeshPhysicalMaterial({
+    color: 0xffffff, roughness: .9, metalness: 0, transmission: 0, thickness: 2.2, ior: 1.52,
+    attenuationColor: new THREE.Color('#9fd6e8'), attenuationDistance: 3.2,
+    clearcoat: .6, clearcoatRoughness: .05, specularIntensity: 1, iridescence: 0, iridescenceIOR: 1.3,
+    emissive: new THREE.Color(0), emissiveIntensity: 0, envMapIntensity: 1.1,
+  });
+  const glass = new THREE.Mesh(geo, mat);
+  const holder = new THREE.Group();
+  holder.add(glass);
+  scene.add(holder);
+
+  const key = new THREE.DirectionalLight('#ffffff', 2.2); key.position.set(3, 4, 5); scene.add(key);
+  const glow = new THREE.PointLight('#ff6a1f', 0, 8); glow.position.set(0, -1.6, 1.5); scene.add(glow);
+
+  // Floating specks of ash and dust
+  const SPECKS = 220;
+  const sGeo = new THREE.BufferGeometry();
+  const sPos = new Float32Array(SPECKS * 3), sSeed = new Float32Array(SPECKS);
+  for (let i = 0; i < SPECKS; i++){
+    sPos[i*3] = (Math.random() - .5) * 9; sPos[i*3+1] = (Math.random() - .5) * 6; sPos[i*3+2] = (Math.random() - .5) * 4;
+    sSeed[i] = Math.random();
+  }
+  sGeo.setAttribute('position', new THREE.BufferAttribute(sPos, 3));
+  const sMat = new THREE.PointsMaterial({ size: .022, color: '#6b7680', transparent: true, opacity: .45, depthWrite: false });
+  const specks = new THREE.Points(sGeo, sMat);
+  scene.add(specks);
+
+  /* Layout: object sits right on desktop, upper centre on mobile */
+  const layout = { x: 0, y: 0, s: 1 };
+  function resize(){
+    const w = innerWidth, h = innerHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h; camera.updateProjectionMatrix();
+    const dist = camera.position.z - backdrop.position.z;
+    const vh = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * dist;
+    backdrop.scale.set(vh * camera.aspect * 1.05, vh * 1.05, 1);
+    bgUniforms.uAspect.value = camera.aspect;
+    if (w >= 900){ layout.x = 1.35 * Math.min(1.25, camera.aspect / 1.6); layout.y = 0; layout.s = 1; }
+    else { layout.x = 0; layout.y = .8; layout.s = .66; }
+  }
+  addEventListener('resize', resize); resize();
+
+  /* Scroll progress across the four chapters (0..3) */
+  const chapters = $('#chapters');
+  const rail = [...document.querySelectorAll('#rail button')];
+  const railEl = $('#rail');
+  const tempVal = $('#tempVal');
+  let target = 0, prog = 0;
+  function readScroll(){
+    const r = chapters.getBoundingClientRect();
+    const span = r.height - innerHeight * .9;
+    target = clamp(-r.top / span, 0, 1) * 3;
+    const idx = clamp(Math.round(target), 0, 3);
+    rail.forEach((b, i) => b.classList.toggle('on', i === idx));
+    railEl.classList.toggle('gone', r.bottom < innerHeight * .6);
+    const heat = clamp(1 - Math.abs(target - 1) * 1.4, 0, 1);
+    tempVal.textContent = Math.round(20 + smooth(heat) * 1080).toLocaleString('en-US');
+  }
+  lenis.on('scroll', readScroll); readScroll();
+
+  /* Drag to turn the piece */
+  let spin = 0, spinV = 0, tilt = 0, dragging = false, lastX = 0, lastY = 0;
+  addEventListener('pointerdown', e => {
+    if (e.target.closest('a,button,input,textarea,form,.header')) return;
+    dragging = true; lastX = e.clientX; lastY = e.clientY;
+  });
+  addEventListener('pointermove', e => {
+    if (!dragging) return;
+    spinV = (e.clientX - lastX) * .006; spin += spinV;
+    tilt = clamp(tilt + (e.clientY - lastY) * .003, -.5, .5);
+    lastX = e.clientX; lastY = e.clientY;
+  });
+  addEventListener('pointerup', () => dragging = false);
+  addEventListener('pointercancel', () => dragging = false);
+
+  /* Interpolate chapter states */
+  const cur = {};
+  const tmpC = new THREE.Color();
+  function blend(p){
+    const i = Math.min(2, Math.floor(p)), t = smooth(clamp(p - i, 0, 1));
+    const a = STATES[i], b = STATES[i + 1];
+    for (const k in a){
+      if (a[k] instanceof THREE.Color){ cur[k] = (cur[k] || new THREE.Color()).copy(a[k]).lerp(b[k], t); }
+      else cur[k] = lerp(a[k], b[k], t);
+    }
+  }
+
+  const clock = new THREE.Clock();
+  let intro = RM ? 1 : 0;
+  function frame(){
+    const dt = Math.min(clock.getDelta(), .05), time = clock.elapsedTime;
+    lenis.raf(time * 1000);
+    prog += (target - prog) * (RM ? 1 : .06);
+    intro = Math.min(1, intro + dt * .6);
+    blend(prog);
+
+    // Deform the sphere into the current shape
+    const tt = RM ? 0 : time * cur.wobble;
+    const amp = cur.amp + (1 - smooth(intro)) * .35;
+    for (let v = 0; v < pos.count; v++){
+      const k = v * 3;
+      let x = base[k], y = base[k+1], z = base[k+2];
+      const f = cur.freq;
+      const n = Math.sin(x*f + tt) * Math.sin(y*f*1.3 + tt*.7) * Math.sin(z*f*.9 - tt*.5)
+              + .5 * Math.sin((x + y) * f * 1.9 - tt * 1.2) * Math.cos(z * f * 1.4 + tt * .6);
+      const d = 1 + n * amp;
+      x *= d; y *= d; z *= d;
+      // vase profile: pinch a neck in the upper half, widen the belly
+      const prof = 1 - cur.neck * Math.exp(-Math.pow((y - .55) * 3.2, 2)) + cur.neck * .35 * Math.exp(-Math.pow((y + .35) * 2.2, 2));
+      const rib = 1 + cur.rib * Math.cos(Math.atan2(z, x) * 12);
+      x *= prof * rib; z *= prof * rib;
+      y *= 1 + cur.stretch;
+      // twist around the vertical axis
+      const ang = y * cur.twist, ca = Math.cos(ang), sa = Math.sin(ang);
+      pos.array[k] = x * ca - z * sa; pos.array[k+1] = y; pos.array[k+2] = x * sa + z * ca;
+    }
+    pos.needsUpdate = true;
+    geo.computeVertexNormals();
+
+    mat.color.copy(cur.color);
+    mat.roughness = cur.rough;
+    mat.transmission = cur.trans;
+    mat.emissive.copy(cur.emissive);
+    mat.emissiveIntensity = cur.emi;
+    mat.iridescence = cur.irid;
+    glow.intensity = cur.emi * 6;
+    bgUniforms.uA.value.copy(cur.bgA); bgUniforms.uB.value.copy(cur.bgB);
+    bgUniforms.uCaustic.value = cur.caustic;
+    bgUniforms.uTime.value = RM ? 0 : time;
+
+    if (!dragging){ spinV *= .94; spin += spinV + (RM ? 0 : dt * .18); tilt *= .96; }
+    holder.rotation.set(tilt, spin, 0);
+    holder.position.set(layout.x, layout.y + (RM ? 0 : Math.sin(time * .6) * .06), 0);
+    holder.scale.setScalar(layout.s * lerp(.6, 1, smooth(intro)));
+
+    const sp = sGeo.attributes.position.array;
+    for (let i = 0; i < SPECKS; i++){
+      sp[i*3+1] += dt * (.05 + sSeed[i] * .12) * (1 + cur.emi * 1.5);
+      sp[i*3] += Math.sin(time * .5 + sSeed[i] * 20) * dt * .03;
+      if (sp[i*3+1] > 3) sp[i*3+1] = -3;
+    }
+    sGeo.attributes.position.needsUpdate = true;
+    sMat.color.set(cur.emi > .2 ? tmpC.set('#e0703a') : tmpC.set('#6b7680'));
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+} else {
+  const raf = t => { lenis.raf(t); requestAnimationFrame(raf); };
+  requestAnimationFrame(raf);
+}
+
+/* ---------- Visit form ---------- */
+const form = $('#form');
+form.querySelectorAll('.seg').forEach(g => g.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  g.querySelectorAll('button').forEach(x => x.setAttribute('aria-checked', String(x === b)));
+}));
+form.addEventListener('input', e => e.target.closest('.field')?.classList.remove('bad'));
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  const checks = [
+    ['#fName', form.name.value.trim().length > 1],
+    ['#fEmail', /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(form.email.value.trim())],
+  ];
+  let first = null;
+  checks.forEach(([sel, ok]) => { const f = $(sel); f.classList.toggle('bad', !ok); if (!ok && !first) first = f; });
+  if (first){ first.querySelector('input').focus(); return; }
+  const btn = $('#send'); btn.disabled = true; btn.textContent = 'Sending…';
+  setTimeout(() => { form.classList.add('done'); btn.disabled = false; btn.textContent = 'Send request'; }, 900);
+});
+$('#again').addEventListener('click', () => { form.reset(); form.classList.remove('done'); });
+</script>
+</body>
+</html>
