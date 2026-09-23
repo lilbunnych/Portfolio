@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio | Websites and apps</title>
+<meta name="description" content="Twelve demo projects: landing pages, WebGL scroll stories, web apps, a mobile app for iOS and Android, and a desktop app for macOS, Windows and Linux.">
+<meta name="theme-color" content="#f6f6f4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#101112" media="(prefers-color-scheme: dark)">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light dark;
+  --bg:#f6f6f4; --card:#ffffff; --ink:#131415; --muted:#63666b; --faint:#9a9da2; --line:#e4e4e0; --chip:#eeeeea;
+  --accent:#e4572e; --sans:'Geist', system-ui, sans-serif; --mono:'Geist Mono', ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#101112; --card:#17181a; --ink:#ececea; --muted:#9a9ea4; --faint:#6b6f75; --line:#26282b; --chip:#1f2123; --accent:#ff7a52 }
+}
+*{ box-sizing:border-box; margin:0; padding:0 }
+html{ -webkit-font-smoothing:antialiased }
+body{ background:var(--bg); color:var(--ink); font-family:var(--sans); line-height:1.5 }
+a{ color:inherit }
+button{ font:inherit; color:inherit; background:none; border:0; cursor:pointer }
+:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:6px }
+.wrap{ max-width:80rem; margin:0 auto; padding:0 1.25rem }
+@media (min-width:768px){ .wrap{ padding:0 2.5rem } }
+
+header.top{ display:flex; justify-content:space-between; align-items:center; padding:1.5rem 0 }
+.mark{ display:flex; align-items:center; gap:.6rem; font-weight:600 }
+.mark i{ width:.75rem; height:.75rem; border-radius:3px; background:var(--accent); display:inline-block }
+.top a.cta{ font-size:.9rem; text-decoration:none; padding:.55rem 1rem; border:1px solid var(--line); border-radius:999px }
+.top a.cta:hover{ border-color:var(--ink) }
+
+.intro{ padding:4rem 0 3rem; display:grid; gap:2rem }
+.intro h1{ font-size:clamp(2.5rem,6vw,4.75rem); line-height:1; letter-spacing:-.045em; font-weight:600; max-width:14ch }
+.intro p{ font-size:1.125rem; color:var(--muted); max-width:44ch }
+.facts{ display:flex; flex-wrap:wrap; gap:.5rem 2rem; font-family:var(--mono); font-size:.8125rem; color:var(--muted) }
+.facts b{ color:var(--ink); font-weight:500 }
+@media (min-width:960px){ .intro{ grid-template-columns:1.2fr .8fr; align-items:end } }
+
+.filters{ position:sticky; top:0; z-index:5; display:flex; gap:.5rem; overflow-x:auto; padding:.9rem 0; background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); scrollbar-width:none }
+.filters button{ flex-shrink:0; padding:.5rem 1rem; border-radius:999px; background:var(--chip); color:var(--muted); font-size:.9rem; transition:all .2s }
+.filters button:hover{ color:var(--ink) }
+.filters button[aria-pressed="true"]{ background:var(--ink); color:var(--bg) }
+
+.grid{ display:grid; gap:1.25rem; padding:1rem 0 5rem }
+@media (min-width:720px){ .grid{ grid-template-columns:repeat(2,1fr) } }
+@media (min-width:1120px){ .grid{ grid-template-columns:repeat(3,1fr) } }
+.card{ display:flex; flex-direction:column; background:var(--card); border:1px solid var(--line); border-radius:1.25rem; overflow:hidden; transition:transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s }
+.card:hover{ transform:translateY(-4px); box-shadow:0 24px 50px -30px rgba(0,0,0,.35) }
+.card[hidden]{ display:none }
+.shot{ position:relative; aspect-ratio:16/10; overflow:hidden; background:var(--chip); border-bottom:1px solid var(--line) }
+.shot img{ width:100%; height:100%; object-fit:cover; object-position:top; transition:transform .8s cubic-bezier(.16,1,.3,1) }
+.card:hover .shot img{ transform:scale(1.03) }
+.shot.phone{ display:grid; place-items:center; background:linear-gradient(160deg, #1f7a55, #0b3a28) }
+.shot.phone img{ width:auto; height:92%; border-radius:1.25rem; box-shadow:0 20px 40px rgba(0,0,0,.35); object-fit:contain }
+.demo-tag{ position:absolute; left:.75rem; top:.75rem; background:#ffd400; color:#111; font:800 .7rem/1 system-ui, sans-serif; letter-spacing:.14em; padding:.4rem .55rem; border-radius:.3rem; border:2px solid #111 }
+.body{ padding:1.25rem 1.25rem 1.1rem; display:flex; flex-direction:column; gap:.6rem; flex:1 }
+.meta{ display:flex; justify-content:space-between; gap:.5rem; font-family:var(--mono); font-size:.75rem; color:var(--faint) }
+.card h2{ font-size:1.25rem; letter-spacing:-.02em; font-weight:600 }
+.card p{ color:var(--muted); font-size:.95rem }
+.tags{ display:flex; flex-wrap:wrap; gap:.35rem; margin-top:.25rem }
+.tags li{ list-style:none; font-size:.75rem; padding:.25rem .6rem; border-radius:999px; background:var(--chip); color:var(--muted) }
+.links{ margin-top:auto; padding-top:.75rem; display:flex; flex-wrap:wrap; gap:.5rem }
+.links a{ font-size:.875rem; font-weight:500; text-decoration:none; padding:.5rem .9rem; border-radius:999px; border:1px solid var(--line) }
+.links a.primary{ background:var(--ink); color:var(--bg); border-color:var(--ink) }
+.links a:hover{ border-color:var(--ink) }
+
+footer{ border-top:1px solid var(--line); padding:2rem 0 3rem; color:var(--muted); font-size:.875rem; display:flex; flex-wrap:wrap; justify-content:space-between; gap:1rem }
+@media (prefers-reduced-motion: reduce){ *{ transition:none !important } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="mark"><i aria-hidden="true"></i>Portfolio</div>
+    <a class="cta" href="mailto:hello@example.com">Get in touch</a>
+  </header>
+
+  <section class="intro">
+    <div>
+      <h1>Websites and apps, built end to end.</h1>
+    </div>
+    <div>
+      <p>Twelve demo projects: landing pages, WebGL scroll stories, web apps, a mobile app for iOS and Android, and a desktop app for macOS, Windows and Linux.</p>
+      <div class="facts" style="margin-top:1.25rem">
+        <span><b>12</b> projects</span><span><b>9</b> stacks</span><span><b>3</b> rebuilt from specs</span>
+      </div>
+    </div>
+  </section>
+
+  <nav class="filters" aria-label="Filter projects">
+    <button data-f="all" aria-pressed="true">All</button>
+    <button data-f="site">Websites</button>
+    <button data-f="webgl">WebGL</button>
+    <button data-f="app">Web apps</button>
+    <button data-f="native">Mobile and desktop</button>
+  </nav>
+
+  <main class="grid" id="grid"></main>
+
+  <footer>
+    <span>Every project here is a demo with a fictional brand. Each page carries a "DEMO" notice.</span>
+    <span>Source for every project is in its own folder of this repository.</span>
+  </footer>
+</div>
+
+<script>
+const PROJECTS = [
+  { id:'01', dir:'first-demo', title:'Lumora', kind:'Studio landing page', text:'Liquid cursor reveal over a photo hero, spring physics, intro loader and a request modal.', tags:['HTML','CSS','JS','Lenis'], f:['site'], origin:'Rebuilt from spec', open:'first-demo/' },
+  { id:'02', dir:'second-demo', title:'Tessel', kind:'Studio landing page', text:'Pixel mosaic hero, pinned horizontal process, cursor image preview and a project drawer.', tags:['HTML','CSS','JS','Lenis'], f:['site'], origin:'Original', open:'second-demo/' },
+  { id:'03', dir:'third-demo', title:'Laocoön', kind:'WebGL scroll story', text:'Camera orbits a bronze horse over a liquid metal shader while you scroll.', tags:['Three.js','GLSL'], f:['site','webgl'], origin:'Rebuilt from spec', open:'third-demo/' },
+  { id:'04', dir:'fourth-demo', title:'Vitrea', kind:'WebGL scroll story', text:'Procedural glass that morphs from sand to a fluted vase, refracting caustic light.', tags:['Three.js','Lenis'], f:['site','webgl'], origin:'Original', open:'fourth-demo/' },
+  { id:'05', dir:'fifth-demo', title:'Loopstack', kind:'Single-screen hero', text:'Video hero with masked word and letter reveals and a glass cursor pill.', tags:['HTML','CSS','JS'], f:['site'], origin:'Rebuilt from spec', open:'fifth-demo/' },
+  { id:'06', dir:'sixth-demo', title:'Driftnote', kind:'Waitlist page', text:'Halftone sound field that ripples with your cursor and typing, plus a live countdown.', tags:['Canvas 2D','JS'], f:['site'], origin:'Original', open:'sixth-demo/' },
+  { id:'07', dir:'seventh-demo', title:'Fjordhus', kind:'Booking site', text:'Cabin booking with live price calculation, capacity checks and validation.', tags:['Astro','Tailwind'], f:['site','app'], origin:'Original', open:'seventh-demo/dist/' },
+  { id:'08', dir:'eighth-demo', title:'Ledgerly', kind:'Finance dashboard', text:'Charts, budgets and a searchable, sortable transactions table with dark mode.', tags:['React','TypeScript','Recharts'], f:['app'], origin:'Original', open:'eighth-demo/dist/' },
+  { id:'09', dir:'ninth-demo', title:'Tempo', kind:'Installable PWA', text:'Focus timer with tasks and stats. Installs on any phone or computer and works offline.', tags:['Svelte 5','PWA'], f:['app','native'], origin:'Original', open:'ninth-demo/dist/' },
+  { id:'10', dir:'tenth-demo', title:'Understory', kind:'Editorial long read', text:'Reading progress, live contents, footnote popovers and three reading themes.', tags:['HTML','CSS','JS'], f:['site'], origin:'Original', open:'tenth-demo/' },
+  { id:'11', dir:'eleventh-demo', title:'Sprout', kind:'Mobile app, iOS and Android', text:'Habit tracker with streaks, a 12-week heatmap and haptics. One codebase, also runs on the web.', tags:['Expo','React Native','TypeScript'], f:['native'], origin:'Original', open:'eleventh-demo/dist/', phone:true, extra:{ label:'Run on your phone', href:'eleventh-demo/README.md' } },
+  { id:'12', dir:'twelfth-demo', title:'Jot', kind:'Desktop app', text:'Markdown notes with live preview and autosave. Builds for macOS, Windows and Linux on x64 and ARM64.', tags:['Electron','JS'], f:['native'], origin:'Original', open:null, extra:{ label:'Downloads and build', href:'twelfth-demo/README.md' } },
+];
+
+const grid = document.getElementById('grid');
+grid.innerHTML = PROJECTS.map(p => `
+  <article class="card" data-f="${p.f.join(' ')}">
+    <div class="shot${p.phone ? ' phone' : ''}">
+      <img src="_hub/shots/${p.id}.jpg" alt="Screenshot of ${p.title}" loading="lazy">
+      <span class="demo-tag">DEMO</span>
+    </div>
+    <div class="body">
+      <div class="meta"><span>${p.id} · ${p.kind}</span><span>${p.origin}</span></div>
+      <h2>${p.title}</h2>
+      <p>${p.text}</p>
+      <ul class="tags">${p.tags.map(t => `<li>${t}</li>`).join('')}</ul>
+      <div class="links">
+        ${p.open ? `<a class="primary" href="${p.open}">Open demo</a>` : ''}
+        ${p.extra ? `<a ${p.open ? '' : 'class="primary"'} href="${p.extra.href}">${p.extra.label}</a>` : ''}
+        <a href="${p.dir}/">Source</a>
+      </div>
+    </div>
+  </article>`).join('');
+
+document.querySelectorAll('.filters button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.filters button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  const f = b.dataset.f;
+  grid.querySelectorAll('.card').forEach(c => { c.hidden = f !== 'all' && !c.dataset.f.split(' ').includes(f); });
+}));
+</script>
+</body>
+</html>

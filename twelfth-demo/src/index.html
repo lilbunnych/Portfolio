@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https:; font-src 'self'">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jot</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="drag"></div>
+    <div class="side-head">
+      <label class="search"><span class="sr">Search notes</span><input id="search" placeholder="Search notes" autocomplete="off"></label>
+      <button id="new" class="icon-btn" title="New note (Ctrl/Cmd+N)" aria-label="New note">+</button>
+    </div>
+    <ul id="list" class="list" aria-label="Notes"></ul>
+    <p id="empty" class="empty" hidden>No notes match your search.</p>
+  </aside>
+
+  <main class="main">
+    <header class="toolbar">
+      <input id="title" class="title" placeholder="Untitled" aria-label="Note title">
+      <div class="seg" role="group" aria-label="View mode">
+        <button data-mode="edit">Editor</button>
+        <button data-mode="split">Split</button>
+        <button data-mode="preview">Preview</button>
+      </div>
+      <button id="export" class="ghost" title="Export as Markdown (Ctrl/Cmd+E)">Export</button>
+      <button id="delete" class="ghost danger" title="Delete note">Delete</button>
+    </header>
+    <section id="panes" class="panes" data-mode="split">
+      <textarea id="editor" class="editor" spellcheck="true" aria-label="Markdown editor"></textarea>
+      <article id="preview" class="preview md" aria-label="Preview"></article>
+    </section>
+    <footer class="status"><span id="words">0 words</span><span id="saved">Saved</span></footer>
+  </main>
+</div>
+<div class="demo" role="note"><span class="tag">DEMO</span><span class="txt">Portfolio demo · fictional app · not a real product</span></div>
+
+<script src="../node_modules/marked/lib/marked.umd.js"></script>
+<script src="../node_modules/dompurify/dist/purify.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

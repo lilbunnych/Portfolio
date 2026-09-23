@@ -1,0 +1,63 @@
+{
+  "name": "jot-notes",
+  "productName": "Jot",
+  "version": "1.0.0",
+  "description": "Jot: a small Markdown notes app (portfolio demo).",
+  "author": "Portfolio demo",
+  "license": "MIT",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist:mac": "electron-builder --mac --x64 --arm64",
+    "dist:win": "electron-builder --win --x64 --arm64",
+    "dist:linux": "electron-builder --linux --x64 --arm64",
+    "dist:all": "electron-builder --mac --win --linux --x64 --arm64"
+  },
+  "build": {
+    "appId": "com.portfolio.jot",
+    "productName": "Jot",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "src/**/*",
+      "node_modules/marked/lib/marked.umd.js",
+      "node_modules/dompurify/dist/purify.min.js",
+      "package.json"
+    ],
+    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
+    "mac": {
+      "target": [
+        "zip"
+      ],
+      "category": "public.app-category.productivity",
+      "icon": "build/icon.png",
+      "identity": null
+    },
+    "win": {
+      "target": [
+        "zip"
+      ],
+      "icon": "build/icon.png",
+      "signAndEditExecutable": false
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "tar.gz"
+      ],
+      "icon": "build/icon.png",
+      "category": "Office",
+      "maintainer": "Portfolio demo"
+    }
+  },
+  "dependencies": {
+    "dompurify": "^3.4.16",
+    "marked": "^18.0.14"
+  },
+  "devDependencies": {
+    "electron": "^44.4.5",
+    "electron-builder": "^26.15.3"
+  }
+}
