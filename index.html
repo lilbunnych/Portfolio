@@ -162,10 +162,10 @@ const PROJECTS = [
   { id:'10', dir:'tenth-demo', title:'Understory', tags:['HTML','CSS','JS'], f:['site'], open:'tenth-demo/',
     en:{ kind:'Editorial long read', text:'Reading progress, live contents, footnote popovers and three reading themes.' },
     ru:{ kind:'Журнальный лонгрид', text:'Прогресс чтения, живое оглавление, всплывающие сноски и три темы для чтения.' } },
-  { id:'11', dir:'eleventh-demo', title:'Sprout', tags:['Expo','React Native','TypeScript'], f:['native'], open:'eleventh-demo/dist/', phone:true, extra:{ key:'phone', href:'eleventh-demo/README.md' },
+  { id:'11', dir:'eleventh-demo', title:'Sprout', tags:['Expo','React Native','TypeScript'], f:['native'], open:'eleventh-demo/dist/', phone:true, extra:{ key:'phone', href:'https://github.com/lilbunnych/Portfolio/tree/main/eleventh-demo#run-on-your-phone-no-build-needed' },
     en:{ kind:'Mobile app, iOS and Android', text:'Habit tracker with streaks, a 12-week heatmap and haptics. One codebase, also runs on the web.' },
     ru:{ kind:'Мобильное приложение, iOS и Android', text:'Трекер привычек: серии, тепловая карта за 12 недель, вибро-отклик. Один код, работает и в браузере.' } },
-  { id:'12', dir:'twelfth-demo', title:'Jot', tags:['Electron','JS'], f:['native'], open:null, extra:{ key:'downloads', href:'twelfth-demo/README.md' },
+  { id:'12', dir:'twelfth-demo', title:'Jot', tags:['Electron','JS'], f:['native'], open:null, extra:{ key:'downloads', href:'https://github.com/lilbunnych/Portfolio/releases/latest' },
     en:{ kind:'Desktop app', text:'Markdown notes with live preview and autosave. Builds for macOS, Windows and Linux on x64 and ARM64.' },
     ru:{ kind:'Десктопное приложение', text:'Заметки в Markdown с живым превью и автосохранением. Сборки для macOS, Windows и Linux, x64 и ARM64.' } },
 ];
@@ -195,7 +195,7 @@ function render(lang) {
         <div class="links">
           ${p.open ? `<a class="primary" href="${p.open}">${t.open}</a>` : ''}
           ${p.extra ? `<a ${p.open ? '' : 'class="primary"'} href="${p.extra.href}">${t[p.extra.key]}</a>` : ''}
-          <a href="${p.dir}/">${t.source}</a>
+          <a href="https://github.com/lilbunnych/Portfolio/tree/main/${p.dir}">${t.source}</a>
         </div>
       </div>
     </article>`;

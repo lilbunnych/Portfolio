@@ -46,7 +46,7 @@ npx eas-cli@latest build --profile production --platform all    # store builds (
 ## Web build for the portfolio hub
 
 ```bash
-EXPO_BASE_URL=/eleventh-demo/dist npx expo export --platform web
+EXPO_BASE_URL=/Portfolio/eleventh-demo/dist npx expo export --platform web   # path on GitHub Pages
 ```
 
 ## Note
