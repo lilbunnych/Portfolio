@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="paper">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The forest in the car park | Understory</title>
+<meta name="description" content="How a planting method from 1970s Japan turned a strip of tarmac into a forest, and what it can and cannot do for cities.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/*
+  Editorial long read. Serif is justified here: this is a publication.
+  Themes: paper (default), sepia, night. Reader can change text size.
+*/
+:root{ --measure: 38rem; --size: 1.25rem; --serif:'EB Garamond', Georgia, serif; --sans:'Instrument Sans', system-ui, sans-serif }
+[data-theme="paper"]{ --bg:#fbfbf9; --text:#1b1d1c; --muted:#646a66; --line:#e3e5e1; --accent:#2f6b4f; --card:#f1f3ef }
+[data-theme="sepia"]{ --bg:#f3ead8; --text:#3b2f22; --muted:#7a6a55; --line:#e2d5bd; --accent:#8a4b1d; --card:#eadfc9 }
+[data-theme="night"]{ --bg:#141816; --text:#e3e6e1; --muted:#98a09a; --line:#2a302c; --accent:#8fcca8; --card:#1c211e }
+*{ box-sizing:border-box; margin:0; padding:0 }
+html{ -webkit-font-smoothing:antialiased; scroll-padding-top:5rem }
+body{ background:var(--bg); color:var(--text); font-family:var(--serif); font-size:var(--size); line-height:1.65; transition:background .3s, color .3s; padding-bottom:46px }
+a{ color:var(--accent) }
+:focus-visible{ outline:2px solid var(--accent); outline-offset:3px }
+button{ font:inherit; color:inherit; background:none; border:0; cursor:pointer }
+img{ display:block; max-width:100% }
+
+/* Reading progress + toolbar */
+.progress{ position:fixed; top:0; left:0; height:3px; width:100%; background:var(--accent); transform-origin:left; transform:scaleX(0); z-index:50 }
+.bar{ position:sticky; top:0; z-index:40; display:flex; justify-content:space-between; align-items:center; gap:1rem; padding:.8rem clamp(1rem,4vw,2.5rem); background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-bottom:1px solid var(--line); font-family:var(--sans); font-size:.875rem }
+.mast{ font-family:var(--serif); font-size:1.4rem; font-weight:600; letter-spacing:-.01em; text-decoration:none; color:var(--text) }
+.tools{ display:flex; align-items:center; gap:.25rem }
+.tools button{ height:2.25rem; min-width:2.25rem; padding:0 .6rem; border-radius:999px; color:var(--muted) }
+.tools button:hover, .tools button[aria-pressed="true"]{ color:var(--text); background:var(--card) }
+.swatch{ width:1rem; height:1rem; border-radius:50%; display:inline-block; border:1px solid var(--muted); vertical-align:middle }
+.sep{ width:1px; height:1.2rem; background:var(--line); margin:0 .35rem }
+.time{ color:var(--muted) }
+@media (max-width:640px){ .time, .sep.opt{ display:none } }
+
+/* Header */
+.head{ max-width:62rem; margin:0 auto; padding:clamp(3rem,8vw,6rem) 1.25rem 2rem; text-align:center }
+.kicker{ font-family:var(--sans); font-size:.8rem; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--accent) }
+h1{ margin-top:1rem; font-weight:500; font-size:clamp(2.6rem,6.5vw,5rem); line-height:1.02; letter-spacing:-.02em }
+.dek{ margin:1.25rem auto 0; max-width:34rem; font-size:1.3rem; font-style:italic; color:var(--muted); line-height:1.45 }
+.byline{ margin-top:1.75rem; font-family:var(--sans); font-size:.875rem; color:var(--muted) }
+.byline b{ color:var(--text); font-weight:600 }
+.lead{ max-width:72rem; margin:0 auto; padding:0 1.25rem }
+.lead img{ width:100%; aspect-ratio:16/8; object-fit:cover; border-radius:.5rem }
+figcaption{ margin-top:.6rem; font-family:var(--sans); font-size:.8rem; color:var(--muted) }
+
+/* Body with sticky contents */
+.layout{ max-width:72rem; margin:0 auto; padding:3rem 1.25rem 4rem; display:grid; gap:2rem }
+@media (min-width:1100px){ .layout{ grid-template-columns:14rem minmax(0,var(--measure)) 1fr; column-gap:4rem } }
+.toc{ display:none; font-family:var(--sans); font-size:.85rem }
+@media (min-width:1100px){ .toc{ display:block; position:sticky; top:5.5rem; align-self:start } }
+.toc p{ color:var(--muted); margin-bottom:.75rem; font-weight:600 }
+.toc a{ display:block; padding:.35rem 0 .35rem .8rem; border-left:2px solid var(--line); color:var(--muted); text-decoration:none; line-height:1.35 }
+.toc a.on{ color:var(--text); border-left-color:var(--accent) }
+
+article{ max-width:var(--measure); width:100% }
+article > p{ margin-bottom:1.15em; hyphens:auto }
+article > p:first-of-type::first-letter{ float:left; font-size:4.1em; line-height:.82; padding:.06em .08em 0 0; color:var(--accent); font-weight:500 }
+article h2{ margin:2.2em 0 .6em; font-size:1.75em; font-weight:500; line-height:1.15; letter-spacing:-.01em }
+blockquote{ margin:1.8em 0; padding:0; font-size:1.55em; line-height:1.25; font-style:italic; color:var(--accent) }
+blockquote cite{ display:block; margin-top:.6em; font-family:var(--sans); font-style:normal; font-size:.5em; color:var(--muted) }
+article figure{ margin:2em 0 }
+article figure img{ border-radius:.4rem; width:100%; aspect-ratio:3/2; object-fit:cover }
+@media (min-width:1100px){ article figure.wide{ width:calc(100% + 18rem); max-width:none } }
+.aside{ margin:2em 0; padding:1.25em 1.4em; background:var(--card); border-radius:.6rem; font-family:var(--sans); font-size:.8em; line-height:1.55 }
+.aside h3{ font-size:1em; margin-bottom:.5em }
+.aside ol{ padding-left:1.2em; display:grid; gap:.35em }
+
+/* Footnotes */
+sup{ line-height:0 }
+sup button{ font-family:var(--sans); font-size:.7em; font-weight:600; color:var(--accent); padding:.1em .3em; line-height:1; border-radius:.3em }
+sup button:hover{ background:var(--card) }
+.fn-pop{ position:absolute; z-index:60; max-width:22rem; padding:.9rem 1rem; background:var(--text); color:var(--bg); border-radius:.6rem; font-family:var(--sans); font-size:.85rem; line-height:1.5; box-shadow:0 12px 30px rgba(0,0,0,.2) }
+.notes{ margin-top:3rem; padding-top:1.5rem; border-top:1px solid var(--line); font-family:var(--sans); font-size:.85rem; color:var(--muted) }
+.notes ol{ padding-left:1.2rem; display:grid; gap:.5rem }
+
+.end{ margin-top:3rem; display:flex; flex-wrap:wrap; gap:.75rem; align-items:center; font-family:var(--sans); font-size:.9rem }
+.pill{ border:1px solid var(--line); border-radius:999px; padding:.6rem 1.1rem }
+.pill:hover{ border-color:var(--text) }
+.copied{ color:var(--accent) }
+footer{ border-top:1px solid var(--line); padding:2rem 1.25rem; text-align:center; font-family:var(--sans); font-size:.8rem; color:var(--muted) }
+@media (prefers-reduced-motion: reduce){ *{ transition:none !important } }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress" aria-hidden="true"></div>
+
+<div class="bar">
+  <a class="mast" href="#top">Understory</a>
+  <div class="tools" role="toolbar" aria-label="Reading settings">
+    <span class="time" id="readTime"></span>
+    <span class="sep opt"></span>
+    <button data-size="-1" aria-label="Smaller text">A−</button>
+    <button data-size="1" aria-label="Larger text">A+</button>
+    <span class="sep"></span>
+    <button data-theme-set="paper" aria-label="Paper theme"><span class="swatch" style="background:#fbfbf9"></span></button>
+    <button data-theme-set="sepia" aria-label="Sepia theme"><span class="swatch" style="background:#f3ead8"></span></button>
+    <button data-theme-set="night" aria-label="Night theme"><span class="swatch" style="background:#141816"></span></button>
+  </div>
+</div>
+
+<header class="head" id="top">
+  <p class="kicker">Cities · Long read</p>
+  <h1>The forest in the car park</h1>
+  <p class="dek">A planting method from 1970s Japan is turning strips of tarmac into dense young woods. What can a forest the size of a tennis court really do?</p>
+  <p class="byline">By <b>Ada Lindgren</b> · Photographs by <b>Tomas Rey</b> · 23 September 2026</p>
+</header>
+
+<figure class="lead">
+  <img src="https://picsum.photos/id/28/1800/900" alt="A dense stand of young trees along a rocky stream" fetchpriority="high">
+  <figcaption>Three years after planting, the first saplings on the site already close their canopy in summer.</figcaption>
+</figure>
+
+<div class="layout">
+  <nav class="toc" aria-label="Contents">
+    <p>Contents</p>
+    <a href="#s1">A strip of tarmac</a>
+    <a href="#s2">The Miyawaki method</a>
+    <a href="#s3">What the numbers say</a>
+    <a href="#s4">The honest limits</a>
+    <a href="#s5">Planting your own</a>
+  </nav>
+
+  <article id="article">
+    <p>On a Saturday in March, forty volunteers pulled up the asphalt behind a supermarket on the edge of the city. By the evening they had planted six hundred saplings in a plot not much larger than a tennis court: oak, rowan, hazel, wild cherry and a dozen other native species, packed so tightly that you could not walk between them.</p>
+    <p>Three summers later the plot is taller than the fence around it. Blackbirds nest in it. On hot afternoons the air on its shaded side is noticeably cooler, and the delivery drivers who park beside it have started to eat their lunch there.</p>
+
+    <h2 id="s1">A strip of tarmac</h2>
+    <p>The site had been a car park overflow for twenty years. Rainwater ran off it into a storm drain, and in August the surface reached temperatures that made the neighbouring flats uncomfortable at night. When the supermarket reduced its parking, the council offered the strip to a residents' group on the condition that it would not become another lawn to mow.</p>
+    <p>The group chose a method they had read about online: dense, multi-layered planting of native species, designed to reach something like a mature woodland structure within a few decades instead of a century.</p>
+
+    <blockquote>“We did not want a park. We wanted something that would look after itself once we stopped looking after it.”<cite>Mara Holt, residents' group coordinator</cite></blockquote>
+
+    <h2 id="s2">The Miyawaki method</h2>
+    <p>The approach is named after the botanist Akira Miyawaki, who spent decades studying the remnant forests that survive around shrines and temples in Japan.<sup><button data-fn="1" aria-label="Footnote 1">1</button></sup> He argued that those small patches showed what the land would grow if left alone, and that planting the same species, densely and all at once, could shortcut the slow process of natural succession.</p>
+    <p>In practice that means three to five saplings per square metre, a thick layer of mulch, and a deep preparation of the soil. For the first two or three years the plot is weeded and watered. After that, the idea is that it is left entirely alone.</p>
+
+    <figure class="wide">
+      <img loading="lazy" src="https://picsum.photos/id/17/1600/1000" alt="A narrow path through tall grass towards a line of trees">
+      <figcaption>Planting is dense on purpose: saplings compete for light and grow upward quickly.</figcaption>
+    </figure>
+
+    <h2 id="s3">What the numbers say</h2>
+    <p>Supporters often claim that these forests grow ten times faster and become thirty times denser than conventional plantations. Those figures come mostly from early projects and from the method's own advocates, and independent studies have been more cautious.<sup><button data-fn="2" aria-label="Footnote 2">2</button></sup></p>
+    <p>What independent monitoring does tend to confirm is more modest and still useful: fast early height growth, high survival where the soil is well prepared, and a clear local cooling effect on the shaded side of a plot during heat waves.</p>
+
+    <div class="aside">
+      <h3>What a small plot can do</h3>
+      <ol>
+        <li>Shade and cool the ground and air close to it.</li>
+        <li>Soak up rain that would otherwise run straight into drains.</li>
+        <li>Give birds and insects a dense, sheltered patch in a hard landscape.</li>
+        <li>Give neighbours a reason to meet, plant and argue about trees.</li>
+      </ol>
+    </div>
+
+    <h2 id="s4">The honest limits</h2>
+    <p>A forest the size of a tennis court will not offset a city's emissions. The carbon it stores over its lifetime is small next to a single year of a household's energy use, and ecologists warn against treating tiny forests as a substitute for protecting large, old woodland.<sup><button data-fn="3" aria-label="Footnote 3">3</button></sup></p>
+    <p>There are practical risks too. Dense planting on poorly prepared ground can fail, and a plot that is abandoned in its second summer drought may lose most of its saplings.</p>
+
+    <figure>
+      <img loading="lazy" src="https://picsum.photos/id/212/1400/933" alt="A quiet city street after rain">
+      <figcaption>Most tiny forests are planted on land that no one else wanted: verges, school corners, car park edges.</figcaption>
+    </figure>
+
+    <h2 id="s5">Planting your own</h2>
+    <p>The residents' group has published its notes for anyone who wants to try. Their advice is unglamorous: start with the soil, choose species that already grow within a few kilometres, plant in the dormant season, and line up volunteers for watering before the first summer, not during it.</p>
+    <p>And be patient with the neighbours. The first year, their plot looked like a muddy rectangle of sticks. It was only in the third summer, when the canopy closed and the blackbirds arrived, that people stopped asking when the real trees would be planted.</p>
+
+    <section class="notes" aria-label="Notes">
+      <ol>
+        <li id="fn1">Miyawaki's surveys of shrine forests began in the 1970s and shaped his idea of "potential natural vegetation".</li>
+        <li id="fn2">Figures vary widely between sites. Independent studies stress soil preparation and aftercare as the main drivers of success.</li>
+        <li id="fn3">Small urban forests are best seen as local climate and biodiversity measures, not carbon offsets.</li>
+      </ol>
+    </section>
+
+    <div class="end">
+      <button class="pill" id="share">Copy link to this story</button>
+      <a class="pill" href="#top" style="text-decoration:none;color:var(--text)">Back to top</a>
+    </div>
+  </article>
+</div>
+
+<footer>Understory is a fictional magazine. Story, people and quotes are invented for this portfolio demo.</footer>
+
+<script>
+(() => {
+  const root = document.documentElement;
+  const store = { get(k){ try{ return localStorage.getItem(k) }catch{ return null } }, set(k,v){ try{ localStorage.setItem(k,v) }catch{} } };
+
+  // Theme and size
+  const setTheme = t => { root.dataset.theme = t; store.set('us-theme', t);
+    document.querySelectorAll('[data-theme-set]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.themeSet === t))); };
+  setTheme(store.get('us-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'night' : 'paper'));
+  document.querySelectorAll('[data-theme-set]').forEach(b => b.addEventListener('click', () => setTheme(b.dataset.themeSet)));
+  let size = Number(store.get('us-size')) || 1.25;
+  const applySize = () => root.style.setProperty('--size', size + 'rem');
+  applySize();
+  document.querySelectorAll('[data-size]').forEach(b => b.addEventListener('click', () => {
+    size = Math.min(1.6, Math.max(1.05, +(size + Number(b.dataset.size) * .075).toFixed(3))); applySize(); store.set('us-size', size);
+  }));
+
+  // Reading time
+  const words = document.getElementById('article').innerText.split(/\s+/).length;
+  document.getElementById('readTime').textContent = `${Math.max(1, Math.round(words / 230))} min read`;
+
+  // Progress bar (rAF-throttled)
+  const bar = document.getElementById('progress'), art = document.getElementById('article');
+  let ticking = false;
+  const update = () => {
+    const r = art.getBoundingClientRect();
+    const p = Math.min(1, Math.max(0, -r.top / (r.height - innerHeight * .6)));
+    bar.style.transform = `scaleX(${p})`; ticking = false;
+  };
+  addEventListener('scroll', () => { if (!ticking){ ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  update();
+
+  // Contents highlight
+  const links = [...document.querySelectorAll('.toc a')];
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) links.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id));
+  }), { rootMargin: '-20% 0px -70% 0px' });
+  document.querySelectorAll('article h2[id]').forEach(h => io.observe(h));
+
+  // Footnote popovers
+  let pop = null;
+  const close = () => { pop?.remove(); pop = null; };
+  document.querySelectorAll('[data-fn]').forEach(btn => btn.addEventListener('click', e => {
+    e.stopPropagation(); close();
+    pop = document.createElement('div'); pop.className = 'fn-pop'; pop.setAttribute('role', 'note');
+    pop.textContent = document.getElementById('fn' + btn.dataset.fn).textContent;
+    document.body.append(pop);
+    const r = btn.getBoundingClientRect();
+    const left = Math.min(innerWidth - pop.offsetWidth - 12, Math.max(12, r.left + scrollX - pop.offsetWidth / 2));
+    pop.style.left = left + 'px'; pop.style.top = (r.bottom + scrollY + 8) + 'px';
+  }));
+  addEventListener('click', close); addEventListener('keydown', e => e.key === 'Escape' && close());
+
+  // Share
+  document.getElementById('share').addEventListener('click', async e => {
+    const b = e.currentTarget;
+    try { await navigator.clipboard.writeText(location.href.split('#')[0]); b.textContent = 'Link copied'; b.classList.add('copied'); }
+    catch { b.textContent = location.href.split('#')[0]; }
+    setTimeout(() => { b.textContent = 'Copy link to this story'; b.classList.remove('copied'); }, 2000);
+  });
+})();
+</script>
+<!-- DEMO BANNER: portfolio notice, keep on every demo page -->
+<script>
+(() => {
+  const host = document.createElement('div');
+  host.setAttribute('role', 'note');
+  host.setAttribute('aria-label', 'Demo site notice');
+  const root = host.attachShadow({ mode: 'open' });
+  root.innerHTML = `
+    <style>
+      :host{ all:initial }
+      .bar{ position:fixed; left:0; right:0; bottom:0; z-index:2147483647; display:flex; align-items:center; justify-content:center; gap:14px;
+        height:46px; padding:0 14px; box-sizing:border-box; cursor:default; pointer-events:auto;
+        font:800 22px/1 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif; letter-spacing:.14em; text-transform:uppercase; color:#111;
+        background:repeating-linear-gradient(-45deg,#ffd400 0 22px,#ffc400 22px 44px); border-top:3px solid #111;
+        box-shadow:0 -6px 18px rgba(0,0,0,.25) }
+      .tag{ background:#111; color:#ffd400; padding:6px 12px; border-radius:4px; letter-spacing:.2em }
+      .txt{ font-size:13px; font-weight:700; letter-spacing:.06em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+      @media (max-width:560px){ .bar{ font-size:18px; gap:10px } .txt{ font-size:11px } }
+    </style>
+    <div class="bar"><span class="tag">DEMO</span><span class="txt">Portfolio demo · fictional brand · not a real product</span></div>`;
+  const mount = () => document.body.appendChild(host);
+  document.body ? mount() : addEventListener('DOMContentLoaded', mount);
+})();
+</script>
+<!-- /DEMO BANNER -->
+</body>
+</html>
