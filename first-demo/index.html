@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta name="robots" content="noindex">
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Lumora — Independent Design & Engineering Studio</title>
@@ -1277,5 +1278,30 @@ document.addEventListener('keydown', e => {
   else if (menuOpen) closeMenu();
 });
 </script>
+<!-- DEMO BANNER: portfolio notice, keep on every demo page -->
+<script>
+(() => {
+  const host = document.createElement('div');
+  host.setAttribute('role', 'note');
+  host.setAttribute('aria-label', 'Demo site notice');
+  const root = host.attachShadow({ mode: 'open' });
+  root.innerHTML = `
+    <style>
+      :host{ all:initial }
+      .bar{ position:fixed; left:0; right:0; bottom:0; z-index:2147483647; display:flex; align-items:center; justify-content:center; gap:14px;
+        height:46px; padding:0 14px; box-sizing:border-box; cursor:default; pointer-events:auto;
+        font:800 22px/1 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif; letter-spacing:.14em; text-transform:uppercase; color:#111;
+        background:repeating-linear-gradient(-45deg,#ffd400 0 22px,#ffc400 22px 44px); border-top:3px solid #111;
+        box-shadow:0 -6px 18px rgba(0,0,0,.25) }
+      .tag{ background:#111; color:#ffd400; padding:6px 12px; border-radius:4px; letter-spacing:.2em }
+      .txt{ font-size:13px; font-weight:700; letter-spacing:.06em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+      @media (max-width:560px){ .bar{ font-size:18px; gap:10px } .txt{ font-size:11px } }
+    </style>
+    <div class="bar"><span class="tag">DEMO</span><span class="txt">Portfolio demo · fictional brand · not a real product</span></div>`;
+  const mount = () => document.body.appendChild(host);
+  document.body ? mount() : addEventListener('DOMContentLoaded', mount);
+})();
+</script>
+<!-- /DEMO BANNER -->
 </body>
 </html>

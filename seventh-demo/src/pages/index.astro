@@ -1,0 +1,321 @@
+---
+import Base from '../layouts/Base.astro';
+import { cabins, experiences, extras } from '../data/cabins';
+
+const nok = (n: number) => `${new Intl.NumberFormat('en-US').format(n)} NOK`;
+const [feature, ...rest] = cabins;
+---
+<Base title="Fjordhus | Cabins on the Norwegian coast" description="Three timber cabins between a fjord and a pine forest. Book a stay, a sauna evening or a paddle between the islands.">
+
+  <!-- Header -->
+  <header class="absolute inset-x-0 top-0 z-30">
+    <div class="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 text-fog md:px-8">
+      <a href="#top" class="flex items-center gap-2.5 font-display text-xl font-bold tracking-tight">
+        <svg viewBox="0 0 32 32" class="size-7" aria-hidden="true"><path d="M6 23 16 9l10 14z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M13 23v-5h6v5" fill="none" stroke="#e0a43a" stroke-width="2.5"/></svg>
+        Fjordhus
+      </a>
+      <nav class="hidden gap-8 text-sm font-medium text-fog/80 md:flex" aria-label="Primary">
+        <a class="hover:text-fog" href="#cabins">Cabins</a>
+        <a class="hover:text-fog" href="#around">Around us</a>
+        <a class="hover:text-fog" href="#travel">Getting here</a>
+      </nav>
+      <a href="#book" class="rounded-full bg-lantern px-5 py-2.5 text-sm font-semibold text-pine transition hover:brightness-105 active:scale-[.98]">Book a stay</a>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section id="top" class="relative isolate flex min-h-[100dvh] items-end overflow-hidden bg-pine text-fog">
+    <img src="https://picsum.photos/id/10/2000/1300" alt="Pine forest sloping down to a calm fjord" class="absolute inset-0 -z-10 size-full object-cover" fetchpriority="high" />
+    <div class="absolute inset-0 -z-10 bg-gradient-to-t from-pine via-pine/40 to-pine/10"></div>
+    <div class="mx-auto w-full max-w-7xl px-5 pb-10 pt-32 md:px-8 md:pb-14">
+      <h1 class="max-w-3xl font-display text-5xl font-bold leading-[1.02] tracking-tight md:text-7xl">Three cabins where the forest meets the fjord.</h1>
+      <p class="mt-5 max-w-lg text-lg text-fog/80">Wood stoves, cold water and long light. Two hours north of Bergen by car and ferry.</p>
+
+      <form id="quick" class="mt-10 grid gap-2 rounded-3xl bg-fog/95 p-2 text-pine shadow-2xl backdrop-blur md:grid-cols-[1fr_1fr_.8fr_auto]">
+        <label class="rounded-2xl px-4 py-3 hover:bg-mist/60">
+          <span class="block text-xs font-semibold uppercase tracking-wide text-stone">Arrive</span>
+          <input name="in" type="date" class="w-full bg-transparent text-base font-medium outline-none" required />
+        </label>
+        <label class="rounded-2xl px-4 py-3 hover:bg-mist/60">
+          <span class="block text-xs font-semibold uppercase tracking-wide text-stone">Leave</span>
+          <input name="out" type="date" class="w-full bg-transparent text-base font-medium outline-none" required />
+        </label>
+        <label class="rounded-2xl px-4 py-3 hover:bg-mist/60">
+          <span class="block text-xs font-semibold uppercase tracking-wide text-stone">Guests</span>
+          <select name="guests" class="w-full bg-transparent text-base font-medium outline-none">
+            {[1,2,3,4,5,6].map(n => <option value={n} selected={n === 2}>{n} {n === 1 ? 'guest' : 'guests'}</option>)}
+          </select>
+        </label>
+        <button class="rounded-2xl bg-pine px-7 py-4 font-semibold text-fog transition hover:bg-pine-2 active:scale-[.98]">Check dates</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Intro -->
+  <section class="mx-auto grid max-w-7xl gap-10 px-5 py-24 md:grid-cols-12 md:px-8 md:py-32">
+    <div class="reveal md:col-span-5">
+      <h2 class="font-display text-4xl font-bold leading-tight tracking-tight md:text-5xl">Built by a boat builder, run by his daughters.</h2>
+      <p class="mt-6 max-w-md text-lg text-stone">Each cabin is framed in local pine and faces the water. No television, fast Wi-Fi, and a shelf of books left by the last guests.</p>
+    </div>
+    <div class="reveal grid grid-cols-5 gap-4 md:col-span-7" style="transition-delay:120ms">
+      <img loading="lazy" src="https://picsum.photos/id/11/800/1000" alt="Misty inlet at dawn" class="col-span-3 aspect-[4/5] w-full rounded-3xl object-cover" />
+      <img loading="lazy" src="https://picsum.photos/id/29/600/900" alt="Snowy peaks above the valley" class="col-span-2 mt-16 aspect-[2/3] w-full rounded-3xl object-cover" />
+    </div>
+  </section>
+
+  <!-- Cabins -->
+  <section id="cabins" class="bg-pine py-24 text-fog md:py-32">
+    <div class="mx-auto max-w-7xl px-5 md:px-8">
+      <h2 class="reveal font-display text-4xl font-bold tracking-tight md:text-5xl">The cabins</h2>
+      <div class="mt-12 grid gap-5 md:grid-cols-2">
+        <article class="reveal group relative overflow-hidden rounded-3xl md:row-span-2">
+          <img loading="lazy" src={feature.image} alt={feature.name} class="aspect-[4/5] size-full object-cover transition duration-700 group-hover:scale-[1.03] md:aspect-auto" />
+          <div class="absolute inset-0 bg-gradient-to-t from-pine/95 via-pine/30 to-transparent"></div>
+          <div class="absolute inset-x-0 bottom-0 p-7">
+            <p class="text-sm text-fog/70">{feature.size} · sleeps {feature.sleeps}</p>
+            <h3 class="mt-1 font-display text-3xl font-bold">{feature.name}</h3>
+            <p class="mt-2 max-w-sm text-fog/80">{feature.blurb}</p>
+            <div class="mt-5 flex items-center justify-between gap-4">
+              <p><span class="font-display text-2xl font-bold">{nok(feature.price)}</span><span class="text-sm text-fog/70"> / night</span></p>
+              <button data-pick={feature.id} class="rounded-full bg-lantern px-5 py-2.5 text-sm font-semibold text-pine transition hover:brightness-105">Choose</button>
+            </div>
+          </div>
+        </article>
+        {rest.map((c, i) => (
+          <article class="reveal grid overflow-hidden rounded-3xl bg-pine-2 sm:grid-cols-2" style={`transition-delay:${(i + 1) * 100}ms`}>
+            <img loading="lazy" src={c.image} alt={c.name} class="aspect-[4/3] size-full object-cover sm:aspect-auto" />
+            <div class="flex flex-col p-6">
+              <p class="text-sm text-fog/60">{c.size} · sleeps {c.sleeps}</p>
+              <h3 class="mt-1 font-display text-2xl font-bold">{c.name}</h3>
+              <p class="mt-2 text-fog/75">{c.blurb}</p>
+              <ul class="mt-4 flex flex-wrap gap-2 text-xs">
+                {c.features.map(f => <li class="rounded-full border border-fog/20 px-3 py-1 text-fog/80">{f}</li>)}
+              </ul>
+              <div class="mt-auto flex items-center justify-between gap-3 pt-6">
+                <p><span class="font-display text-xl font-bold">{nok(c.price)}</span><span class="text-sm text-fog/60"> / night</span></p>
+                <button data-pick={c.id} class="rounded-full border border-fog/30 px-4 py-2 text-sm font-semibold transition hover:border-lantern hover:text-lantern">Choose</button>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Around us: horizontal snap -->
+  <section id="around" class="py-24 md:py-32">
+    <div class="mx-auto max-w-7xl px-5 md:px-8">
+      <h2 class="reveal max-w-xl font-display text-4xl font-bold tracking-tight md:text-5xl">Days here start outside.</h2>
+    </div>
+    <ul class="mt-12 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4" style="scrollbar-width:thin;padding-inline:max(1.25rem, calc((100vw - 80rem) / 2 + 2rem));scroll-padding-inline:max(1.25rem, calc((100vw - 80rem) / 2 + 2rem))">
+      {experiences.map(e => (
+        <li class="w-[78vw] shrink-0 snap-start sm:w-80">
+          <img loading="lazy" src={e.image} alt={e.title} class="aspect-[4/5] w-full rounded-3xl object-cover" />
+          <h3 class="mt-4 font-display text-xl font-bold">{e.title}</h3>
+          <p class="mt-1 text-stone">{e.text}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- Booking -->
+  <section id="book" class="bg-mist/60 py-24 md:py-32">
+    <div class="mx-auto grid max-w-7xl gap-10 px-5 md:grid-cols-12 md:px-8">
+      <form id="booking" novalidate class="md:col-span-7">
+        <h2 class="font-display text-4xl font-bold tracking-tight md:text-5xl">Book your stay</h2>
+        <p class="mt-3 text-stone">Prices update as you choose. Nothing is charged in this demo.</p>
+
+        <fieldset class="mt-10">
+          <legend class="font-semibold">Cabin</legend>
+          <div class="mt-3 grid gap-3 sm:grid-cols-3">
+            {cabins.map(c => (
+              <label class="cursor-pointer rounded-2xl border-2 border-transparent bg-fog p-4 transition has-[:checked]:border-pine hover:border-stone/40">
+                <input type="radio" name="cabin" value={c.id} class="sr-only" checked={c.id === 'fjord'} />
+                <span class="block font-semibold">{c.name}</span>
+                <span class="block text-sm text-stone">Sleeps {c.sleeps} · {nok(c.price)}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <div class="mt-8 grid gap-4 sm:grid-cols-3">
+          <label class="block"><span class="text-sm font-semibold">Arrive</span>
+            <input name="in" type="date" class="mt-2 w-full rounded-xl border border-stone/25 bg-fog px-4 py-3 outline-none focus:border-pine" /></label>
+          <label class="block"><span class="text-sm font-semibold">Leave</span>
+            <input name="out" type="date" class="mt-2 w-full rounded-xl border border-stone/25 bg-fog px-4 py-3 outline-none focus:border-pine" /></label>
+          <div><span class="text-sm font-semibold" id="guestsLabel">Guests</span>
+            <div class="mt-2 flex items-center justify-between rounded-xl border border-stone/25 bg-fog px-2 py-1.5" role="group" aria-labelledby="guestsLabel">
+              <button type="button" data-step="-1" class="size-9 rounded-lg text-xl hover:bg-mist" aria-label="Fewer guests">−</button>
+              <output name="guests" class="font-semibold">2</output>
+              <button type="button" data-step="1" class="size-9 rounded-lg text-xl hover:bg-mist" aria-label="More guests">+</button>
+            </div>
+          </div>
+        </div>
+        <p id="dateError" class="mt-2 hidden text-sm font-medium text-red-700" role="alert"></p>
+
+        <fieldset class="mt-8">
+          <legend class="font-semibold">Extras</legend>
+          <div class="mt-3 grid gap-2">
+            {extras.map(x => (
+              <label class="flex cursor-pointer items-center justify-between gap-4 rounded-xl bg-fog px-4 py-3">
+                <span class="flex items-center gap-3"><input type="checkbox" name="extra" value={x.id} class="size-4 accent-pine" />{x.label}</span>
+                <span class="text-sm text-stone">{nok(x.price)} / {x.per}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <div class="mt-8 grid gap-4 sm:grid-cols-2">
+          <label class="block"><span class="text-sm font-semibold">Name</span>
+            <input name="name" autocomplete="name" placeholder="Solveig Berg" class="mt-2 w-full rounded-xl border border-stone/25 bg-fog px-4 py-3 outline-none placeholder:text-stone/70 focus:border-pine" />
+            <span class="err mt-1 hidden text-sm text-red-700">Please add your name.</span></label>
+          <label class="block"><span class="text-sm font-semibold">Email</span>
+            <input name="email" type="email" autocomplete="email" placeholder="solveig@mail.no" class="mt-2 w-full rounded-xl border border-stone/25 bg-fog px-4 py-3 outline-none placeholder:text-stone/70 focus:border-pine" />
+            <span class="err mt-1 hidden text-sm text-red-700">Enter a valid email address.</span></label>
+        </div>
+      </form>
+
+      <aside class="md:col-span-5">
+        <div class="rounded-3xl bg-pine p-7 text-fog md:sticky md:top-8">
+          <p class="text-sm text-fog/60">Your stay</p>
+          <h3 id="sumCabin" class="mt-1 font-display text-2xl font-bold">Fjord House</h3>
+          <p id="sumDates" class="mt-1 text-fog/75"></p>
+          <dl id="sumLines" class="mt-6 space-y-2 border-t border-fog/15 pt-5 text-sm"></dl>
+          <div class="mt-5 flex items-baseline justify-between border-t border-fog/15 pt-5">
+            <span class="text-fog/70">Total</span>
+            <span id="sumTotal" class="font-display text-3xl font-bold">0 NOK</span>
+          </div>
+          <button form="booking" class="mt-6 w-full rounded-2xl bg-lantern py-4 font-semibold text-pine transition hover:brightness-105 active:scale-[.99]">Request booking</button>
+          <p class="mt-3 text-center text-xs text-fog/50">Free cancellation up to 14 days before arrival.</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- Getting here + FAQ -->
+  <section id="travel" class="mx-auto grid max-w-7xl gap-12 px-5 py-24 md:grid-cols-2 md:px-8 md:py-32">
+    <div class="reveal">
+      <h2 class="font-display text-4xl font-bold tracking-tight">Getting here</h2>
+      <ol class="mt-8 space-y-6">
+        <li class="flex gap-4"><span class="font-display text-lantern">01</span><p><b>Fly or train to Bergen.</b> Direct trains from Oslo take about seven hours.</p></li>
+        <li class="flex gap-4"><span class="font-display text-lantern">02</span><p><b>Drive north on the E39.</b> We send a map with the last, unmarked turn.</p></li>
+        <li class="flex gap-4"><span class="font-display text-lantern">03</span><p><b>Take the Halhjem ferry.</b> Twenty minutes, every half hour, coffee on board.</p></li>
+      </ol>
+    </div>
+    <div class="reveal" style="transition-delay:120ms">
+      <h2 class="font-display text-4xl font-bold tracking-tight">Questions</h2>
+      <div class="mt-8 divide-y divide-stone/20 border-y border-stone/20">
+        <details class="group py-4"><summary class="flex cursor-pointer list-none justify-between font-semibold">Are pets welcome?<span class="transition group-open:rotate-45">+</span></summary><p class="mt-3 text-stone">Dogs are welcome in the Shore Cabin. Please keep them leashed near the sheep.</p></details>
+        <details class="group py-4"><summary class="flex cursor-pointer list-none justify-between font-semibold">Is there food nearby?<span class="transition group-open:rotate-45">+</span></summary><p class="mt-3 text-stone">A small shop is ten minutes away. Breakfast baskets can be added to any booking.</p></details>
+        <details class="group py-4"><summary class="flex cursor-pointer list-none justify-between font-semibold">When is the best season?<span class="transition group-open:rotate-45">+</span></summary><p class="mt-3 text-stone">June for endless light, September for colour and quiet, February for the northern lights.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-pine py-10 text-sm text-fog/60">
+    <div class="mx-auto flex max-w-7xl flex-wrap justify-between gap-4 px-5 md:px-8">
+      <span>© 2026 Fjordhus Cabins</span>
+      <span>Vestland, Norway</span>
+    </div>
+  </footer>
+
+  <dialog id="done" class="m-auto max-w-md rounded-3xl bg-fog p-8 text-pine backdrop:bg-pine/60 backdrop:backdrop-blur-sm">
+    <h3 class="font-display text-2xl font-bold">Request received</h3>
+    <p id="doneText" class="mt-3 text-stone"></p>
+    <form method="dialog"><button class="mt-6 rounded-full bg-pine px-6 py-3 font-semibold text-fog">Close</button></form>
+  </dialog>
+
+  <script is:inline define:vars={{ cabins, extras }}>
+    const $ = (s, r = document) => r.querySelector(s);
+    const nok = n => `${new Intl.NumberFormat('en-US').format(n)} NOK`;
+    const DAY = 86400000;
+    const iso = d => new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+
+    // Reveal on scroll
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -10% 0px' });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    const form = $('#booking'), quick = $('#quick');
+    const inEl = form.elements.in, outEl = form.elements.out, guestsOut = form.elements.guests;
+    let guests = 2;
+    const defIn = new Date(today.getTime() + 14 * DAY), defOut = new Date(today.getTime() + 17 * DAY);
+    [inEl, quick.elements.in].forEach(el => { el.min = iso(today); el.value = iso(defIn); });
+    [outEl, quick.elements.out].forEach(el => { el.min = iso(new Date(today.getTime() + DAY)); el.value = iso(defOut); });
+
+    function nights() {
+      const a = new Date(inEl.value), b = new Date(outEl.value);
+      return (isNaN(a) || isNaN(b)) ? 0 : Math.round((b - a) / DAY);
+    }
+    function cabin() { return cabins.find(c => c.id === form.elements.cabin.value); }
+
+    function render() {
+      const c = cabin(), n = nights(), err = $('#dateError');
+      let msg = '';
+      if (n <= 0) msg = 'Your leave date needs to be after your arrival date.';
+      else if (guests > c.sleeps) msg = `${c.name} sleeps ${c.sleeps}. Choose a bigger cabin or fewer guests.`;
+      err.textContent = msg; err.classList.toggle('hidden', !msg);
+      outEl.min = inEl.value ? iso(new Date(new Date(inEl.value).getTime() + DAY)) : '';
+
+      const lines = [];
+      const nn = Math.max(n, 0);
+      lines.push([`${nok(c.price)} × ${nn} ${nn === 1 ? 'night' : 'nights'}`, c.price * nn]);
+      form.querySelectorAll('input[name="extra"]:checked').forEach(box => {
+        const x = extras.find(e => e.id === box.value);
+        const qty = x.per === 'guest / night' ? guests * nn : x.per === 'guest' ? guests : 1;
+        lines.push([x.label, x.price * qty]);
+      });
+      lines.push(['Cleaning', 600]);
+      const total = lines.reduce((s, l) => s + l[1], 0);
+
+      $('#sumCabin').textContent = c.name;
+      const fmt = v => v ? new Date(v).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '...';
+      $('#sumDates').textContent = `${fmt(inEl.value)} to ${fmt(outEl.value)} · ${guests} ${guests === 1 ? 'guest' : 'guests'}`;
+      $('#sumLines').innerHTML = lines.map(([k, v]) => `<div class="flex justify-between gap-4"><dt class="text-fog/70">${k}</dt><dd>${nok(v)}</dd></div>`).join('');
+      $('#sumTotal').textContent = nok(msg ? 0 : total);
+      return { ok: !msg, total, n, c };
+    }
+
+    form.addEventListener('input', render);
+    form.addEventListener('change', render);
+    form.querySelectorAll('[data-step]').forEach(b => b.addEventListener('click', () => {
+      guests = Math.min(6, Math.max(1, guests + Number(b.dataset.step)));
+      guestsOut.value = guests; render();
+    }));
+
+    // Hero quick form and cabin cards feed the booking form
+    quick.addEventListener('submit', e => {
+      e.preventDefault();
+      inEl.value = quick.elements.in.value; outEl.value = quick.elements.out.value;
+      guests = Number(quick.elements.guests.value); guestsOut.value = guests;
+      const fit = cabins.filter(c => c.sleeps >= guests).sort((a, b) => a.price - b.price)[0];
+      if (fit && guests > cabin().sleeps) form.querySelector(`input[value="${fit.id}"]`).checked = true;
+      render(); $('#book').scrollIntoView({ behavior: 'smooth' });
+    });
+    document.querySelectorAll('[data-pick]').forEach(b => b.addEventListener('click', () => {
+      form.querySelector(`input[name="cabin"][value="${b.dataset.pick}"]`).checked = true;
+      render(); $('#book').scrollIntoView({ behavior: 'smooth' });
+    }));
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const state = render();
+      const checks = [
+        [form.elements.name, form.elements.name.value.trim().length > 1],
+        [form.elements.email, /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(form.elements.email.value.trim())],
+      ];
+      let first = null;
+      checks.forEach(([el, ok]) => {
+        el.nextElementSibling.classList.toggle('hidden', ok);
+        el.classList.toggle('border-red-700', !ok);
+        if (!ok && !first) first = el;
+      });
+      if (!state.ok) { $('#dateError').scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
+      if (first) { first.focus(); return; }
+      $('#doneText').textContent = `${state.c.name}, ${state.n} nights, ${nok(state.total)}. We will confirm by email within a day.`;
+      $('#done').showModal();
+    });
+
+    render();
+  </script>
+</Base>
