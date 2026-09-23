@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "Sprout",
+    "slug": "sprout-habits",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.portfolio.sprout"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0f3d2e",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "package": "com.portfolio.sprout"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "scheme": "sprout",
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
