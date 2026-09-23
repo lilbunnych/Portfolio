@@ -7,3 +7,8 @@ build/
 .env*
 !.env.example
 .claude-flow/
+# ruflo / agent tooling artifacts
+ruvector.db
+*.db
+.swarm/
+.hive-mind/
