@@ -33,6 +33,10 @@ header.top{ display:flex; justify-content:space-between; align-items:center; pad
 .mark i{ width:.75rem; height:.75rem; border-radius:3px; background:var(--accent); display:inline-block }
 .top a.cta{ font-size:.9rem; text-decoration:none; padding:.55rem 1rem; border:1px solid var(--line); border-radius:999px }
 .top a.cta:hover{ border-color:var(--ink) }
+.top-r{ display:flex; align-items:center; gap:.75rem }
+.lang{ display:flex; padding:.2rem; border-radius:999px; background:var(--chip) }
+.lang button{ font-family:var(--mono); font-size:.8rem; padding:.35rem .7rem; border-radius:999px; color:var(--muted) }
+.lang button[aria-pressed="true"]{ background:var(--card); color:var(--ink); box-shadow:0 1px 2px rgba(0,0,0,.12) }
 
 .intro{ padding:4rem 0 3rem; display:grid; gap:2rem }
 .intro h1{ font-size:clamp(2.5rem,6vw,4.75rem); line-height:1; letter-spacing:-.045em; font-weight:600; max-width:14ch }
@@ -76,78 +80,144 @@ footer{ border-top:1px solid var(--line); padding:2rem 0 3rem; color:var(--muted
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="mark"><i aria-hidden="true"></i>Portfolio</div>
-    <a class="cta" href="mailto:hello@example.com">Get in touch</a>
+    <div class="mark"><i aria-hidden="true"></i><span data-i18n="brand">Portfolio</span></div>
+    <div class="top-r">
+      <div class="lang" role="group" aria-label="Language"><button data-lang="ru">RU</button><button data-lang="en">EN</button></div>
+      <a class="cta" href="mailto:hello@example.com" data-i18n="contact">Get in touch</a>
+    </div>
   </header>
 
   <section class="intro">
     <div>
-      <h1>Websites and apps, built end to end.</h1>
+      <h1 data-i18n="h1">Websites and apps, built end to end.</h1>
     </div>
     <div>
-      <p>Twelve demo projects: landing pages, WebGL scroll stories, web apps, a mobile app for iOS and Android, and a desktop app for macOS, Windows and Linux.</p>
+      <p data-i18n="lead">Twelve demo projects: landing pages, WebGL scroll stories, web apps, a mobile app for iOS and Android, and a desktop app for macOS, Windows and Linux.</p>
       <div class="facts" style="margin-top:1.25rem">
-        <span><b>12</b> projects</span><span><b>9</b> stacks</span><span><b>3</b> rebuilt from specs</span>
+        <span><b>12</b> <span data-i18n="f1">projects</span></span><span><b>9</b> <span data-i18n="f2">stacks</span></span><span><b>3</b> <span data-i18n="f3">rebuilt from specs</span></span>
       </div>
     </div>
   </section>
 
   <nav class="filters" aria-label="Filter projects">
-    <button data-f="all" aria-pressed="true">All</button>
-    <button data-f="site">Websites</button>
+    <button data-f="all" aria-pressed="true" data-i18n="all">All</button>
+    <button data-f="site" data-i18n="sites">Websites</button>
     <button data-f="webgl">WebGL</button>
-    <button data-f="app">Web apps</button>
-    <button data-f="native">Mobile and desktop</button>
+    <button data-f="app" data-i18n="apps">Web apps</button>
+    <button data-f="native" data-i18n="native">Mobile and desktop</button>
   </nav>
 
   <main class="grid" id="grid"></main>
 
   <footer>
-    <span>Every project here is a demo with a fictional brand. Each page carries a "DEMO" notice.</span>
-    <span>Source for every project is in its own folder of this repository.</span>
+    <span data-i18n="foot1">Every project here is a demo with a fictional brand. Each page carries a "DEMO" notice.</span>
+    <span data-i18n="foot2">Source for every project is in its own folder of this repository.</span>
   </footer>
 </div>
 
 <script>
+const UI = {
+  en: { brand:'Portfolio', contact:'Get in touch', h1:'Websites and apps, built end to end.',
+    lead:'Twelve demo projects: landing pages, WebGL scroll stories, web apps, a mobile app for iOS and Android, and a desktop app for macOS, Windows and Linux.',
+    f1:'projects', f2:'stacks', f3:'rebuilt from specs', all:'All', sites:'Websites', apps:'Web apps', native:'Mobile and desktop',
+    foot1:'Every project here is a demo with a fictional brand. Each page carries a "DEMO" notice.', foot2:'Source for every project is in its own folder of this repository.',
+    open:'Open demo', source:'Source', spec:'Rebuilt from spec', original:'Original', phone:'Run on your phone', downloads:'Downloads and build', shot:'Screenshot of',
+    title:'Portfolio | Websites and apps' },
+  ru: { brand:'Портфолио', contact:'Связаться', h1:'Сайты и приложения под ключ.',
+    lead:'Двенадцать демо-проектов: лендинги, WebGL-истории со скроллом, веб-приложения, мобильное приложение для iOS и Android и десктопное для macOS, Windows и Linux.',
+    f1:'проектов', f2:'стеков', f3:'повторены по ТЗ', all:'Все', sites:'Сайты', apps:'Веб-приложения', native:'Мобильные и десктоп',
+    foot1:'Все проекты здесь демо с вымышленными брендами. На каждой странице есть пометка «DEMO».', foot2:'Исходный код каждого проекта лежит в отдельной папке репозитория.',
+    open:'Открыть демо', source:'Код', spec:'По ТЗ', original:'Своя разработка', phone:'Запуск на телефоне', downloads:'Скачать и собрать', shot:'Скриншот',
+    title:'Портфолио | Сайты и приложения' },
+};
+
 const PROJECTS = [
-  { id:'01', dir:'first-demo', title:'Lumora', kind:'Studio landing page', text:'Liquid cursor reveal over a photo hero, spring physics, intro loader and a request modal.', tags:['HTML','CSS','JS','Lenis'], f:['site'], origin:'Rebuilt from spec', open:'first-demo/' },
-  { id:'02', dir:'second-demo', title:'Tessel', kind:'Studio landing page', text:'Pixel mosaic hero, pinned horizontal process, cursor image preview and a project drawer.', tags:['HTML','CSS','JS','Lenis'], f:['site'], origin:'Original', open:'second-demo/' },
-  { id:'03', dir:'third-demo', title:'Laocoön', kind:'WebGL scroll story', text:'Camera orbits a bronze horse over a liquid metal shader while you scroll.', tags:['Three.js','GLSL'], f:['site','webgl'], origin:'Rebuilt from spec', open:'third-demo/' },
-  { id:'04', dir:'fourth-demo', title:'Vitrea', kind:'WebGL scroll story', text:'Procedural glass that morphs from sand to a fluted vase, refracting caustic light.', tags:['Three.js','Lenis'], f:['site','webgl'], origin:'Original', open:'fourth-demo/' },
-  { id:'05', dir:'fifth-demo', title:'Loopstack', kind:'Single-screen hero', text:'Video hero with masked word and letter reveals and a glass cursor pill.', tags:['HTML','CSS','JS'], f:['site'], origin:'Rebuilt from spec', open:'fifth-demo/' },
-  { id:'06', dir:'sixth-demo', title:'Driftnote', kind:'Waitlist page', text:'Halftone sound field that ripples with your cursor and typing, plus a live countdown.', tags:['Canvas 2D','JS'], f:['site'], origin:'Original', open:'sixth-demo/' },
-  { id:'07', dir:'seventh-demo', title:'Fjordhus', kind:'Booking site', text:'Cabin booking with live price calculation, capacity checks and validation.', tags:['Astro','Tailwind'], f:['site','app'], origin:'Original', open:'seventh-demo/dist/' },
-  { id:'08', dir:'eighth-demo', title:'Ledgerly', kind:'Finance dashboard', text:'Charts, budgets and a searchable, sortable transactions table with dark mode.', tags:['React','TypeScript','Recharts'], f:['app'], origin:'Original', open:'eighth-demo/dist/' },
-  { id:'09', dir:'ninth-demo', title:'Tempo', kind:'Installable PWA', text:'Focus timer with tasks and stats. Installs on any phone or computer and works offline.', tags:['Svelte 5','PWA'], f:['app','native'], origin:'Original', open:'ninth-demo/dist/' },
-  { id:'10', dir:'tenth-demo', title:'Understory', kind:'Editorial long read', text:'Reading progress, live contents, footnote popovers and three reading themes.', tags:['HTML','CSS','JS'], f:['site'], origin:'Original', open:'tenth-demo/' },
-  { id:'11', dir:'eleventh-demo', title:'Sprout', kind:'Mobile app, iOS and Android', text:'Habit tracker with streaks, a 12-week heatmap and haptics. One codebase, also runs on the web.', tags:['Expo','React Native','TypeScript'], f:['native'], origin:'Original', open:'eleventh-demo/dist/', phone:true, extra:{ label:'Run on your phone', href:'eleventh-demo/README.md' } },
-  { id:'12', dir:'twelfth-demo', title:'Jot', kind:'Desktop app', text:'Markdown notes with live preview and autosave. Builds for macOS, Windows and Linux on x64 and ARM64.', tags:['Electron','JS'], f:['native'], origin:'Original', open:null, extra:{ label:'Downloads and build', href:'twelfth-demo/README.md' } },
+  { id:'01', dir:'first-demo', title:'Lumora', tags:['HTML','CSS','JS','Lenis'], f:['site'], spec:true, open:'first-demo/',
+    en:{ kind:'Studio landing page', text:'Liquid cursor reveal over a photo hero, spring physics, intro loader and a request modal.' },
+    ru:{ kind:'Лендинг студии', text:'«Жидкое» проявление фото под курсором, пружинная анимация, прелоадер и форма заявки.' } },
+  { id:'02', dir:'second-demo', title:'Tessel', tags:['HTML','CSS','JS','Lenis'], f:['site'], open:'second-demo/',
+    en:{ kind:'Studio landing page', text:'Pixel mosaic hero, pinned horizontal process, cursor image preview and a project drawer.' },
+    ru:{ kind:'Лендинг студии', text:'Пиксельная мозаика в hero, горизонтальный скролл этапов, превью работ за курсором и форма в боковой панели.' } },
+  { id:'03', dir:'third-demo', title:'Laocoön', tags:['Three.js','GLSL'], f:['site','webgl'], spec:true, open:'third-demo/',
+    en:{ kind:'WebGL scroll story', text:'Camera orbits a bronze horse over a liquid metal shader while you scroll.' },
+    ru:{ kind:'WebGL-история', text:'Камера облетает бронзовую статую коня на фоне шейдера «жидкого металла» по мере прокрутки.' } },
+  { id:'04', dir:'fourth-demo', title:'Vitrea', tags:['Three.js','Lenis'], f:['site','webgl'], open:'fourth-demo/',
+    en:{ kind:'WebGL scroll story', text:'Procedural glass that morphs from sand to a fluted vase, refracting caustic light.' },
+    ru:{ kind:'WebGL-история', text:'Стекло, созданное кодом, превращается из песка в витую вазу и преломляет блики света.' } },
+  { id:'05', dir:'fifth-demo', title:'Loopstack', tags:['HTML','CSS','JS'], f:['site'], spec:true, open:'fifth-demo/',
+    en:{ kind:'Single-screen hero', text:'Video hero with masked word and letter reveals and a glass cursor pill.' },
+    ru:{ kind:'Одноэкранный hero', text:'Видео-фон, появление слов и букв из маски и стеклянная плашка за курсором.' } },
+  { id:'06', dir:'sixth-demo', title:'Driftnote', tags:['Canvas 2D','JS'], f:['site'], open:'sixth-demo/',
+    en:{ kind:'Waitlist page', text:'Halftone sound field that ripples with your cursor and typing, plus a live countdown.' },
+    ru:{ kind:'Страница предзапуска', text:'Звуковая волна из точек реагирует на курсор и набор текста, живой таймер до запуска.' } },
+  { id:'07', dir:'seventh-demo', title:'Fjordhus', tags:['Astro','Tailwind'], f:['site','app'], open:'seventh-demo/dist/',
+    en:{ kind:'Booking site', text:'Cabin booking with live price calculation, capacity checks and validation.' },
+    ru:{ kind:'Сайт бронирования', text:'Бронирование домиков: живой расчёт цены, проверка вместимости и валидация формы.' } },
+  { id:'08', dir:'eighth-demo', title:'Ledgerly', tags:['React','TypeScript','Recharts'], f:['app'], open:'eighth-demo/dist/',
+    en:{ kind:'Finance dashboard', text:'Charts, budgets and a searchable, sortable transactions table with dark mode.' },
+    ru:{ kind:'Финансовый дашборд', text:'Графики, бюджеты, таблица операций с поиском и сортировкой, тёмная тема.' } },
+  { id:'09', dir:'ninth-demo', title:'Tempo', tags:['Svelte 5','PWA'], f:['app','native'], open:'ninth-demo/dist/',
+    en:{ kind:'Installable PWA', text:'Focus timer with tasks and stats. Installs on any phone or computer and works offline.' },
+    ru:{ kind:'Устанавливаемое PWA', text:'Таймер фокуса с задачами и статистикой. Ставится на любой телефон и компьютер, работает офлайн.' } },
+  { id:'10', dir:'tenth-demo', title:'Understory', tags:['HTML','CSS','JS'], f:['site'], open:'tenth-demo/',
+    en:{ kind:'Editorial long read', text:'Reading progress, live contents, footnote popovers and three reading themes.' },
+    ru:{ kind:'Журнальный лонгрид', text:'Прогресс чтения, живое оглавление, всплывающие сноски и три темы для чтения.' } },
+  { id:'11', dir:'eleventh-demo', title:'Sprout', tags:['Expo','React Native','TypeScript'], f:['native'], open:'eleventh-demo/dist/', phone:true, extra:{ key:'phone', href:'eleventh-demo/README.md' },
+    en:{ kind:'Mobile app, iOS and Android', text:'Habit tracker with streaks, a 12-week heatmap and haptics. One codebase, also runs on the web.' },
+    ru:{ kind:'Мобильное приложение, iOS и Android', text:'Трекер привычек: серии, тепловая карта за 12 недель, вибро-отклик. Один код, работает и в браузере.' } },
+  { id:'12', dir:'twelfth-demo', title:'Jot', tags:['Electron','JS'], f:['native'], open:null, extra:{ key:'downloads', href:'twelfth-demo/README.md' },
+    en:{ kind:'Desktop app', text:'Markdown notes with live preview and autosave. Builds for macOS, Windows and Linux on x64 and ARM64.' },
+    ru:{ kind:'Десктопное приложение', text:'Заметки в Markdown с живым превью и автосохранением. Сборки для macOS, Windows и Linux, x64 и ARM64.' } },
 ];
 
 const grid = document.getElementById('grid');
-grid.innerHTML = PROJECTS.map(p => `
-  <article class="card" data-f="${p.f.join(' ')}">
-    <div class="shot${p.phone ? ' phone' : ''}">
-      <img src="_hub/shots/${p.id}.jpg" alt="Screenshot of ${p.title}" loading="lazy">
-      <span class="demo-tag">DEMO</span>
-    </div>
-    <div class="body">
-      <div class="meta"><span>${p.id} · ${p.kind}</span><span>${p.origin}</span></div>
-      <h2>${p.title}</h2>
-      <p>${p.text}</p>
-      <ul class="tags">${p.tags.map(t => `<li>${t}</li>`).join('')}</ul>
-      <div class="links">
-        ${p.open ? `<a class="primary" href="${p.open}">Open demo</a>` : ''}
-        ${p.extra ? `<a ${p.open ? '' : 'class="primary"'} href="${p.extra.href}">${p.extra.label}</a>` : ''}
-        <a href="${p.dir}/">Source</a>
-      </div>
-    </div>
-  </article>`).join('');
+let filter = 'all';
 
+function render(lang) {
+  const t = UI[lang];
+  document.documentElement.lang = lang;
+  document.title = t.title;
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t[el.dataset.i18n]; });
+  document.querySelectorAll('[data-lang]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  grid.innerHTML = PROJECTS.map(p => {
+    const c = p[lang];
+    return `
+    <article class="card" data-f="${p.f.join(' ')}" ${filter !== 'all' && !p.f.includes(filter) ? 'hidden' : ''}>
+      <div class="shot${p.phone ? ' phone' : ''}">
+        <img src="_hub/shots/${p.id}.jpg" alt="${t.shot} ${p.title}" loading="lazy">
+        <span class="demo-tag">DEMO</span>
+      </div>
+      <div class="body">
+        <div class="meta"><span>${p.id} · ${c.kind}</span><span>${p.spec ? t.spec : t.original}</span></div>
+        <h2>${p.title}</h2>
+        <p>${c.text}</p>
+        <ul class="tags">${p.tags.map(x => `<li>${x}</li>`).join('')}</ul>
+        <div class="links">
+          ${p.open ? `<a class="primary" href="${p.open}">${t.open}</a>` : ''}
+          ${p.extra ? `<a ${p.open ? '' : 'class="primary"'} href="${p.extra.href}">${t[p.extra.key]}</a>` : ''}
+          <a href="${p.dir}/">${t.source}</a>
+        </div>
+      </div>
+    </article>`;
+  }).join('');
+}
+
+function pickLang() {
+  try { const saved = localStorage.getItem('portfolio-lang'); if (saved === 'ru' || saved === 'en') return saved; } catch {}
+  return (navigator.language || '').toLowerCase().startsWith('ru') ? 'ru' : 'en';
+}
+let lang = pickLang();
+render(lang);
+
+document.querySelectorAll('[data-lang]').forEach(b => b.addEventListener('click', () => {
+  lang = b.dataset.lang;
+  try { localStorage.setItem('portfolio-lang', lang); } catch {}
+  render(lang);
+}));
 document.querySelectorAll('.filters button').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('.filters button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
-  const f = b.dataset.f;
-  grid.querySelectorAll('.card').forEach(c => { c.hidden = f !== 'all' && !c.dataset.f.split(' ').includes(f); });
+  filter = b.dataset.f;
+  grid.querySelectorAll('.card').forEach(c => { c.hidden = filter !== 'all' && !c.dataset.f.split(' ').includes(filter); });
 }));
 </script>
 </body>

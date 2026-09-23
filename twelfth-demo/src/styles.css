@@ -10,7 +10,7 @@ button { cursor: pointer; background: none; border: 0; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 
-.app { display: grid; grid-template-columns: 280px 1fr; height: calc(100vh - 46px); }
+.app { display: grid; grid-template-columns: 280px 1fr; height: 100vh; }
 .side { background: var(--side); border-right: 1px solid var(--line); display: flex; flex-direction: column; min-height: 0; }
 .drag { height: 28px; -webkit-app-region: drag; flex-shrink: 0; }
 .side-head { display: flex; gap: 8px; padding: 4px 12px 12px; }
@@ -61,7 +61,11 @@ button { cursor: pointer; background: none; border: 0; }
 
 .status { display: flex; justify-content: space-between; padding: 6px 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
 
-.demo { position: fixed; left: 0; right: 0; bottom: 0; height: 46px; z-index: 99; display: flex; align-items: center; justify-content: center; gap: 14px;
-  background: repeating-linear-gradient(-45deg,#ffd400 0 22px,#ffc400 22px 44px); border-top: 3px solid #111; color: #111;
-  font: 800 13px/1 var(--sans); letter-spacing: .06em; text-transform: uppercase; }
-.demo .tag { background: #111; color: #ffd400; padding: 6px 12px; border-radius: 4px; font-size: 20px; letter-spacing: .2em; }
+
+/* Portfolio notice: slim DEMO tab on the right edge */
+.demo { position: fixed; right: 0; top: 30%; z-index: 99; display: flex; align-items: flex-start; }
+.demo-tab { width: 28px; padding: 12px 0; display: flex; justify-content: center; background: #ffd400; color: #111; border: 2px solid #111; border-right: 0; border-radius: 8px 0 0 8px; box-shadow: -4px 4px 14px rgba(0,0,0,.28); }
+.demo-tab span { writing-mode: vertical-rl; transform: rotate(180deg); font: 900 16px/1 var(--sans); letter-spacing: .22em; }
+.demo-panel { display: none; width: 220px; margin-right: -2px; padding: 14px 16px; background: #111; color: #fff; border-radius: 10px 0 0 10px; font-size: 13px; line-height: 1.45; }
+.demo-panel b { color: #ffd400; letter-spacing: .12em; }
+.demo.open .demo-panel { display: block; }

@@ -16,10 +16,42 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet" />
     <title>Tempo | Focus timer</title>
-    <script type="module" crossorigin src="./assets/index-DnHuHP6n.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-c16sN_1z.css">
+    <script type="module" crossorigin src="./assets/index-BDSx9KS7.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DCvT3uG9.css">
   </head>
   <body>
     <div id="app"></div>
+<!-- DEMO BANNER: portfolio notice, keep on every demo page -->
+<script>
+(() => {
+  // Slim vertical tab on the right edge: always visible, covers almost nothing.
+  // Click it to read what "demo" means here.
+  const host = document.createElement('div');
+  const root = host.attachShadow({ mode: 'open' });
+  root.innerHTML = `
+    <style>
+      :host{ all:initial }
+      .wrap{ position:fixed; right:0; top:30%; z-index:2147483647; display:flex; align-items:flex-start; font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif; cursor:auto }
+      .tab{ all:unset; box-sizing:border-box; width:28px; padding:12px 0; cursor:pointer; display:flex; align-items:center; justify-content:center;
+        background:#ffd400; color:#111; border:2px solid #111; border-right:0; border-radius:8px 0 0 8px; box-shadow:-4px 4px 14px rgba(0,0,0,.28) }
+      .tab span{ writing-mode:vertical-rl; transform:rotate(180deg); font-weight:900; font-size:16px; letter-spacing:.22em; line-height:1 }
+      .tab:focus-visible{ outline:3px solid #111; outline-offset:2px }
+      .panel{ display:none; width:220px; margin-right:-2px; padding:14px 16px; background:#111; color:#fff; border:2px solid #111; border-radius:10px 0 0 10px;
+        font-size:13px; line-height:1.45; box-shadow:-6px 8px 24px rgba(0,0,0,.35) }
+      .panel b{ color:#ffd400; letter-spacing:.12em }
+      .wrap.open .panel{ display:block }
+      @media (max-width:560px){ .tab{ width:22px; padding:9px 0 } .tab span{ font-size:12px } }
+    </style>
+    <div class="wrap">
+      <div class="panel" role="note" id="demo-note"><b>DEMO</b><br>Portfolio project. The brand, people and content are fictional. Not a real product.</div>
+      <button class="tab" aria-expanded="false" aria-controls="demo-note" aria-label="Demo site: show details"><span>DEMO</span></button>
+    </div>`;
+  const wrap = root.querySelector('.wrap'), tab = root.querySelector('.tab');
+  tab.addEventListener('click', () => { const o = wrap.classList.toggle('open'); tab.setAttribute('aria-expanded', String(o)); });
+  const mount = () => document.body.appendChild(host);
+  document.body ? mount() : addEventListener('DOMContentLoaded', mount);
+})();
+</script>
+<!-- /DEMO BANNER -->
   </body>
 </html>

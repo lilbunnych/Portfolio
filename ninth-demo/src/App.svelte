@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { app, persist, uid, chime, type Mode } from './lib/state.svelte'
-  import DemoBanner from './lib/DemoBanner.svelte'
 
   const LABEL: Record<Mode, string> = { focus: 'Focus', short: 'Short break', long: 'Long break' }
 
@@ -49,14 +48,23 @@
   })
   const activeTitle = $derived(app.tasks.find(t => t.id === app.activeTask)?.title ?? 'No task selected')
 
-  function setMode(m: Mode) {
-    mode = m; running = false; remaining = app.settings[m] * 60 * 1000
+  // Each mode keeps its own remaining time, so switching tabs pauses instead of resetting.
+  const paused: Record<Mode, number | null> = { focus: null, short: null, long: null }
+
+  function setMode(m: Mode, fresh = false) {
+    if (running) remaining = Math.max(0, endAt - Date.now())
+    running = false
+    const full = app.settings[mode] * 60 * 1000
+    paused[mode] = remaining > 0 && remaining < full ? remaining : null
+    mode = m
+    if (fresh) paused[m] = null
+    remaining = paused[m] ?? app.settings[m] * 60 * 1000
   }
   function toggle() {
     if (running) { running = false; remaining = Math.max(0, endAt - Date.now()) }
     else { running = true; endAt = Date.now() + remaining }
   }
-  function reset() { running = false; remaining = total }
+  function reset() { running = false; paused[mode] = null; remaining = total }
   function skip() { complete(false) }
 
   function complete(natural = true) {
@@ -67,9 +75,11 @@
         persist()
       }
       focusCount += 1
-      setMode(focusCount % app.settings.longEvery === 0 ? 'long' : 'short')
+      remaining = 0
+      setMode(focusCount % app.settings.longEvery === 0 ? 'long' : 'short', true)
     } else {
-      setMode('focus')
+      remaining = 0
+      setMode('focus', true)
     }
     if (natural && app.settings.sound) chime()
   }
@@ -133,7 +143,7 @@
         <label>
           <span>{label}</span>
           <input type="range" min={min} max={max} step="1" bind:value={app.settings[key as Mode]}
-            onchange={() => { persist(); if (!running && mode === key) remaining = app.settings[mode] * 60000 }} />
+            onchange={() => { persist(); paused[key as Mode] = null; if (!running && mode === key) remaining = app.settings[mode] * 60000 }} />
           <b>{app.settings[key as Mode]} min</b>
         </label>
       {/each}
@@ -145,7 +155,7 @@
     <section class="timer panel">
       <div class="modes" role="tablist" aria-label="Timer mode">
         {#each Object.entries(LABEL) as [m, label]}
-          <button role="tab" aria-selected={mode === m} class:on={mode === m} onclick={() => setMode(m as Mode)}>{label}</button>
+          <button role="tab" aria-selected={mode === m} class:on={mode === m} onclick={() => mode !== m && setMode(m as Mode)}>{label}</button>
         {/each}
       </div>
 
@@ -209,10 +219,9 @@
     </section>
   </main>
 </div>
-<DemoBanner />
 
 <style>
-  .shell { max-width: 1120px; margin: 0 auto; padding: max(1rem, env(safe-area-inset-top)) 1rem 5.5rem; }
+  .shell { max-width: 1120px; margin: 0 auto; padding: max(1rem, env(safe-area-inset-top)) 1rem 2rem; }
   .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
   .brand { display: flex; align-items: center; gap: .6rem; font-weight: 700; font-size: 1.2rem; }
   .top-actions { display: flex; align-items: center; gap: .5rem; }

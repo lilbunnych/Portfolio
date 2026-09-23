@@ -107,6 +107,10 @@
     else if (ch.startsWith('mode:')) setMode(ch.slice(5));
   });
 
+  // Demo notice tab
+  const demo = $('#demo'), demoTab = demo.querySelector('.demo-tab');
+  demoTab.addEventListener('click', () => demoTab.setAttribute('aria-expanded', String(demo.classList.toggle('open'))));
+
   // Boot
   (async () => {
     let mode = 'split';

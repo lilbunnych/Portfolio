@@ -10,7 +10,7 @@ const ITEMS = [
 
 export function Sidebar() {
   return (
-    <aside className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col border-r border-stone-200 bg-white px-4 pb-16 pt-6 lg:flex dark:border-stone-800 dark:bg-stone-900">
+    <aside className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col border-r border-stone-200 bg-white px-4 pb-6 pt-6 lg:flex dark:border-stone-800 dark:bg-stone-900">
       <div className="flex items-center gap-2.5 px-2 text-lg font-semibold">
         <img src="./favicon.svg" alt="" className="size-7" /> Ledgerly
       </div>
@@ -31,7 +31,7 @@ export function Sidebar() {
 
 export function TabBar() {
   return (
-    <nav className="fixed inset-x-0 bottom-[46px] z-40 grid grid-cols-5 border-t border-stone-200 bg-white/95 backdrop-blur lg:hidden dark:border-stone-800 dark:bg-stone-900/95" aria-label="Main">
+    <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-stone-200 bg-white/95 backdrop-blur lg:hidden dark:border-stone-800 dark:bg-stone-900/95" aria-label="Main">
       {ITEMS.map(({ icon: Icon, label, active }) => (
         <a key={label} href="#" className={`flex flex-col items-center gap-0.5 py-2 text-[11px] ${active ? 'text-brand dark:text-teal-300' : 'text-stone-500'}`}>
           <Icon size={22} weight={active ? 'fill' : 'regular'} /> {label}

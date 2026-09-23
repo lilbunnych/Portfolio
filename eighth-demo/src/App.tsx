@@ -7,7 +7,6 @@ import { CashflowChart } from './components/CashflowChart'
 import { CategoryChart } from './components/CategoryChart'
 import { Budgets } from './components/Budgets'
 import { Transactions } from './components/Transactions'
-import { DemoBanner } from './components/DemoBanner'
 import { STARTING_BALANCE, TODAY, months, transactions, type Category } from './data'
 
 const RANGES = [3, 6, 12] as const
@@ -69,7 +68,7 @@ export default function App() {
   return (
     <div className="flex min-h-dvh">
       <Sidebar />
-      <main className="min-w-0 flex-1 px-4 pb-40 pt-6 md:px-8 lg:pb-24">
+      <main className="min-w-0 flex-1 px-4 pb-28 pt-6 md:px-8 lg:pb-12">
         <header className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="text-sm text-stone-500">{TODAY.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
@@ -113,7 +112,6 @@ export default function App() {
         </div>
       </main>
       <TabBar />
-      <DemoBanner />
     </div>
   )
 }
