@@ -22,7 +22,7 @@ python3 -m http.server 8000   # then open http://localhost:8000
 | `eighth-demo/` | Ledgerly | Finance dashboard | React, TypeScript, Recharts | Original |
 | `ninth-demo/` | Tempo | Installable PWA | Svelte 5 | Original |
 | `tenth-demo/` | Understory | Editorial long read | HTML/CSS/JS | Original |
-| `eleventh-demo/` | Sprout | Mobile app (iOS, Android, web) | Expo, React Native | Original |
-| `twelfth-demo/` | Jot | Desktop app (macOS, Windows, Linux; x64 + ARM64) | Electron | Original |
+| `eleventh-demo/` | Stackd | Mobile game (iOS, Android, web) | Expo, React Native | Original |
+| `twelfth-demo/` | Nocturne | Desktop music player (macOS, Windows, Linux; x64 + ARM64) | Electron, Three.js | Original |
 
-Built projects keep their `dist/` output in the repo so the hub works without a build step. The Jot desktop builds are produced with `npm run dist:all` in `twelfth-demo/` and are not committed.
+Built projects keep their `dist/` output in the repo so the hub works without a build step. The Nocturne desktop builds are produced with `npm run dist:all` in `twelfth-demo/` and are not committed.

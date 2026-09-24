@@ -2,45 +2,84 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https:; font-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' blob:; font-src 'self'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jot</title>
+<meta name="robots" content="noindex">
+<title>Nocturne</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<canvas id="viz" aria-hidden="true"></canvas>
+<div class="tint" aria-hidden="true"></div>
+
 <div class="app">
-  <aside class="side">
+  <aside class="lib" aria-label="Library">
     <div class="drag"></div>
-    <div class="side-head">
-      <label class="search"><span class="sr">Search notes</span><input id="search" placeholder="Search notes" autocomplete="off"></label>
-      <button id="new" class="icon-btn" title="New note (Ctrl/Cmd+N)" aria-label="New note">+</button>
+    <div class="brand"><span class="mark" aria-hidden="true"></span>Nocturne</div>
+    <div class="lib-head">
+      <span>Library</span>
+      <div class="lib-actions">
+        <button id="addFiles" class="chip">+ Add music</button>
+        <button id="addFolder" class="chip ghost" title="Add a whole folder">Folder</button>
+      </div>
     </div>
-    <ul id="list" class="list" aria-label="Notes"></ul>
-    <p id="empty" class="empty" hidden>No notes match your search.</p>
+    <ul id="list" class="list"></ul>
+    <p class="drop-hint">Drop audio files here. Add a matching <b>.lrc</b> file for synced lyrics.</p>
+    <input id="fileInput" type="file" accept="audio/*,.mp3,.m4a,.flac,.wav,.ogg,.aac,.lrc" multiple hidden>
+    <input id="folderInput" type="file" webkitdirectory multiple hidden>
   </aside>
 
-  <main class="main">
-    <header class="toolbar">
-      <input id="title" class="title" placeholder="Untitled" aria-label="Note title">
-      <div class="seg" role="group" aria-label="View mode">
-        <button data-mode="edit">Editor</button>
-        <button data-mode="split">Split</button>
-        <button data-mode="preview">Preview</button>
+  <main class="stage">
+    <section class="now">
+      <div class="cover-wrap" id="coverWrap">
+        <img id="cover" class="cover" alt="">
+        <img id="coverGlow" class="cover-glow" alt="" aria-hidden="true">
       </div>
-      <button id="export" class="ghost" title="Export as Markdown (Ctrl/Cmd+E)">Export</button>
-      <button id="delete" class="ghost danger" title="Delete note">Delete</button>
-    </header>
-    <section id="panes" class="panes" data-mode="split">
-      <textarea id="editor" class="editor" spellcheck="true" aria-label="Markdown editor"></textarea>
-      <article id="preview" class="preview md" aria-label="Preview"></article>
+      <div class="meta">
+        <h1 id="title">—</h1>
+        <p id="artist"></p>
+        <p id="credit" class="credit"></p>
+      </div>
     </section>
-    <footer class="status"><span id="words">0 words</span><span id="saved">Saved</span></footer>
-  </main>
-</div>
-<div class="demo" id="demo"><div class="demo-panel" id="demo-note" role="note"><b>DEMO</b><br>Portfolio project. The app and its content are fictional. Not a real product.</div><button class="demo-tab" aria-expanded="false" aria-controls="demo-note" aria-label="Demo app: show details"><span>DEMO</span></button></div>
 
-<script src="../node_modules/marked/lib/marked.umd.js"></script>
-<script src="../node_modules/dompurify/dist/purify.min.js"></script>
-<script src="app.js"></script>
+    <section class="lyrics" id="lyricsPanel" aria-label="Lyrics">
+      <div class="lyrics-scroll" id="lyrics"></div>
+    </section>
+  </main>
+
+  <footer class="dock">
+    <div class="dock-left">
+      <img id="miniCover" class="mini" alt="">
+      <div class="mini-meta"><b id="miniTitle"></b><span id="miniArtist"></span></div>
+    </div>
+    <div class="dock-center">
+      <div class="controls">
+        <button id="shuffle" class="ic small" aria-label="Shuffle" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></button>
+        <button id="prev" class="ic" aria-label="Previous"><svg viewBox="0 0 24 24"><path d="M19 20 9 12l10-8zM5 19V5"/></svg></button>
+        <button id="play" class="play" aria-label="Play"><svg id="playIcon" viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>
+        <button id="next" class="ic" aria-label="Next"><svg viewBox="0 0 24 24"><path d="m5 4 10 8-10 8zM19 5v14"/></svg></button>
+        <button id="repeat" class="ic small" aria-label="Repeat" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="m17 1 4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3"/></svg></button>
+      </div>
+      <div class="seek">
+        <span id="cur" class="time">0:00</span>
+        <input id="progress" type="range" min="0" max="1000" value="0" aria-label="Seek">
+        <span id="dur" class="time">0:00</span>
+      </div>
+    </div>
+    <div class="dock-right">
+      <button id="lyricsBtn" class="ic small" aria-label="Lyrics" aria-pressed="true"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h7M17 14v6a2 2 0 1 0 2-2"/></svg></button>
+      <button id="modeBtn" class="ic small" aria-label="Visual style"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg></button>
+      <svg class="vol-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg>
+      <input id="volume" type="range" min="0" max="100" value="80" aria-label="Volume">
+    </div>
+  </footer>
+</div>
+
+<div class="dropzone" id="dropzone" aria-hidden="true"><div>Drop music to add it to your library</div></div>
+
+<div class="demo" id="demo"><div class="demo-panel" id="demo-note" role="note"><b>DEMO</b><br>Portfolio project. The app is a demo. Default track: “Falls Through Walls (80s edit)” by dotjot, vocals and lyrics by Kaer Trouz, CC BY 3.0.</div><button class="demo-tab" aria-expanded="false" aria-controls="demo-note" aria-label="Demo app: show details"><span>DEMO</span></button></div>
+
+<audio id="audio" preload="metadata" crossorigin="anonymous"></audio>
+<script type="module" src="app.js"></script>
 </body>
 </html>

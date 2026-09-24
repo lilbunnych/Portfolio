@@ -1,8 +1,8 @@
 {
-  "name": "jot-notes",
-  "productName": "Jot",
+  "name": "nocturne-player",
+  "productName": "Nocturne",
   "version": "1.0.0",
-  "description": "Jot: a small Markdown notes app (portfolio demo).",
+  "description": "Nocturne: a music player with a 3D visualiser and synced lyrics (portfolio demo).",
   "author": "Portfolio demo",
   "license": "MIT",
   "main": "src/main.js",
@@ -14,16 +14,14 @@
     "dist:all": "electron-builder --mac --win --linux --x64 --arm64"
   },
   "build": {
-    "appId": "com.portfolio.jot",
-    "productName": "Jot",
+    "appId": "com.portfolio.nocturne",
+    "productName": "Nocturne",
     "directories": {
       "output": "release",
       "buildResources": "build"
     },
     "files": [
       "src/**/*",
-      "node_modules/marked/lib/marked.umd.js",
-      "node_modules/dompurify/dist/purify.min.js",
       "package.json"
     ],
     "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
@@ -31,7 +29,7 @@
       "target": [
         "zip"
       ],
-      "category": "public.app-category.productivity",
+      "category": "public.app-category.music",
       "icon": "build/icon.png",
       "identity": null
     },
@@ -48,16 +46,13 @@
         "tar.gz"
       ],
       "icon": "build/icon.png",
-      "category": "Office",
+      "category": "AudioVideo",
       "maintainer": "Portfolio demo"
     }
   },
-  "dependencies": {
-    "dompurify": "^3.4.16",
-    "marked": "^18.0.14"
-  },
   "devDependencies": {
     "electron": "^44.4.5",
-    "electron-builder": "^26.15.3"
+    "electron-builder": "^26.15.3",
+    "three": "^0.160.0"
   }
 }

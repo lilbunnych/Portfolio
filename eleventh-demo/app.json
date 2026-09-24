@@ -1,24 +1,24 @@
 {
   "expo": {
-    "name": "Sprout",
-    "slug": "sprout-habits",
+    "name": "Stackd",
+    "slug": "stackd-blocks",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "dark",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.portfolio.sprout"
+      "bundleIdentifier": "com.portfolio.stackd"
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#0f3d2e",
+        "backgroundColor": "#150d2e",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.portfolio.sprout"
+      "package": "com.portfolio.stackd"
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -28,9 +28,10 @@
     "plugins": [
       "expo-router"
     ],
-    "scheme": "sprout",
+    "scheme": "stackd",
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "backgroundColor": "#150d2e"
   }
 }
