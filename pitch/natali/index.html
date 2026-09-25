@@ -59,38 +59,40 @@ html.lenis, html.lenis body{ height:auto }
 .rail button{ display:flex; align-items:center; justify-content:flex-end; gap:.75rem; font-family:var(--mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--faint); transition:color .3s }
 .rail button::after{ content:""; width:1.25rem; height:1px; background:currentColor; transition:width .5s var(--ease) }
 .rail button.on{ color:var(--ink) } .rail button.on::after{ width:2.75rem; background:var(--accent) }
-.hud{ position:fixed; left:2rem; bottom:1.75rem; z-index:20; display:none; gap:2rem; font-family:var(--mono); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:var(--faint); transition:opacity .4s }
+.hud{ position:fixed; left:2rem; bottom:1.75rem; z-index:20; display:none; gap:2.75rem; font-family:var(--mono); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:var(--faint); transition:opacity .4s }
 .hud b{ display:block; color:var(--ink); font-weight:500; font-size:.95rem; letter-spacing:.02em; margin-top:.2rem }
 .gone{ opacity:0; pointer-events:none }
-@media (min-width:980px){ .rail, .hud{ display:flex } }
+@media (min-width:980px){ .rail, .hud{ display:flex } .panel{ padding:2rem } }
+@media (max-height:820px){ .hud{ display:none } }
 
 /* Chapters */
 main{ position:relative; z-index:10 }
 .chapter{ min-height:112vh; display:flex; align-items:center; padding:7rem 1.25rem 4rem }
 .chapter:first-child{ min-height:100vh }
 .copy{ width:100%; max-width:34rem }
-h1, h2{ font-family:var(--display); font-weight:500; letter-spacing:-.035em; line-height:1.08 }
+h1, h2{ font-family:var(--display); font-weight:500; letter-spacing:-.03em; line-height:1.12 }
 .chapter h1{ font-size:clamp(2.1rem,4.8vw,4.2rem) }
 .chapter h2, .sec h2, .builder h2{ font-size:clamp(1.8rem,3.4vw,3rem) }
 h1 em, h2 em{ font-style:normal; color:var(--accent) }
-.lead{ margin-top:1.4rem; font-size:1.1rem; color:var(--muted); max-width:36ch }
-.label{ display:inline-flex; align-items:center; gap:.5rem; margin-bottom:1.25rem; font-family:var(--mono); font-size:.75rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent) }
+.lead{ margin-top:1.6rem; font-size:1.1rem; color:var(--muted); max-width:36ch }
+.label{ display:inline-flex; align-items:center; gap:.5rem; margin-bottom:1.5rem; font-family:var(--mono); font-size:.75rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent) }
 .label i{ width:.45rem; height:.45rem; border-radius:50%; background:var(--accent); box-shadow:0 0 0 4px var(--accent-soft); animation:pulse 2.4s infinite }
 @keyframes pulse{ 50%{ box-shadow:0 0 0 8px transparent } }
-.ctas{ margin-top:2rem; display:flex; flex-wrap:wrap; gap:.75rem }
-.chips{ margin-top:1.75rem; display:flex; flex-wrap:wrap; gap:.5rem }
+.ctas{ margin-top:2.4rem; display:flex; flex-wrap:wrap; gap:.9rem }
+.chips{ margin-top:2rem; display:flex; flex-wrap:wrap; gap:.65rem }
 .chips span{ font-size:.85rem; padding:.4rem .85rem; border-radius:999px; background:rgba(255,255,255,.55); border:1px solid rgba(255,255,255,.8); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px) }
-.readout{ margin-top:2rem; display:inline-flex; align-items:baseline; gap:.6rem; font-family:var(--mono); color:var(--ink) }
+.readout{ margin-top:2.4rem; display:inline-flex; align-items:baseline; gap:.6rem; font-family:var(--mono); color:var(--ink) }
 .readout b{ font-size:2.1rem; font-weight:500; letter-spacing:-.04em }
 .readout span{ color:var(--muted); font-size:.85rem }
-.ticks{ margin-top:1.5rem; display:grid; gap:.6rem; font-size:1rem }
+.ticks{ margin-top:1.75rem; display:grid; gap:.9rem; font-size:1rem }
 .ticks li{ list-style:none; display:flex; gap:.6rem; align-items:flex-start }
 .ticks svg{ width:1.2rem; height:1.2rem; color:var(--accent); flex-shrink:0; margin-top:.15rem }
 @media (min-width:980px){ .chapter{ padding-inline:max(2rem, calc((100vw - 80rem)/2 + 2rem)) } }
 @media (max-width:979px){
   .chapter{ align-items:flex-end; padding-bottom:6rem }
-  .chapter .copy{ padding:1.5rem; border-radius:var(--r-panel); background:var(--panel); border:1px solid rgba(255,255,255,.75); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px) }
-  .chapter:first-child .copy{ background:none; border:0; backdrop-filter:none; -webkit-backdrop-filter:none; padding:0 }
+  .chapter .copy{ padding:1.5rem; border-radius:var(--r-panel); background:rgba(255,255,255,.8); border:1px solid rgba(255,255,255,.75); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px) }
+  .chapter:first-child{ padding-top:44vh; padding-bottom:3rem }
+  .chapter:first-child h1{ font-size:clamp(1.8rem,8.4vw,2.6rem) }
 }
 
 [data-reveal]{ opacity:0; transform:translateY(24px); transition:opacity 1s var(--ease), transform 1s var(--ease); transition-delay:var(--d,0ms) }
@@ -100,10 +102,10 @@ h1 em, h2 em{ font-style:normal; color:var(--accent) }
 .builder{ position:relative; z-index:10; padding:7rem 1.25rem 7rem }
 .builder__in{ max-width:80rem; margin-inline:auto }
 .builder .copy{ max-width:36rem }
-.panel{ margin-top:2rem; max-width:36rem; border-radius:var(--r-panel); background:rgba(255,255,255,.68); border:1px solid rgba(255,255,255,.85); box-shadow:0 30px 60px -40px rgba(40,20,40,.45), inset 0 1px 0 #fff; backdrop-filter:blur(18px) saturate(150%); -webkit-backdrop-filter:blur(18px) saturate(150%); padding:1.5rem; display:grid; gap:1.4rem }
-.step-t{ display:flex; align-items:center; gap:.6rem; font-weight:700; font-size:.95rem; margin-bottom:.7rem }
+.panel{ margin-top:2rem; max-width:36rem; border-radius:var(--r-panel); background:rgba(255,255,255,.68); border:1px solid rgba(255,255,255,.85); box-shadow:0 30px 60px -40px rgba(40,20,40,.45), inset 0 1px 0 #fff; backdrop-filter:blur(18px) saturate(150%); -webkit-backdrop-filter:blur(18px) saturate(150%); padding:1.75rem; display:grid; gap:1.9rem }
+.step-t{ display:flex; align-items:center; gap:.6rem; font-weight:700; font-size:.95rem; margin-bottom:.9rem }
 .step-t i{ font-style:normal; font-family:var(--mono); font-size:.7rem; color:var(--accent); padding:.15rem .45rem; border-radius:999px; background:var(--accent-soft) }
-.seg{ display:flex; flex-wrap:wrap; gap:.45rem }
+.seg{ display:flex; flex-wrap:wrap; gap:.55rem }
 .seg button{ height:2.4rem; padding:0 .95rem; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.6); font-size:.88rem; color:var(--muted); transition:all .2s }
 .seg button:hover{ color:var(--ink); border-color:var(--ink) }
 .seg button[aria-pressed="true"]{ background:var(--ink); border-color:var(--ink); color:#fff }
@@ -112,17 +114,17 @@ h1 em, h2 em{ font-style:normal; color:var(--accent) }
 input[type=range]{ -webkit-appearance:none; appearance:none; flex:1; min-width:0; height:4px; border-radius:4px; background:linear-gradient(90deg, var(--accent) var(--p,15%), rgba(17,16,22,.12) var(--p,15%)) }
 input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; width:22px; height:22px; border-radius:50%; background:#fff; border:5px solid var(--accent); box-shadow:0 4px 14px rgba(210,58,111,.45); cursor:pointer }
 input[type=range]::-moz-range-thumb{ width:14px; height:14px; border-radius:50%; background:#fff; border:5px solid var(--accent); cursor:pointer }
-.swatches{ display:flex; flex-wrap:wrap; gap:.5rem }
+.swatches{ display:flex; flex-wrap:wrap; gap:.6rem }
 .sw{ display:flex; align-items:center; gap:.45rem; height:2.4rem; padding:0 .8rem 0 .35rem; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.6); font-size:.85rem; color:var(--muted); transition:all .2s }
 .sw span{ width:1.7rem; height:1.7rem; border-radius:50%; box-shadow:inset 0 0 0 1px rgba(0,0,0,.08) }
 .sw[aria-pressed="true"]{ border-color:var(--ink); color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink) }
-.row2{ display:grid; gap:.75rem; grid-template-columns:1fr 1fr }
+.row2{ display:grid; gap:1rem; grid-template-columns:1fr 1fr }
 .field{ display:flex; flex-direction:column; gap:.35rem; font-size:.82rem; color:var(--muted); min-width:0 }
 .input{ width:100%; height:2.9rem; border:1px solid var(--line); background:rgba(255,255,255,.85); border-radius:var(--r-input); padding:0 .9rem; font-size:.93rem; color:var(--ink); outline:none; -webkit-appearance:none; appearance:none; transition:border-color .2s, box-shadow .2s }
 textarea.input{ height:auto; min-height:4.5rem; padding:.7rem .9rem; resize:vertical }
 select.input{ padding-right:2rem; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111016' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right .75rem center; background-size:1rem }
 .input:focus{ border-color:var(--ink); box-shadow:0 0 0 3px rgba(17,16,22,.07) }
-.summary{ border-top:1px dashed rgba(17,16,22,.18); padding-top:1.3rem; display:grid; gap:1rem }
+.summary{ border-top:1px dashed rgba(17,16,22,.18); padding-top:1.6rem; display:grid; gap:1.2rem }
 .summary-top{ display:flex; justify-content:space-between; align-items:baseline; gap:1rem; font-family:var(--mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--faint) }
 .summary-top b{ color:var(--accent); font-size:.8rem; letter-spacing:.04em }
 .msg{ font-size:.9rem; white-space:pre-line; background:rgba(255,255,255,.8); border:1px solid var(--line); border-radius:var(--r-input); padding:.9rem 1rem }
@@ -137,13 +139,13 @@ select.input{ padding-right:2rem; background-image:url("data:image/svg+xml,%3Csv
 .ticker span{ padding-right:2.5rem }
 .ticker span::before{ content:"✦"; color:var(--accent); margin-right:2.5rem }
 @keyframes tick{ to{ transform:translateX(-50%) } }
-.sec{ max-width:80rem; margin-inline:auto; padding:5.5rem 1.25rem 0 }
+.sec{ max-width:80rem; margin-inline:auto; padding:6.5rem 1.25rem 0 }
 .sec-head{ display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:1.5rem }
 .sec-head p{ max-width:26rem; color:var(--muted) }
-@media (min-width:980px){ .sec{ padding-inline:2rem; padding-top:7.5rem } }
+@media (min-width:980px){ .sec{ padding-inline:2rem; padding-top:9rem } }
 
 /* Collection: tilt cards */
-.bento{ margin-top:2.5rem; display:grid; gap:1rem; grid-template-columns:1fr }
+.bento{ margin-top:3rem; display:grid; gap:1.25rem; grid-template-columns:1fr }
 @media (min-width:700px){ .bento{ grid-template-columns:repeat(2,1fr) } .b-big{ grid-column:span 2 } }
 @media (min-width:1000px){ .bento{ grid-template-columns:repeat(4,1fr); grid-auto-rows:16rem } .b-big{ grid-column:span 2; grid-row:span 2 } .b-wide{ grid-column:span 2 } .b-full{ grid-column:1 / -1 } }
 .tile{ position:relative; min-height:17rem; border-radius:var(--r-panel); overflow:hidden; color:#fff; display:flex; flex-direction:column; justify-content:flex-end; padding:1.4rem; transform:perspective(1000px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)); transition:transform .5s var(--ease), box-shadow .5s var(--ease); box-shadow:0 20px 40px -30px rgba(40,20,40,.5) }
@@ -160,7 +162,7 @@ select.input{ padding-right:2rem; background-image:url("data:image/svg+xml,%3Csv
 .tile .price{ position:absolute; top:1rem; right:1rem; font-weight:700; font-size:.82rem; padding:.35rem .7rem; border-radius:999px; background:#fff; color:var(--ink) }
 
 /* Steps */
-.steps{ margin-top:2.5rem; display:grid; gap:1rem; counter-reset:s }
+.steps{ margin-top:3rem; display:grid; gap:1.25rem; counter-reset:s }
 @media (min-width:860px){ .steps{ grid-template-columns:repeat(3,1fr) } }
 .steps li{ list-style:none; counter-increment:s; position:relative; padding:1.6rem; border-radius:var(--r-panel); background:var(--panel-solid); border:1px solid var(--line) }
 .steps li::before{ content:"0" counter(s); font-family:var(--mono); font-size:.75rem; color:var(--accent); letter-spacing:.08em }
@@ -176,7 +178,7 @@ select.input{ padding-right:2rem; background-image:url("data:image/svg+xml,%3Csv
 @keyframes spin{ to{ transform:rotate(1turn) } }
 .events h2{ font-size:clamp(1.7rem,3.2vw,2.7rem) }
 .events p{ margin-top:1rem; color:rgba(244,241,247,.74); max-width:34rem }
-.events ul{ list-style:none; display:grid; gap:.75rem; align-content:center }
+.events ul{ list-style:none; display:grid; gap:1rem; align-content:center }
 .events li{ display:flex; justify-content:space-between; gap:1rem; padding:1rem 1.1rem; border-radius:1rem; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); font-size:.95rem; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px) }
 .events li span{ font-family:var(--mono); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:rgba(244,241,247,.6); align-self:center; text-align:right }
 .events .label{ color:#ff8fb3 }
@@ -184,7 +186,7 @@ select.input{ padding-right:2rem; background-image:url("data:image/svg+xml,%3Csv
 @media (min-width:900px){ .events{ grid-template-columns:1.1fr .9fr; padding:3.5rem } }
 
 /* Care */
-.care{ margin-top:2.5rem; display:grid; gap:1rem }
+.care{ margin-top:3rem; display:grid; gap:1.25rem }
 @media (min-width:860px){ .care{ grid-template-columns:repeat(3,1fr) } }
 .care div{ padding:1.5rem; border-radius:var(--r-panel); border:1px solid var(--line); background:var(--panel-solid) }
 .care b{ display:block; font-weight:700 }
@@ -202,9 +204,9 @@ select.input{ padding-right:2rem; background-image:url("data:image/svg+xml,%3Csv
 .faq .a a{ color:var(--accent); text-decoration:underline }
 
 /* Final CTA + contacts */
-.final{ display:grid; gap:1rem }
+.final{ display:grid; gap:1.25rem }
 @media (min-width:900px){ .final{ grid-template-columns:1fr 1.15fr } }
-.final .card{ border-radius:var(--r-panel); background:var(--panel-solid); border:1px solid var(--line); padding:2rem; display:grid; gap:1.2rem; align-content:start }
+.final .card{ border-radius:var(--r-panel); background:var(--panel-solid); border:1px solid var(--line); padding:2.25rem; display:grid; gap:1.5rem; align-content:start }
 .final h2{ font-size:clamp(1.7rem,3vw,2.5rem) }
 .line{ display:flex; gap:.8rem; align-items:flex-start; color:var(--muted) }
 .line svg{ width:1.25rem; height:1.25rem; color:var(--accent); flex-shrink:0; margin-top:.15rem }
@@ -342,12 +344,12 @@ select.input{ padding-right:2rem; background-image:url("data:image/svg+xml,%3Csv
       <div>
         <div class="step-t"><i>03</i>Палитра</div>
         <div class="swatches" data-group="palette" role="group" aria-label="Палитра">
-          <button class="sw" aria-pressed="true" data-p="0"><span style="background:linear-gradient(135deg,#ffd6e1,#ff5c8a)"></span>Нежная</button>
-          <button class="sw" aria-pressed="false" data-p="1"><span style="background:linear-gradient(135deg,#ffffff,#d9e4f5)"></span>Белая</button>
-          <button class="sw" aria-pressed="false" data-p="2"><span style="background:linear-gradient(135deg,#ffe7a6,#ff9e1f)"></span>Солнечная</button>
-          <button class="sw" aria-pressed="false" data-p="3"><span style="background:linear-gradient(135deg,#ff7a93,#c3143f)"></span>Яркая</button>
-          <button class="sw" aria-pressed="false" data-p="4"><span style="background:linear-gradient(135deg,#dccfff,#7b5ad6)"></span>Лавандовая</button>
-          <button class="sw" aria-pressed="false" data-p="5"><span style="background:linear-gradient(135deg,#ecd3ad,#9a6440)"></span>Сухоцветы</button>
+          <button class="sw" aria-pressed="true" data-p="0"><span style="background:linear-gradient(135deg,#ff9db5,#d63b6b)"></span>Нежная</button>
+          <button class="sw" aria-pressed="false" data-p="1"><span style="background:linear-gradient(135deg,#fffdf8,#e9dfcc)"></span>Белая</button>
+          <button class="sw" aria-pressed="false" data-p="2"><span style="background:linear-gradient(135deg,#ffcc4d,#ee8a10)"></span>Солнечная</button>
+          <button class="sw" aria-pressed="false" data-p="3"><span style="background:linear-gradient(135deg,#e03a52,#b0102c)"></span>Яркая</button>
+          <button class="sw" aria-pressed="false" data-p="4"><span style="background:linear-gradient(135deg,#bea3ec,#7a52c0)"></span>Лавандовая</button>
+          <button class="sw" aria-pressed="false" data-p="5"><span style="background:linear-gradient(135deg,#c08a5e,#6e3f26)"></span>Сухоцветы</button>
         </div>
       </div>
       <div>
@@ -515,14 +517,14 @@ const smooth = t => t * t * (3 - 2 * t);
 const $ = s => document.querySelector(s);
 const TG = 'https://telegram.me/natali_flowers_himki';
 
-// Palettes shared by the builder and the 3D flower: [inner, outer, glow, name]
+// Palettes shared by the builder and the 3D flower: [heart, outer petals, name]
 const PALETTES = [
-  ['#ff4f86', '#ffd9e3', '#ffb86b', 'Нежная'],
-  ['#dfe8ff', '#ffffff', '#ffd66b', 'Белая'],
-  ['#ff9e1f', '#ffe9a8', '#ff5e3a', 'Солнечная'],
-  ['#c3143f', '#ff8aa0', '#ffcf5c', 'Яркая'],
-  ['#7b5ad6', '#e2d8ff', '#ffc2e0', 'Лавандовая'],
-  ['#7a4428', '#d49a66', '#c88f4a', 'Сухоцветы'],
+  ['#d63b6b', '#ff9db5', 'Нежная'],
+  ['#f3ecdf', '#fffdf8', 'Белая'],
+  ['#ee8a10', '#ffcc4d', 'Солнечная'],
+  ['#b0102c', '#e03a52', 'Яркая'],
+  ['#7a52c0', '#bea3ec', 'Лавандовая'],
+  ['#6e3f26', '#c08a5e', 'Сухоцветы'],
 ];
 
 /* ---------- Smooth scroll ---------- */
@@ -544,7 +546,7 @@ document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
 
 /* ---------- Builder: one order object drives the message and the flower ---------- */
 const order = { occasion: 'День рождения', budget: 3500, palette: 0 };
-const petalsFor = b => Math.round(34 + (b - 1500) / 13500 * 86);
+const petalsFor = b => Math.round(40 + (b - 1500) / 13500 * 78);
 const rub = n => n.toLocaleString('ru-RU') + ' ₽';
 const budget = $('#budget');
 document.querySelectorAll('[data-group]').forEach(g => g.addEventListener('click', e => {
@@ -564,7 +566,7 @@ function message(){
   const v = $('#date').value;
   const date = v ? new Date(v + 'T12:00').toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) : 'уточню';
   const wish = $('#wish').value.trim();
-  return `Здравствуйте! Хочу заказать букет.\nПовод: ${order.occasion}\nБюджет: ${rub(order.budget)}\nПалитра: ${PALETTES[order.palette][3]}\nДата: ${date}\nПолучение: ${$('#how').value}` + (wish ? `\nПожелания: ${wish}` : '');
+  return `Здравствуйте! Хочу заказать букет.\nПовод: ${order.occasion}\nБюджет: ${rub(order.budget)}\nПалитра: ${PALETTES[order.palette][2]}\nДата: ${date}\nПолучение: ${$('#how').value}` + (wish ? `\nПожелания: ${wish}` : '');
 }
 function renderOrder(){
   $('#budgetOut').textContent = rub(order.budget);
@@ -611,12 +613,12 @@ catch (err) { canvas.replaceWith(Object.assign(document.createElement('div'), { 
 const C = h => new THREE.Color(h);
 // Story states: bud, story (palette cycles), bloom, forever (dried). The builder state is updated live.
 const STATES = [
-  { open: .03, count: 90,  inner: C('#ff6f9a'), outer: C('#ffe0e8'), glow: C('#ffb86b'), stem: C('#7fcf9a'), trans: .4, rough: .12, irid: .7, bgA: C('#f6f3f8'), bgB: C('#e2dbea'), caustic: .35, size: .92 },
-  { open: .45, count: 90,  inner: C('#ff4f86'), outer: C('#ffd9e3'), glow: C('#ffb86b'), stem: C('#7fcf9a'), trans: .42, rough: .1,  irid: .5, bgA: C('#f7f2f4'), bgB: C('#eadbe3'), caustic: .5,  size: 1 },
-  { open: 1,   count: 110, inner: C('#ff2d6f'), outer: C('#ffd1dc'), glow: C('#ffcf5c'), stem: C('#6fd19b'), trans: .5, rough: .06, irid: .8, bgA: C('#f1f2f8'), bgB: C('#d9dcef'), caustic: .85, size: 1.08 },
-  { open: .8,  count: 96,  inner: C('#7a4428'), outer: C('#d49a66'), glow: C('#c88f4a'), stem: C('#a79a6a'), trans: 0,   rough: .72, irid: 0,  bgA: C('#f5f1ec'), bgB: C('#e4d9cc'), caustic: .25, size: 1 },
+  { open: .05, count: 96,  inner: C('#d63b6b'), outer: C('#ff9db5'), stem: C('#4f8a3c'), rough: .5,  sheen: 1,  droop: 0,   bgA: C('#f6f3f8'), bgB: C('#e2dbea'), caustic: .3,  size: .95 },
+  { open: .5,  count: 96,  inner: C('#d63b6b'), outer: C('#ff9db5'), stem: C('#4f8a3c'), rough: .5,  sheen: 1,  droop: 0,   bgA: C('#f7f2f4'), bgB: C('#eadbe3'), caustic: .45, size: 1 },
+  { open: 1,   count: 118, inner: C('#c8285a'), outer: C('#ff8fab'), stem: C('#4a8a3a'), rough: .45, sheen: 1,  droop: 0,   bgA: C('#f1f2f8'), bgB: C('#d9dcef'), caustic: .7,  size: 1.06 },
+  { open: .78, count: 104, inner: C('#6e3f26'), outer: C('#c08a5e'), stem: C('#7d7648'), rough: .9,  sheen: .2, droop: .3,  bgA: C('#f5f1ec'), bgB: C('#e4d9cc'), caustic: .2,  size: .96 },
 ];
-const BUILD = { open: .94, count: 48, inner: C('#ff4f86'), outer: C('#ffd9e3'), glow: C('#ffb86b'), stem: C('#7fcf9a'), trans: .45, rough: .08, irid: .75, bgA: C('#f3f1f6'), bgB: C('#dfd9e8'), caustic: .55, size: 1 };
+const BUILD = { open: .9, count: 60, inner: C('#d63b6b'), outer: C('#ff9db5'), stem: C('#4f8a3c'), rough: .5, sheen: 1, droop: 0, bgA: C('#f3f1f6'), bgB: C('#dfd9e8'), caustic: .5, size: 1 };
 const cycle = { i: 0, t: 0 };
 
 if (renderer){
@@ -625,11 +627,11 @@ if (renderer){
   camera.position.set(0, 0, 7);
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.05;
+  renderer.toneMappingExposure = 1.1;
   const pmrem = new THREE.PMREMGenerator(renderer);
   scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
 
-  /* Backdrop: gradient, halo behind the flower, drifting caustics and a faint HUD grid */
+  /* Backdrop: gradient, soft halo behind the flower, drifting light and a faint grid */
   const bgU = { uTime: { value: 0 }, uA: { value: new THREE.Color() }, uB: { value: new THREE.Color() }, uTint: { value: new THREE.Color() }, uCaustic: { value: 0 }, uAspect: { value: 1 }, uCenter: { value: new THREE.Vector2(.68, .52) } };
   const backdrop = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.ShaderMaterial({
     uniforms: bgU, depthWrite: false,
@@ -645,12 +647,12 @@ if (renderer){
         vec2 uv = vUv; uv.x *= uAspect;
         vec2 d = vUv - uCenter; d.x *= uAspect;
         vec3 col = mix(uA, uB, smoothstep(0.0, 1.0, length(d) * .9));
-        col = mix(col, uTint, exp(-dot(d, d) * 5.0) * .45);
-        col += vec3(1.0) * caustic(uv * 3.0, uTime * .2) * .2 * uCaustic;
+        col = mix(col, uTint, exp(-dot(d, d) * 5.0) * .4);
+        col += vec3(1.0) * caustic(uv * 3.0, uTime * .2) * .16 * uCaustic;
         float stripes = smoothstep(.6, 1.0, sin(uv.x * 8.0 - uv.y * 2.4 + uTime * .05));
-        col = mix(col, col * .9 + .1, stripes * .3 * uCaustic);
+        col = mix(col, col * .9 + .1, stripes * .25 * uCaustic);
         vec2 g = abs(fract(uv * 14.0) - .5);
-        col -= smoothstep(.485, .5, max(g.x, g.y)) * .014;
+        col -= smoothstep(.485, .5, max(g.x, g.y)) * .012;
         gl_FragColor = vec4(col, 1.0);
       }`,
   }));
@@ -659,73 +661,134 @@ if (renderer){
 
   const holder = new THREE.Group(); scene.add(holder);
   const flower = new THREE.Group(); holder.add(flower);
+  const head = new THREE.Group(); flower.add(head);
+  head.position.y = .35;
 
-  /* Petal geometry: narrow base, wide belly, rounded tip, cupped sides and a curled tip */
-  function petalGeometry(){
-    const g = new THREE.PlaneGeometry(1, 1, 12, 20);
-    const p = g.attributes.position;
+  /* Rose petal: broad rounded blade with a ruffled rim, fine veins in the vertex colours.
+     cup bends the sides inwards, reflex rolls the top edge outwards. Local +z points away from the centre. */
+  function petalGeometry(cup, reflex, roll, seed){
+    const g = new THREE.PlaneGeometry(1, 1, 26, 34);
+    const p = g.attributes.position, cols = new Float32Array(p.count * 3);
     for (let i = 0; i < p.count; i++){
       const u = p.getX(i), v = p.getY(i) + .5;
-      const w = Math.pow(Math.sin(Math.PI * Math.min(.985, Math.pow(v, .85))), .42) * (1 - .12 * v) + .04 * (1 - v);
-      const x = u * w * .95;
-      const z = -1.05 * x * x * (1 + .6 * v) + .22 * v * v * v + .025 * Math.sin(v * 11 + u * 6) * Math.abs(u) * 2;
-      p.setXYZ(i, x, v, z);
+      const w = v < .6 ? .16 + .84 * Math.sin(Math.PI / 2 * v / .6) : Math.sqrt(Math.max(0, 1 - Math.pow((v - .6) / .42, 2)));
+      const x = u * w * 1.02;
+      const top = smooth(clamp((v - .55) / .45, 0, 1));
+      const edge = Math.pow(Math.abs(u) * 2, 2);
+      let z = -cup * x * x * (1 - .35 * top);
+      z += reflex * top * top * .6;
+      z += roll * x * x * top * 1.6;
+      z += (.035 * Math.sin(u * 17 + seed * 5) + .02 * Math.sin(u * 31 + seed * 11)) * top * (.4 + edge);
+      const y = v - reflex * top * top * .12;
+      p.setXYZ(i, x, y, z);
+      // Colour: warm lighter base, darker veins, slightly paler rim
+      const vein = 1 - .07 * Math.pow(Math.abs(Math.sin(u * w * 46 + v * 2)), 10) * (1 - top * .6);
+      const base = 1 + .12 * (1 - smooth(clamp(v / .25, 0, 1)));
+      const rim = 1 + .05 * edge * top;
+      const k = Math.min(1.15, vein * base * rim) * (.93 + .07 * v);
+      cols[i*3] = k * (1 + .04 * (1 - v)); cols[i*3+1] = k * (1 + .08 * (1 - smooth(clamp(v / .2, 0, 1)))); cols[i*3+2] = k;
     }
+    g.setAttribute('color', new THREE.BufferAttribute(cols, 3));
     g.computeVertexNormals();
     return g;
   }
-  const pGeo = petalGeometry();
-  const MAX = 120;
+
+  /* Soft, velvety petal material with a little light passing through (fake subsurface) */
   const pMat = new THREE.MeshPhysicalMaterial({
-    color: 0xffffff, side: THREE.DoubleSide, roughness: .1, metalness: 0, transmission: .6, thickness: .6, ior: 1.4,
-    clearcoat: 1, clearcoatRoughness: .08, iridescence: .8, iridescenceIOR: 1.35, iridescenceThicknessRange: [120, 480],
-    attenuationColor: new THREE.Color('#ff4f86'), attenuationDistance: .7,
-    sheen: .35, sheenRoughness: .5, sheenColor: new THREE.Color('#ff9fb8'), envMapIntensity: 1,
+    color: 0xffffff, vertexColors: true, side: THREE.DoubleSide, roughness: .5, metalness: 0,
+    sheen: 1, sheenRoughness: .35, sheenColor: new THREE.Color('#ffe3ec'), specularIntensity: .35, envMapIntensity: .7,
   });
-  const petals = new THREE.InstancedMesh(pGeo, pMat, MAX);
-  petals.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-  flower.add(petals);
+  pMat.onBeforeCompile = sh => {
+    sh.fragmentShader = sh.fragmentShader.replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
+      float rimLight = pow(1.0 - abs(dot(normalize(vNormal), normalize(vViewPosition))), 2.0);
+      totalEmissiveRadiance += vColor.rgb * (.07 + .16 * rimLight);`);
+  };
+
+  const MAX = 120;
+  const KINDS = [petalGeometry(2.6, 0, 0, 1), petalGeometry(1.5, .25, .25, 2), petalGeometry(.7, .55, .55, 3)];
+  const meshes = KINDS.map(g => { const m = new THREE.InstancedMesh(g, pMat, MAX); m.instanceMatrix.setUsage(THREE.DynamicDrawUsage); m.count = 0; head.add(m); return m; });
   const P = [];
   for (let i = 0; i < MAX; i++){
-    const t = Math.pow((i + 1) / MAX, .85);
-    P.push({ t, yaw: i * 2.39996, jit: (Math.random() - .5) * .14, len: .92 + Math.random() * .16, vis: 0 });
-    petals.setColorAt(i, new THREE.Color(1, 1, 1));
+    const t = Math.pow((i + 1) / MAX, .8);
+    const kind = t < .4 ? 0 : t < .72 ? 1 : 2;
+    P.push({ t, kind, slot: meshes[kind].count++, yaw: i * 2.39996 + (Math.random() - .5) * .25, jit: (Math.random() - .5) * .12, len: .9 + Math.random() * .2, seed: Math.random() * 6.28, vis: 0 });
   }
+  meshes.forEach(m => { for (let i = 0; i < m.count; i++) m.setColorAt(i, new THREE.Color(1, 1, 1)); });
 
-  /* Glowing stamens in the heart */
-  const STAM = 46;
-  const sMat = new THREE.MeshStandardMaterial({ color: '#ffd27a', emissive: '#ffb86b', emissiveIntensity: 1.2, roughness: .4 });
-  const stamens = new THREE.InstancedMesh(new THREE.SphereGeometry(.028, 12, 10), sMat, STAM);
-  const stamenPos = [];
-  for (let i = 0; i < STAM; i++){
-    const a = i * 2.39996, r = Math.sqrt(i / STAM) * .13;
-    stamenPos.push(new THREE.Vector3(Math.sin(a) * r, .1 + (1 - r / .13) * .08, Math.cos(a) * r));
+  /* Leaves: pointed, serrated, folded along a pale midrib */
+  function leafGeometry(){
+    const g = new THREE.PlaneGeometry(1, 1, 16, 28);
+    const p = g.attributes.position, cols = new Float32Array(p.count * 3);
+    for (let i = 0; i < p.count; i++){
+      const u = p.getX(i), v = p.getY(i) + .5;
+      const w = Math.pow(Math.sin(Math.PI * Math.pow(v, .75)), .8) * .62;
+      const serr = 1 + .07 * Math.pow(Math.abs(Math.sin(v * 44)), 3) * Math.pow(Math.abs(u) * 2, 4);
+      const x = u * w * serr;
+      const z = .22 * Math.abs(x) - .3 * v * v;
+      p.setXYZ(i, x, v, z);
+      const mid = Math.exp(-Math.pow(u * 30, 2)), side = Math.pow(Math.abs(Math.sin((Math.abs(u) * 2 - v) * 16)), 12) * .08;
+      const k = .85 + .3 * mid - side + .1 * v;
+      cols[i*3] = k * .95; cols[i*3+1] = k; cols[i*3+2] = k * .9;
+    }
+    g.setAttribute('color', new THREE.BufferAttribute(cols, 3));
+    g.computeVertexNormals();
+    return g;
   }
-  flower.add(stamens);
+  const greenMat = new THREE.MeshPhysicalMaterial({ color: '#4f8a3c', vertexColors: true, side: THREE.DoubleSide, roughness: .55, sheen: .4, sheenColor: new THREE.Color('#c8f0b0'), envMapIntensity: .7 });
+  greenMat.onBeforeCompile = sh => {
+    sh.fragmentShader = sh.fragmentShader.replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
+      totalEmissiveRadiance += diffuseColor.rgb * .12;`);
+  };
 
-  /* Glass stem and two leaves */
-  const stemMat = new THREE.MeshPhysicalMaterial({ color: '#7fcf9a', roughness: .08, transmission: .7, thickness: .4, ior: 1.4, clearcoat: 1, side: THREE.DoubleSide });
-  const curve = new THREE.CatmullRomCurve3([new THREE.Vector3(0, .05, 0), new THREE.Vector3(.02, -.9, -.05), new THREE.Vector3(.12, -2, .05), new THREE.Vector3(.08, -3.6, 0)]);
-  flower.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 64, .035, 10), stemMat));
-  [[.36, 1, 1.15], [.56, -1, .95]].forEach(([at, side, s]) => {
-    const leaf = new THREE.Mesh(pGeo, stemMat);
-    leaf.position.copy(curve.getPointAt(at));
-    leaf.rotation.set(side * -1.05, side > 0 ? 1.1 : -2, 0, 'YXZ');
-    leaf.scale.set(s * .55, s, s);
-    flower.add(leaf);
+  // Stem with a slight taper, a few thorns, leaves and sepals under the head
+  const curve = new THREE.CatmullRomCurve3([new THREE.Vector3(0, .38, 0), new THREE.Vector3(.03, -.6, -.04), new THREE.Vector3(.1, -1.9, .05), new THREE.Vector3(.06, -3.8, 0)]);
+  const stemGeo = new THREE.TubeGeometry(curve, 80, .042, 12);
+  { const sp = stemGeo.attributes.position, n = stemGeo.attributes.normal;
+    for (let i = 0; i < sp.count; i++){ const y = sp.getY(i), k = 1 + (-y - .5) * .06; sp.setXYZ(i, sp.getX(i) + n.getX(i) * .042 * (k - 1), y, sp.getZ(i) + n.getZ(i) * .042 * (k - 1)); } }
+  flower.add(new THREE.Mesh(stemGeo, greenMat));
+  const thornGeo = new THREE.ConeGeometry(.018, .09, 8); thornGeo.translate(0, .045, 0);
+  [[.3, 0], [.46, 2.2], [.62, 4.1], [.78, 1.2]].forEach(([at, a]) => {
+    const th = new THREE.Mesh(thornGeo, greenMat);
+    th.position.copy(curve.getPointAt(at)).add(new THREE.Vector3(Math.cos(a) * .035, 0, Math.sin(a) * .035));
+    th.rotation.set(Math.sin(a) * 1.2, 0, -Math.cos(a) * 1.2); th.rotateX(-.4);
+    flower.add(th);
   });
-  flower.position.y = .35;
+  const leafGeo = leafGeometry();
+  const leaves = [];
+  [[.36, 1.0, 1.05], [.4, -2.1, .8], [.58, -.6, .95], [.62, 2.4, .7]].forEach(([at, yaw, s]) => {
+    const pivot = new THREE.Group();
+    pivot.position.copy(curve.getPointAt(at));
+    pivot.rotation.set(0, yaw, 0);
+    const leaf = new THREE.Mesh(leafGeo, greenMat);
+    leaf.rotation.x = 1.05; leaf.scale.setScalar(s);
+    pivot.add(leaf); flower.add(pivot); leaves.push({ pivot, leaf, s, seed: Math.random() * 6 });
+  });
+  const sepalGeo = leafGeometry();
+  const sepals = [];
+  for (let i = 0; i < 5; i++){
+    const pv = new THREE.Group(); pv.rotation.y = i / 5 * Math.PI * 2 + .3;
+    const sp = new THREE.Mesh(sepalGeo, greenMat); sp.scale.set(.22, .42, .3);
+    pv.add(sp); head.add(pv); sepals.push(sp);
+  }
+  const receptacle = new THREE.Mesh(new THREE.SphereGeometry(.09, 20, 14), greenMat); receptacle.scale.set(1, .8, 1); receptacle.position.y = -.02; head.add(receptacle);
 
-  /* Futuristic orbit rings */
-  const ringA = new THREE.Mesh(new THREE.RingGeometry(1.95, 1.958, 160), new THREE.MeshBasicMaterial({ color: '#d23a6f', transparent: true, opacity: .35, side: THREE.DoubleSide, depthWrite: false }));
+  /* Loose petals drifting through the scene */
+  const DRIFT = 7;
+  const drift = new THREE.InstancedMesh(KINDS[2], pMat, DRIFT);
+  const D = [];
+  for (let i = 0; i < DRIFT; i++){ D.push({ x: (Math.random() - .5) * 9, y: Math.random() * 7 - 3.5, z: -1.5 - Math.random() * 2, r: Math.random() * 6, s: .18 + Math.random() * .12, v: .15 + Math.random() * .15 }); drift.setColorAt(i, new THREE.Color(1, 1, 1)); }
+  scene.add(drift);
+
+  /* Thin orbit ring for the futuristic frame */
+  const ringA = new THREE.Mesh(new THREE.RingGeometry(1.45, 1.456, 160), new THREE.MeshBasicMaterial({ color: '#d23a6f', transparent: true, opacity: .3, side: THREE.DoubleSide, depthWrite: false }));
   const dotsGeo = new THREE.BufferGeometry();
   const dots = new Float32Array(72 * 3);
-  for (let i = 0; i < 72; i++){ const a = i / 72 * Math.PI * 2; dots[i*3] = Math.cos(a) * 2.3; dots[i*3+1] = Math.sin(a) * 2.3; }
+  for (let i = 0; i < 72; i++){ const a = i / 72 * Math.PI * 2; dots[i*3] = Math.cos(a) * 1.65; dots[i*3+1] = Math.sin(a) * 1.65; }
   dotsGeo.setAttribute('position', new THREE.BufferAttribute(dots, 3));
-  const ringB = new THREE.Points(dotsGeo, new THREE.PointsMaterial({ color: '#111016', size: .025, transparent: true, opacity: .35, depthWrite: false }));
+  const ringB = new THREE.Points(dotsGeo, new THREE.PointsMaterial({ color: '#111016', size: .022, transparent: true, opacity: .3, depthWrite: false }));
   const rings = new THREE.Group(); rings.add(ringA, ringB); rings.position.y = .45; holder.add(rings);
 
-  /* Pollen */
+  /* Dust motes in the light */
   const sprite = (() => {
     const c = document.createElement('canvas'); c.width = c.height = 64;
     const x = c.getContext('2d'), g = x.createRadialGradient(32, 32, 0, 32, 32, 32);
@@ -733,18 +796,20 @@ if (renderer){
     x.fillStyle = g; x.fillRect(0, 0, 64, 64);
     return new THREE.CanvasTexture(c);
   })();
-  const POLL = 180;
+  const POLL = 140;
   const polGeo = new THREE.BufferGeometry();
   const polPos = new Float32Array(POLL * 3), polSeed = new Float32Array(POLL);
   for (let i = 0; i < POLL; i++){ polPos[i*3] = (Math.random() - .5) * 10; polPos[i*3+1] = (Math.random() - .5) * 7; polPos[i*3+2] = (Math.random() - .5) * 4; polSeed[i] = Math.random(); }
   polGeo.setAttribute('position', new THREE.BufferAttribute(polPos, 3));
-  const polMat = new THREE.PointsMaterial({ size: .07, map: sprite, color: '#ff8fb0', transparent: true, opacity: .6, depthWrite: false });
+  const polMat = new THREE.PointsMaterial({ size: .06, map: sprite, color: '#ffffff', transparent: true, opacity: .75, depthWrite: false });
   scene.add(new THREE.Points(polGeo, polMat));
 
-  const key = new THREE.DirectionalLight('#ffffff', 2); key.position.set(3, 4, 5); scene.add(key);
-  const rim = new THREE.PointLight('#ff7aa5', 6, 8); rim.position.set(-2, 1.5, -1.5); scene.add(rim);
+  // Warm key from the front-right, cool fill, strong back light so the petals glow at the rim
+  const key = new THREE.DirectionalLight('#fff1e2', 2.4); key.position.set(3, 4, 5); scene.add(key);
+  scene.add(new THREE.HemisphereLight('#ffffff', '#d8c8d2', .7));
+  const back = new THREE.DirectionalLight('#ffd6e4', 2.2); back.position.set(-2, 2.5, -4); scene.add(back);
 
-  /* Layout: flower on the right on desktop, upper centre on phones */
+  /* Layout: the flower gets the free area right of the text column (and left of the rail) on desktop */
   const layout = { x: 0, y: 0, s: 1 };
   function resize(){
     const w = innerWidth, h = innerHeight;
@@ -755,8 +820,16 @@ if (renderer){
     backdrop.scale.set(vh * camera.aspect * 1.05, vh * 1.05, 1);
     bgU.uAspect.value = camera.aspect;
     const vw0 = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.position.z * camera.aspect;
-    if (w >= 980){ layout.x = 1.3 * Math.min(1.3, camera.aspect / 1.6); layout.y = -.05; layout.s = 1; bgU.uCenter.value.set(.5 + layout.x / vw0, .56); }
-    else { layout.x = 0; layout.y = .72; layout.s = Math.min(.66, w / 600); bgU.uCenter.value.set(.5, .68); }
+    const upp = vw0 / w;
+    if (w >= 980){
+      const padL = Math.max(32, (w - 1280) / 2 + 32);
+      const textR = padL + Math.min(560, w * .42) + 48, right = w - 190;
+      const cx = (textR + right) / 2, room = Math.min((right - textR) / 2, h * .36);
+      layout.x = (cx - w / 2) * upp; layout.y = -.08; layout.s = clamp(room * upp / 1.55, .5, 1.1);
+      bgU.uCenter.value.set(cx / w, .56);
+    } else {
+      layout.x = 0; layout.y = .62; layout.s = Math.min(.58, w / 680); bgU.uCenter.value.set(.5, .7);
+    }
   }
   addEventListener('resize', resize); resize();
 
@@ -799,71 +872,78 @@ if (renderer){
     lenis.raf(time * 1000);
     prog += (target - prog) * (RM ? 1 : .06);
     bW += (bTarget - bW) * (RM ? 1 : .07);
-    intro = Math.min(1, intro + dt * .5);
+    intro = Math.min(1, intro + dt * .45);
+    const wind = RM ? 0 : Math.sin(time * .9) * .6 + Math.sin(time * 2.3) * .25 + Math.sin(time * 5.1) * .08;
 
     // Chapter "story" cycles through the palettes
     cycle.t += dt;
-    if (cycle.t > 2.4){ cycle.t = 0; cycle.i = (cycle.i + 1) % 5; palName.textContent = PALETTES[cycle.i][3]; }
+    if (cycle.t > 2.6){ cycle.t = 0; cycle.i = (cycle.i + 1) % 5; palName.textContent = PALETTES[cycle.i][2]; }
     const cp = PALETTES[cycle.i];
-    STATES[1].inner.lerp(col.set(cp[0]), .05); STATES[1].outer.lerp(col.set(cp[1]), .05); STATES[1].glow.lerp(col.set(cp[2]), .05);
+    STATES[1].inner.lerp(col.set(cp[0]), .05); STATES[1].outer.lerp(col.set(cp[1]), .05);
 
     // Builder state follows the order
     const bp = PALETTES[order.palette], dried = order.palette === 5 ? 1 : 0;
-    BUILD.inner.lerp(col.set(bp[0]), .08); BUILD.outer.lerp(col.set(bp[1]), .08); BUILD.glow.lerp(col.set(bp[2]), .08);
-    BUILD.stem.lerp(col.set(dried ? '#a79a6a' : '#7fcf9a'), .08);
+    BUILD.inner.lerp(col.set(bp[0]), .08); BUILD.outer.lerp(col.set(bp[1]), .08);
+    BUILD.stem.lerp(col.set(dried ? '#7d7648' : '#4f8a3c'), .08);
     BUILD.count = lerp(BUILD.count, petalsFor(order.budget), .12);
-    BUILD.size = lerp(BUILD.size, .88 + (order.budget - 1500) / 13500 * .3, .1);
-    BUILD.trans = lerp(BUILD.trans, dried ? 0 : .45, .08); BUILD.rough = lerp(BUILD.rough, dried ? .72 : .08, .08); BUILD.irid = lerp(BUILD.irid, dried ? 0 : .75, .08);
+    BUILD.size = lerp(BUILD.size, .86 + (order.budget - 1500) / 13500 * .3, .1);
+    BUILD.rough = lerp(BUILD.rough, dried ? .9 : .5, .08); BUILD.sheen = lerp(BUILD.sheen, dried ? .2 : 1, .08); BUILD.droop = lerp(BUILD.droop, dried ? .3 : 0, .08);
 
     const i0 = Math.min(2, Math.floor(prog)), tt = smooth(clamp(prog - i0, 0, 1));
     blendInto(mid, STATES[i0], STATES[i0 + 1], tt);
     blendInto(cur, mid, BUILD, smooth(bW));
 
-    // Petals: outer ones open first; the count reveals petals from the centre outwards
-    const open = cur.open * smooth(intro) + (RM ? 0 : Math.sin(time * 1.3) * .015);
+    // Petals: the outer ones open first, inner ones stay wrapped into the heart; each one breathes a little
+    const open = cur.open * smooth(intro) + (RM ? 0 : Math.sin(time * .8) * .012);
     for (let i = 0; i < MAX; i++){
-      const p = P[i];
+      const p = P[i], m = meshes[p.kind];
       p.vis += (clamp(cur.count - i, 0, 1) - p.vis) * .12;
-      const o = clamp(open * 1.35 - (1 - p.t) * .35, 0, 1);
-      const pitch = lerp(.06 + p.t * .22, .3 + p.t * 1.28, smooth(o)) + p.jit;
-      const L = (.28 + .82 * Math.pow(p.t, .9)) * p.len * cur.size;
-      const r0 = .02 + .1 * p.t * (.4 + .6 * o);
-      q.setFromEuler(e3.set(pitch, p.yaw, 0));
-      v3.set(Math.sin(p.yaw) * r0, -.06 * p.t * o, Math.cos(p.yaw) * r0);
+      const o = smooth(clamp(open * 1.4 - (1 - p.t) * .4, 0, 1));
+      const flutter = RM ? 0 : Math.sin(time * 2.1 + p.seed) * .018 * p.t + wind * .012 * p.t;
+      const pitch = lerp(.04 + p.t * .16, .2 + p.t * 1.02, o) + p.jit * o + cur.droop * p.t * p.t + flutter;
+      const L = (.26 + .7 * Math.pow(p.t, .75)) * p.len * cur.size;
+      const r0 = .015 + .09 * p.t * (.35 + .65 * o);
+      q.setFromEuler(e3.set(pitch, p.yaw, flutter * .5));
+      v3.set(Math.sin(p.yaw) * r0, .02 - .07 * p.t * o, Math.cos(p.yaw) * r0);
       const sv = L * smooth(p.vis) + 1e-4;
-      petals.setMatrixAt(i, m4.compose(v3, q, s3.set(sv * .85, sv, sv)));
-      petals.setColorAt(i, col.copy(cur.inner).lerp(cur.outer, Math.pow(p.t, .7)));
+      m.setMatrixAt(p.slot, m4.compose(v3, q, s3.set(sv * (.95 + .1 * p.t), sv, sv)));
+      m.setColorAt(p.slot, col.copy(cur.inner).lerp(cur.outer, Math.pow(p.t, 1.3)));
     }
-    petals.instanceMatrix.needsUpdate = true; petals.instanceColor.needsUpdate = true;
+    meshes.forEach(m => { m.instanceMatrix.needsUpdate = true; m.instanceColor.needsUpdate = true; });
 
-    const so = smooth(clamp((open - .15) / .5, 0, 1));
-    q.identity();
-    for (let i = 0; i < STAM; i++){
-      v3.copy(stamenPos[i]); v3.y += so * .06;
-      const s = so * (.7 + .5 * Math.sin(time * 2 + i));
-      stamens.setMatrixAt(i, m4.compose(v3, q, s3.setScalar(s + 1e-4)));
-    }
-    stamens.instanceMatrix.needsUpdate = true;
-    sMat.color.copy(cur.glow); sMat.emissive.copy(cur.glow);
+    // Sepals fold back as the flower opens
+    sepals.forEach((s, i) => { s.rotation.x = lerp(.5, 2.1, smooth(clamp(open, 0, 1))) + Math.sin(i * 2.3) * .08; s.position.y = -.02; });
+    leaves.forEach(l => { l.leaf.rotation.x = 1.05 + (RM ? 0 : Math.sin(time * 1.4 + l.seed) * .05 + wind * .04); l.leaf.rotation.z = RM ? 0 : Math.sin(time * 1.1 + l.seed) * .06; });
 
-    pMat.transmission = cur.trans; pMat.attenuationColor.copy(cur.inner); pMat.sheenColor.copy(cur.outer); pMat.roughness = cur.rough; pMat.iridescence = cur.irid; pMat.clearcoat = 1 - cur.rough;
-    stemMat.color.copy(cur.stem); stemMat.transmission = cur.trans; stemMat.roughness = cur.rough;
-    rim.color.copy(cur.inner); polMat.color.copy(cur.inner);
+    pMat.roughness = cur.rough; pMat.sheen = cur.sheen; pMat.sheenColor.copy(cur.outer).lerp(col.set('#ffffff'), .2);
+    greenMat.color.copy(cur.stem);
+    polMat.color.copy(cur.outer).lerp(col.set('#ffffff'), .6);
     bgU.uA.value.copy(cur.bgA); bgU.uB.value.copy(cur.bgB); bgU.uTint.value.copy(cur.outer);
     bgU.uCaustic.value = cur.caustic; bgU.uTime.value = RM ? 0 : time;
 
-    if (!dragging){ spinV *= .94; spin += spinV + (RM ? 0 : dt * .16); tilt *= .96; }
-    flower.rotation.set(.42 + tilt, spin, -.08);
-    holder.position.set(layout.x, layout.y + (RM ? 0 : Math.sin(time * .6) * .05), 0);
-    holder.scale.setScalar(layout.s * lerp(.55, 1, smooth(intro)));
-    rings.rotation.set(1.25 + Math.sin(time * .3) * .08, 0, time * .1);
-    ringB.rotation.z = -time * .18;
-    ringA.material.opacity = .15 + .25 * cur.irid;
+    // Drifting loose petals
+    for (let i = 0; i < DRIFT; i++){
+      const d = D[i];
+      if (!RM){ d.y -= d.v * dt; d.x += Math.sin(time * .7 + i) * dt * .12; d.r += dt * .6; }
+      if (d.y < -4){ d.y = 4; d.x = (Math.random() - .5) * 9; }
+      q.setFromEuler(e3.set(d.r, d.r * .7, Math.sin(d.r) * .8));
+      drift.setMatrixAt(i, m4.compose(v3.set(d.x, d.y, d.z), q, s3.setScalar(d.s)));
+      drift.setColorAt(i, col.copy(cur.outer).lerp(cur.inner, .3));
+    }
+    drift.instanceMatrix.needsUpdate = true; drift.instanceColor.needsUpdate = true;
+
+    if (!dragging){ spinV *= .94; spin += spinV + (RM ? 0 : dt * .12); tilt *= .96; }
+    flower.rotation.set(.38 + tilt + wind * .012, spin, -.06 + wind * .025);
+    head.rotation.z = wind * .02;
+    holder.position.set(layout.x, layout.y + (RM ? 0 : Math.sin(time * .6) * .04), 0);
+    holder.scale.setScalar(layout.s * lerp(.6, 1, smooth(intro)));
+    rings.rotation.set(1.25 + Math.sin(time * .3) * .06, 0, time * .08);
+    ringB.rotation.z = -time * .15;
 
     const sp = polGeo.attributes.position.array;
     for (let i = 0; i < POLL; i++){
-      sp[i*3+1] += dt * (.05 + polSeed[i] * .14) * (RM ? 0 : 1);
-      sp[i*3] += Math.sin(time * .5 + polSeed[i] * 20) * dt * .03;
+      sp[i*3+1] += dt * (.04 + polSeed[i] * .1) * (RM ? 0 : 1);
+      sp[i*3] += (Math.sin(time * .5 + polSeed[i] * 20) * .03 + wind * .02) * dt;
       if (sp[i*3+1] > 3.5) sp[i*3+1] = -3.5;
     }
     polGeo.attributes.position.needsUpdate = true;
