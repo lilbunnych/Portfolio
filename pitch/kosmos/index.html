@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Космос — боулинг в Химках</title>
+<meta name="description" content="Боулинг «Космос» в центре городского парка Химок. Дорожки от 800 ₽ в час, ресторан и своя пивоварня в том же здании, дни рождения и корпоративы.">
+<meta name="theme-color" content="#05060d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Onest:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/*
+  Theme: deep space, one accent (plasma cyan). Russo One display for a Soviet-space feel, mono HUD.
+  Shape rule: panels 1.25rem, controls full pill, inputs .75rem.
+  Z-index: hero canvas 0, content 10, header 30.
+*/
+:root{
+  --bg:#05060d; --bg2:#0a0c18; --ink:#eef1ff; --muted:#9097b3; --faint:#5d637e;
+  --line:rgba(255,255,255,.09); --glass:rgba(255,255,255,.04);
+  --accent:#45f3ff; --accent-ink:#031216; --accent-soft:rgba(69,243,255,.12);
+  --r:1.25rem; --r-in:.75rem;
+  --display:'Russo One', system-ui, sans-serif; --sans:'Onest', system-ui, sans-serif; --mono:'JetBrains Mono', ui-monospace, monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{ margin:0; padding:0; box-sizing:border-box }
+html{ -webkit-font-smoothing:antialiased; background:var(--bg); scroll-behavior:smooth }
+body{ font-family:var(--sans); color:var(--ink); background:var(--bg); overflow-x:clip; line-height:1.55 }
+body::before{ content:""; position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.55;
+  background-image:radial-gradient(1px 1px at 20px 30px, #fff 50%, transparent 51%), radial-gradient(1px 1px at 140px 90px, #cfe 50%, transparent 51%), radial-gradient(1.5px 1.5px at 90px 160px, #fff 50%, transparent 51%), radial-gradient(1px 1px at 210px 220px, #fde 50%, transparent 51%);
+  background-size:260px 260px }
+a{ color:inherit; text-decoration:none }
+button, input, select, textarea{ font:inherit; color:inherit }
+button{ background:none; border:0; cursor:pointer }
+img{ display:block; max-width:100% }
+:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:.3rem }
+.wrap{ max-width:80rem; margin-inline:auto; padding-inline:1.25rem }
+@media (min-width:900px){ .wrap{ padding-inline:2rem } }
+.mono{ font-family:var(--mono) }
+
+/* Header */
+.header{ position:fixed; top:1rem; inset-inline:1rem; z-index:30; display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:.45rem .45rem .45rem 1rem; border-radius:999px; background:rgba(8,10,22,.55); border:1px solid var(--line); backdrop-filter:blur(14px) saturate(140%); -webkit-backdrop-filter:blur(14px) saturate(140%); transition:transform .4s var(--ease) }
+.brand{ display:flex; align-items:center; gap:.55rem; font-family:var(--display); letter-spacing:.14em; font-size:1rem }
+.brand svg{ width:1.6rem; height:1.6rem }
+.nav{ display:none; gap:1.6rem; font-size:.92rem; color:var(--muted) }
+.nav a:hover{ color:var(--ink) }
+.head-r{ display:flex; align-items:center; gap:.9rem }
+.tel{ display:none; font-family:var(--mono); font-size:.85rem; color:var(--muted) }
+.tel:hover{ color:var(--ink) }
+@media (min-width:1000px){ .nav{ display:flex } .header{ inset-inline:2rem; top:1.25rem } }
+@media (min-width:1200px){ .tel{ display:inline } }
+.btn{ display:inline-flex; align-items:center; justify-content:center; gap:.5rem; height:2.8rem; padding:0 1.35rem; border-radius:999px; font-weight:600; font-size:.93rem; white-space:nowrap; transition:transform .15s, background .25s, box-shadow .25s, border-color .25s, color .25s }
+.btn:active{ transform:scale(.98) }
+.btn--accent{ background:var(--accent); color:var(--accent-ink); box-shadow:0 0 0 0 rgba(69,243,255,.5), 0 10px 30px -10px rgba(69,243,255,.6) }
+.btn--accent:hover{ box-shadow:0 0 0 6px rgba(69,243,255,.15), 0 10px 40px -8px rgba(69,243,255,.8) }
+.btn--line{ border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.03) }
+.btn--line:hover{ border-color:var(--ink) }
+.btn svg{ width:1rem; height:1rem }
+
+/* Hero */
+.hero{ position:relative; height:100vh; height:100svh; min-height:40rem; overflow:hidden; isolation:isolate }
+#space{ position:absolute; inset:0; width:100%; height:100%; z-index:0; display:block }
+.hero-fallback{ position:absolute; inset:0; background:radial-gradient(50% 40% at 50% 60%, #1b2a55, transparent 70%), radial-gradient(40% 30% at 20% 20%, #3b1245, transparent 70%), var(--bg) }
+.hero::after{ content:""; position:absolute; inset:auto 0 0 0; height:30%; z-index:1; background:linear-gradient(to top, var(--bg), transparent); pointer-events:none }
+.hero-c{ position:absolute; inset:0; z-index:2; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:6rem 1.25rem 7rem; pointer-events:none }
+.hero-c > *{ pointer-events:auto }
+.kicker{ font-family:var(--mono); font-size:.75rem; letter-spacing:.24em; text-transform:uppercase; color:var(--accent); margin-bottom:1.4rem }
+.logo{ display:flex; align-items:center; justify-content:center; font-family:var(--display); font-weight:400; font-size:clamp(3.4rem,13vw,11rem); line-height:.9; letter-spacing:.06em; color:#fff; text-shadow:0 0 30px rgba(69,243,255,.35), 0 0 80px rgba(69,243,255,.18); transition:text-shadow .3s }
+.logo .planet{ width:.86em; height:.86em; margin:0 .03em 0 .05em; overflow:visible; filter:drop-shadow(0 0 18px rgba(69,243,255,.45)) }
+.logo.flash{ text-shadow:0 0 30px rgba(69,243,255,.9), 0 0 120px rgba(69,243,255,.6) }
+.orbit{ transform-origin:50px 50px; animation:orbit 9s linear infinite }
+@keyframes orbit{ to{ transform:rotate(360deg) } }
+.sub{ margin-top:1.1rem; display:flex; align-items:center; gap:.9rem; font-family:var(--mono); font-size:clamp(.72rem,1.6vw,.9rem); letter-spacing:.32em; text-transform:uppercase; color:#cdd3f0 }
+.sub i{ width:2.5rem; height:1px; background:linear-gradient(90deg, transparent, var(--accent)) }
+.sub i:last-child{ transform:scaleX(-1) }
+.hero-lead{ margin-top:1.6rem; max-width:34rem; color:var(--muted); font-size:1.05rem }
+.hero-ctas{ margin-top:2rem; display:flex; flex-wrap:wrap; justify-content:center; gap:.8rem }
+.hud{ position:absolute; z-index:3; left:0; right:0; bottom:1.5rem; display:flex; justify-content:space-between; align-items:flex-end; padding-inline:1.5rem; font-family:var(--mono); font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); pointer-events:none }
+.hud b{ display:block; margin-top:.3rem; font-weight:500; font-size:.9rem; letter-spacing:.06em; color:var(--ink) }
+.hud .r{ text-align:right }
+.strike-tag{ display:inline-block; margin-left:.5rem; color:var(--accent); opacity:0; transform:translateY(6px); transition:opacity .25s, transform .25s }
+.strike-tag.on{ opacity:1; transform:none }
+.scroll-cue{ display:none; flex-direction:column; align-items:center; gap:.5rem }
+.scroll-cue span{ width:1px; height:2.2rem; background:linear-gradient(var(--accent), transparent); animation:cue 2s var(--ease) infinite }
+@keyframes cue{ 0%{ transform:scaleY(0); transform-origin:top } 50%{ transform:scaleY(1); transform-origin:top } 51%{ transform-origin:bottom } 100%{ transform:scaleY(0); transform-origin:bottom } }
+@media (min-width:760px){ .scroll-cue{ display:flex } .hud{ padding-inline:2rem; bottom:1.75rem } }
+@media (max-width:600px){ .hud .hide-sm{ display:none } }
+
+/* Sections */
+section.block{ position:relative; z-index:10; padding:7rem 0 0 }
+@media (min-width:900px){ section.block{ padding-top:9rem } }
+.eyebrow{ display:inline-flex; align-items:center; gap:.6rem; font-family:var(--mono); font-size:.75rem; letter-spacing:.2em; text-transform:uppercase; color:var(--accent) }
+.eyebrow::before{ content:""; width:.5rem; height:.5rem; border:1px solid var(--accent); transform:rotate(45deg) }
+h2{ margin-top:1rem; font-family:var(--display); font-weight:400; font-size:clamp(2rem,4.6vw,3.6rem); line-height:1.05; letter-spacing:.01em }
+h2 em{ font-style:normal; color:var(--accent) }
+.head{ display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:1.5rem 3rem }
+.head p{ max-width:28rem; color:var(--muted) }
+[data-rv]{ opacity:0; transform:translateY(28px); transition:opacity .9s var(--ease), transform .9s var(--ease); transition-delay:var(--d,0ms) }
+[data-rv].in{ opacity:1; transform:none }
+
+/* Services bento */
+.bento{ margin-top:3rem; display:grid; gap:1.1rem; grid-template-columns:1fr }
+@media (min-width:760px){ .bento{ grid-template-columns:repeat(2,1fr) } }
+@media (min-width:1100px){ .bento{ grid-template-columns:repeat(4,1fr) } .b2{ grid-column:span 2 } }
+.card{ position:relative; overflow:hidden; border-radius:var(--r); background:var(--glass); border:1px solid var(--line); padding:1.75rem; min-height:16rem; display:flex; flex-direction:column; justify-content:space-between; gap:2rem; transition:border-color .4s, transform .5s var(--ease) }
+.card:hover{ border-color:rgba(69,243,255,.35); transform:translateY(-4px) }
+.card::before{ content:""; position:absolute; inset:0; pointer-events:none; opacity:0; transition:opacity .4s; background:radial-gradient(380px circle at var(--mx,50%) var(--my,50%), rgba(69,243,255,.12), transparent 60%) }
+.card:hover::before{ opacity:1 }
+.card .ic{ width:2.8rem; height:2.8rem; border-radius:.9rem; display:grid; place-items:center; background:var(--accent-soft); color:var(--accent) }
+.card .ic svg{ width:1.4rem; height:1.4rem }
+.card h3{ font-family:var(--display); font-weight:400; font-size:1.35rem; letter-spacing:.02em }
+.card p{ margin-top:.6rem; color:var(--muted); font-size:.96rem }
+.card .num{ position:absolute; top:1.5rem; right:1.6rem; font-family:var(--mono); font-size:.7rem; letter-spacing:.14em; color:var(--faint) }
+.card.hl{ background:linear-gradient(140deg, rgba(69,243,255,.14), rgba(69,243,255,.02) 60%); border-color:rgba(69,243,255,.28) }
+.price-chip{ display:inline-flex; margin-top:1rem; font-family:var(--mono); font-size:.8rem; color:var(--accent); border:1px solid rgba(69,243,255,.35); border-radius:999px; padding:.3rem .75rem }
+
+/* Combo: bowling + restaurant */
+.combo{ margin-top:3rem; display:grid; gap:1.1rem }
+@media (min-width:980px){ .combo{ grid-template-columns:1.05fr .95fr } }
+.combo-main{ position:relative; overflow:hidden; border-radius:1.75rem; padding:2.2rem 1.6rem; background:radial-gradient(120% 90% at 100% 0%, rgba(69,243,255,.18), transparent 55%), linear-gradient(160deg, #0d1330, #070914); border:1px solid rgba(69,243,255,.2) }
+.combo-main h3{ font-family:var(--display); font-weight:400; font-size:clamp(1.5rem,2.6vw,2.1rem); line-height:1.15 }
+.combo-main p{ margin-top:1rem; color:#b9bfdc; max-width:34rem }
+.tags{ margin-top:1.6rem; display:flex; flex-wrap:wrap; gap:.55rem }
+.tags span{ font-size:.86rem; padding:.45rem .9rem; border-radius:999px; background:rgba(255,255,255,.05); border:1px solid var(--line) }
+.combo-main .btn{ margin-top:2rem }
+@media (min-width:900px){ .combo-main{ padding:3rem } }
+.plan{ border-radius:1.75rem; border:1px solid var(--line); background:var(--glass); padding:1.75rem }
+.plan-t{ display:flex; justify-content:space-between; font-family:var(--mono); font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--faint) }
+.plan ol{ list-style:none; margin-top:1.5rem; position:relative; display:grid; gap:1.4rem }
+.plan ol::before{ content:""; position:absolute; left:.45rem; top:.4rem; bottom:.4rem; width:1px; background:linear-gradient(var(--accent), rgba(69,243,255,.05)) }
+.plan li{ position:relative; padding-left:2rem }
+.plan li::before{ content:""; position:absolute; left:0; top:.35rem; width:.95rem; height:.95rem; border-radius:50%; background:var(--bg); border:2px solid var(--accent); box-shadow:0 0 12px rgba(69,243,255,.6) }
+.plan li b{ display:block; font-weight:600 }
+.plan li span{ display:block; color:var(--muted); font-size:.92rem }
+.plan li .t{ font-family:var(--mono); font-size:.75rem; color:var(--accent); letter-spacing:.08em }
+.plan small{ display:block; margin-top:1.4rem; font-size:.78rem; color:var(--faint) }
+
+/* Prices */
+.prices{ margin-top:3rem; display:grid; gap:1.1rem }
+@media (min-width:980px){ .prices{ grid-template-columns:1.2fr .8fr } }
+.ptable{ border-radius:1.5rem; border:1px solid var(--line); overflow:hidden; background:var(--glass); display:flex; flex-direction:column }
+.ptable .foot{ margin-top:auto }
+.ptable table{ width:100%; border-collapse:collapse; font-size:.95rem }
+.ptable th, .ptable td{ padding:1.05rem 1.2rem; text-align:left; border-bottom:1px solid var(--line) }
+.ptable thead th{ font-family:var(--mono); font-weight:500; font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); background:rgba(255,255,255,.02) }
+.ptable tbody tr:last-child td{ border-bottom:0 }
+.ptable td b{ font-family:var(--display); font-weight:400; font-size:1.2rem; letter-spacing:.02em }
+.ptable td small{ display:block; color:var(--faint); font-size:.78rem; margin-top:.15rem }
+.ptable tr.now td{ background:rgba(69,243,255,.07) }
+.ptable tr.now td:first-child{ box-shadow:inset 3px 0 0 var(--accent) }
+.ptable .foot{ padding:1rem 1.2rem; font-size:.8rem; color:var(--faint); border-top:1px solid var(--line) }
+@media (max-width:560px){ .ptable th, .ptable td{ padding:.85rem .75rem } .ptable td b{ font-size:1.05rem } }
+.calc{ border-radius:1.5rem; border:1px solid rgba(69,243,255,.25); background:linear-gradient(170deg, rgba(69,243,255,.1), rgba(69,243,255,.01) 60%); padding:1.75rem; display:grid; gap:1.4rem; align-content:start }
+.calc h3{ font-family:var(--display); font-weight:400; font-size:1.3rem }
+.lbl{ font-family:var(--mono); font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); margin-bottom:.6rem }
+.seg{ display:flex; flex-wrap:wrap; gap:.45rem }
+.seg button{ height:2.4rem; padding:0 1rem; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.03); font-size:.88rem; color:var(--muted); transition:all .2s }
+.seg button:hover{ color:var(--ink); border-color:rgba(255,255,255,.35) }
+.seg button[aria-pressed="true"]{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); font-weight:600 }
+.total{ display:flex; align-items:baseline; justify-content:space-between; gap:1rem; padding-top:1.2rem; border-top:1px dashed rgba(255,255,255,.14) }
+.total output{ font-family:var(--display); font-size:2.4rem; color:#fff; text-shadow:0 0 24px rgba(69,243,255,.4) }
+.total span{ color:var(--muted); font-size:.9rem }
+
+/* Booking */
+.booking{ margin-top:3rem; display:grid; gap:1.1rem }
+@media (min-width:980px){ .booking{ grid-template-columns:1.25fr .75fr } }
+.form{ border-radius:1.5rem; border:1px solid var(--line); background:var(--glass); padding:1.75rem; display:grid; gap:1.4rem }
+@media (min-width:900px){ .form{ padding:2.2rem } }
+.row{ display:grid; gap:1rem }
+@media (min-width:640px){ .row.two{ grid-template-columns:1fr 1fr } .row.three{ grid-template-columns:1fr 1fr 1fr } }
+.field{ display:flex; flex-direction:column; gap:.45rem; min-width:0 }
+.field > span{ font-size:.85rem; color:var(--muted) }
+.input{ width:100%; height:3rem; border-radius:var(--r-in); border:1px solid rgba(255,255,255,.14); background:rgba(0,0,0,.35); padding:0 1rem; font-size:.95rem; color:var(--ink); outline:none; -webkit-appearance:none; appearance:none; color-scheme:dark; transition:border-color .2s, box-shadow .2s }
+.input:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(69,243,255,.15) }
+select.input{ padding-right:2.2rem; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239097b3' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right .8rem center; background-size:1rem }
+.stepper{ display:flex; align-items:center; height:3rem; border-radius:var(--r-in); border:1px solid rgba(255,255,255,.14); background:rgba(0,0,0,.35) }
+.stepper button{ width:3rem; height:100%; font-size:1.2rem; color:var(--muted) }
+.stepper button:hover{ color:var(--accent) }
+.stepper output{ flex:1; text-align:center; font-weight:600 }
+.check{ display:flex; gap:.8rem; align-items:flex-start; padding:1rem; border-radius:var(--r-in); border:1px solid var(--line); background:rgba(255,255,255,.02); cursor:pointer; font-size:.93rem }
+.check input{ margin-top:.2rem; width:1.1rem; height:1.1rem; accent-color:var(--accent) }
+.check small{ display:block; color:var(--muted); font-size:.82rem }
+.err{ display:none; color:#ff8a8a; font-size:.8rem }
+.bad .err{ display:block } .bad .input{ border-color:#ff8a8a }
+.form-foot{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:1rem }
+.stub{ font-size:.8rem; color:var(--faint); max-width:24rem }
+.done-card{ display:none; text-align:center; padding:2rem 1rem; gap:1rem; justify-items:center }
+.done-card .big{ width:4.5rem; height:4.5rem; border-radius:50%; display:grid; place-items:center; background:var(--accent-soft); color:var(--accent); box-shadow:0 0 40px rgba(69,243,255,.35) }
+.done-card .big svg{ width:2rem; height:2rem }
+.done-card h3{ font-family:var(--display); font-weight:400; font-size:1.6rem }
+.done-card p{ color:var(--muted); max-width:28rem }
+.form.done .form-body{ display:none } .form.done .done-card{ display:grid }
+.side{ display:grid; gap:1.1rem; align-content:start }
+.ticket{ position:relative; border-radius:1.5rem; padding:1.6rem; background:linear-gradient(160deg, #10183a, #080a16); border:1px solid rgba(69,243,255,.22); overflow:hidden }
+.ticket::after{ content:""; position:absolute; left:-.8rem; right:-.8rem; top:58%; height:0; border-top:1px dashed rgba(255,255,255,.18) }
+.ticket .lbl{ margin-bottom:.3rem }
+.ticket .v{ font-size:1rem; font-weight:600; margin-bottom:1rem }
+.ticket .sum{ margin-top:2.2rem; display:flex; justify-content:space-between; align-items:baseline }
+.ticket .sum output{ font-family:var(--display); font-size:2rem; color:var(--accent) }
+.mini{ border-radius:1.5rem; border:1px solid var(--line); background:var(--glass); padding:1.4rem; font-size:.92rem; color:var(--muted) }
+.mini b{ color:var(--ink) }
+
+/* Reviews */
+.reviews{ margin-top:3rem; display:grid; gap:1.1rem }
+@media (min-width:900px){ .reviews{ grid-template-columns:repeat(3,1fr) } }
+.review{ border-radius:var(--r); border:1px solid var(--line); background:var(--glass); padding:1.6rem; display:flex; flex-direction:column; gap:1rem }
+.review p{ color:#d6dbf2 }
+.review small{ margin-top:auto; font-family:var(--mono); font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color:var(--faint) }
+.stars{ color:var(--accent); letter-spacing:.2em }
+
+/* Contacts */
+.contacts{ margin-top:3rem; display:grid; gap:1.1rem }
+@media (min-width:980px){ .contacts{ grid-template-columns:.9fr 1.1fr } }
+.cc{ border-radius:1.5rem; border:1px solid var(--line); background:var(--glass); padding:2rem; display:grid; gap:1.4rem; align-content:start }
+.line{ display:flex; gap:.9rem; color:var(--muted) }
+.line svg{ width:1.25rem; height:1.25rem; flex-shrink:0; color:var(--accent); margin-top:.15rem }
+.line b{ display:block; color:var(--ink) }
+.map{ border-radius:1.5rem; overflow:hidden; border:1px solid var(--line); min-height:22rem; background:#0b0e1c }
+.map iframe{ width:100%; height:100%; min-height:22rem; border:0; filter:invert(.92) hue-rotate(180deg) saturate(.6) brightness(.9) }
+.sister{ display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:1.25rem 1.4rem; border-radius:1.2rem; background:linear-gradient(120deg, rgba(242,163,58,.18), rgba(242,163,58,.03)); border:1px solid rgba(242,163,58,.35); color:#ffd9a3; transition:transform .3s var(--ease) }
+.sister:hover{ transform:translateY(-2px) }
+.sister b{ display:block; color:#fff; font-family:var(--display); font-weight:400; font-size:1.1rem; letter-spacing:.04em }
+.sister svg{ width:1.3rem; height:1.3rem; flex-shrink:0 }
+
+footer{ position:relative; z-index:10; margin-top:7rem; border-top:1px solid var(--line) }
+footer .wrap{ display:flex; flex-wrap:wrap; justify-content:space-between; gap:1rem; padding-block:2rem 3rem; font-size:.85rem; color:var(--faint) }
+footer a{ text-decoration:underline; text-underline-offset:3px }
+
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto }
+  *{ animation:none !important; transition:none !important }
+  [data-rv]{ opacity:1; transform:none }
+}
+</style>
+</head>
+<body>
+
+<header class="header" id="header">
+  <a class="brand" href="#top" aria-label="Космос, на главную">
+    <svg viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="gb" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#9ffaff"/><stop offset=".45" stop-color="#1b6b9a"/><stop offset="1" stop-color="#0a1030"/></radialGradient></defs><circle cx="50" cy="50" r="30" fill="url(#gb)"/><circle cx="44" cy="38" r="4" fill="#05060d"/><circle cx="56" cy="37" r="4" fill="#05060d"/><circle cx="50" cy="48" r="4.4" fill="#05060d"/><ellipse cx="50" cy="52" rx="46" ry="13" fill="none" stroke="#45f3ff" stroke-width="3" transform="rotate(-18 50 50)"/></svg>
+    КОСМОС
+  </a>
+  <nav class="nav" aria-label="Разделы">
+    <a href="#services">Что у нас</a>
+    <a href="#events">Мероприятия</a>
+    <a href="#prices">Цены</a>
+    <a href="#booking">Бронь</a>
+    <a href="#contacts">Контакты</a>
+  </nav>
+  <div class="head-r">
+    <a class="tel" href="tel:+74957758678">+7 (495) 775-86-78</a>
+    <a class="btn btn--accent" href="#booking">Забронировать</a>
+  </div>
+</header>
+
+<section class="hero" id="top" aria-label="Боулинг Космос">
+  <canvas id="space" aria-hidden="true"></canvas>
+  <div class="hero-c">
+    <div class="kicker" data-rv>Боулинг · Химки · городской парк</div>
+    <h1 class="logo" id="logo" aria-label="Космос" data-rv style="--d:120ms">
+      <span aria-hidden="true">К</span>
+      <svg class="planet" viewBox="0 0 100 100" aria-hidden="true">
+        <defs>
+          <radialGradient id="pl" cx="34%" cy="28%" r="80%"><stop offset="0" stop-color="#c8fdff"/><stop offset=".3" stop-color="#45c9e8"/><stop offset=".7" stop-color="#16306e"/><stop offset="1" stop-color="#070a1e"/></radialGradient>
+          <linearGradient id="band" x1="0" x2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset=".5" stop-color="#ffffff" stop-opacity=".22"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
+          <clipPath id="ball"><circle cx="50" cy="50" r="36"/></clipPath>
+        </defs>
+        <g class="orbit"><path d="M4 58 A47 15 -16 0 1 96 42" fill="none" stroke="#45f3ff" stroke-opacity=".35" stroke-width="2"/></g>
+        <circle cx="50" cy="50" r="36" fill="url(#pl)"/>
+        <g clip-path="url(#ball)"><rect x="0" y="54" width="100" height="7" fill="url(#band)" transform="rotate(-16 50 50)"/><rect x="0" y="66" width="100" height="3" fill="url(#band)" transform="rotate(-16 50 50)"/></g>
+        <circle cx="41" cy="33" r="4.6" fill="#050714"/><circle cx="55" cy="31" r="4.6" fill="#050714"/><circle cx="49" cy="45" r="5.2" fill="#050714"/>
+        <g class="orbit"><path d="M96 42 A47 15 -16 0 1 4 58" fill="none" stroke="#45f3ff" stroke-width="3.2" stroke-linecap="round"/><circle cx="96" cy="42" r="3" fill="#fff"/></g>
+      </svg>
+      <span aria-hidden="true">СМОС</span>
+    </h1>
+    <div class="sub" data-rv style="--d:240ms"><i></i>Боулинг&nbsp;·&nbsp;ресторан<i></i></div>
+    <p class="hero-lead" data-rv style="--d:320ms">Дорожки, живое пиво собственной варки и кухня ресторана «Яхонт» — в одном здании, в центре парка.</p>
+    <div class="hero-ctas" data-rv style="--d:420ms">
+      <a class="btn btn--accent" href="#booking">Забронировать дорожку</a>
+      <a class="btn btn--line" href="#prices">Цены от 800 ₽/час</a>
+    </div>
+  </div>
+  <div class="hud" aria-hidden="true">
+    <div>Сегодня открыто<b id="todayHours">11:00–24:00</b></div>
+    <div class="scroll-cue"><span></span></div>
+    <div class="r">Страйков<b><span id="strikes">000</span><span class="strike-tag" id="strikeTag">STRIKE</span></b></div>
+  </div>
+</section>
+
+<main>
+  <section class="block" id="services">
+    <div class="wrap">
+      <div class="head">
+        <div><span class="eyebrow" data-rv>Что у нас</span><h2 data-rv style="--d:80ms">Целая <em>орбита</em> развлечений</h2></div>
+        <p data-rv style="--d:160ms">Боулинг, ресторан и собственная пивоварня работают вместе. Можно просто поиграть, а можно остаться на весь вечер.</p>
+      </div>
+      <div class="bento">
+        <article class="card hl b2" data-rv>
+          <span class="num">01</span>
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><circle cx="10" cy="8.5" r="1"/><circle cx="13.5" cy="8" r="1"/><circle cx="12" cy="11.5" r="1.1"/></svg></div>
+          <div><h3>Боулинг</h3><p>Игра на час или на два. Приходите компанией, с детьми или вдвоём: дорожку можно забронировать онлайн прямо на этом сайте.</p><span class="price-chip">от 800 ₽ / час</span></div>
+        </article>
+        <article class="card" data-rv style="--d:80ms">
+          <span class="num">02</span>
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M7 3v8a2 2 0 0 0 2 2v8M5 3v5M9 3v5M17 21V3c-2 0-3 3-3 7h3"/></svg></div>
+          <div><h3>Ресторан «Яхонт»</h3><p>Пицца, закуски к пиву, горячее и десерты в том же здании.</p></div>
+        </article>
+        <article class="card" data-rv style="--d:160ms">
+          <span class="num">03</span>
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h10v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2zM16 10h2a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-2M6 8a3 3 0 0 1 3-4 3 3 0 0 1 5 0 2.5 2.5 0 0 1 2 4"/></svg></div>
+          <div><h3>Своя пивоварня</h3><p>Живое пиво без консервантов и пастеризации: от светлого лагера до тёмного стаута.</p></div>
+        </article>
+        <article class="card b2" data-rv>
+          <span class="num">04</span>
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.4 5 5.6.8-4 3.9.9 5.5L12 15.6 7.1 18.2l.9-5.5-4-3.9L9.6 8z"/></svg></div>
+          <div><h3>Праздники и корпоративы</h3><p>Дни рождения, корпоративы и вечеринки: игра на дорожках и стол в ресторане в одном месте, без переездов между заведениями.</p></div>
+        </article>
+        <article class="card" data-rv style="--d:80ms">
+          <span class="num">05</span>
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+          <div><h3>В центре парка</h3><p>Ленинский проспект, 2Б. Этажи 1–2.</p></div>
+        </article>
+        <article class="card" data-rv style="--d:160ms">
+          <span class="num">06</span>
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+          <div><h3>До 02:00 по пятницам</h3><p>С понедельника по четверг и в выходные до полуночи.</p></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="events">
+    <div class="wrap">
+      <div class="head">
+        <div><span class="eyebrow" data-rv>Боулинг + ресторан</span><h2 data-rv style="--d:80ms">Один вечер, <em>два мира</em></h2></div>
+        <p data-rv style="--d:160ms">Боулинг «Космос» и ресторан «Яхонт» находятся под одной крышей. Поэтому праздник можно собрать целиком: игра, ужин и пиво своей варки.</p>
+      </div>
+      <div class="combo">
+        <div class="combo-main" data-rv>
+          <h3>Праздник, который не нужно никуда переносить</h3>
+          <p>Соберите компанию на дорожках, а после игры переходите за стол в ресторан. Команда поможет спланировать вечер под ваш повод и количество гостей.</p>
+          <div class="tags"><span>День рождения</span><span>Корпоратив</span><span>Детский праздник</span><span>Вечеринка с друзьями</span><span>Командный турнир</span></div>
+          <a class="btn btn--accent" href="tel:+74957758678">Обсудить мероприятие</a>
+        </div>
+        <div class="plan" data-rv style="--d:120ms">
+          <div class="plan-t"><span>План полёта</span><span>пример вечера</span></div>
+          <ol>
+            <li><span class="t">T−0</span><b>Сбор экипажа</b><span>Гости собираются, выдаём дорожки.</span></li>
+            <li><span class="t">T+0:15</span><b>Игра на дорожках</b><span>Час или два: командами или каждый за себя.</span></li>
+            <li><span class="t">T+2:00</span><b>Ужин в «Яхонте»</b><span>Горячее, пицца и закуски к пиву.</span></li>
+            <li><span class="t">T+2:30</span><b>Тост пивом своей варки</b><span>И награждение чемпиона вечера.</span></li>
+          </ol>
+          <small>Программу и формат согласуем под вашу компанию.</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="prices">
+    <div class="wrap">
+      <div class="head">
+        <div><span class="eyebrow" data-rv>Цены</span><h2 data-rv style="--d:80ms">Стоимость <em>игры</em></h2></div>
+        <p data-rv style="--d:160ms">Цена зависит от дня недели и времени. Текущий тариф подсвечен.</p>
+      </div>
+      <div class="prices">
+        <div class="ptable" data-rv>
+          <table>
+            <thead><tr><th>Когда</th><th>Время</th><th>1 час</th><th>2 часа</th></tr></thead>
+            <tbody>
+              <tr data-k="wd-day"><td>Пн–Чт</td><td>11:00–18:00</td><td><b>800 ₽</b></td><td><b>1 600 ₽</b></td></tr>
+              <tr data-k="wd-eve"><td>Пн–Чт</td><td>18:00–24:00</td><td><b>1 500 ₽</b></td><td><b>3 000 ₽</b></td></tr>
+              <tr data-k="fr-day"><td>Пятница</td><td>11:00–18:00</td><td><b>1 500 ₽</b></td><td><b>3 000 ₽</b></td></tr>
+              <tr data-k="fr-eve"><td>Пятница</td><td>18:00–02:00</td><td><b>2 100 ₽</b></td><td><b>4 200 ₽</b></td></tr>
+              <tr data-k="we"><td>Сб, Вс<small>и праздники</small></td><td>11:00–24:00</td><td><b>2 100 ₽</b></td><td><b>4 200 ₽</b></td></tr>
+            </tbody>
+          </table>
+          <div class="foot">Цены из онлайн-записи заведения. Уточняйте актуальные условия по телефону.</div>
+        </div>
+        <div class="calc" data-rv style="--d:120ms">
+          <h3>Посчитать игру</h3>
+          <div><div class="lbl">День</div><div class="seg" data-calc="day"><button aria-pressed="true" data-v="wd">Пн–Чт</button><button aria-pressed="false" data-v="fr">Пятница</button><button aria-pressed="false" data-v="we">Сб–Вс</button></div></div>
+          <div><div class="lbl">Время</div><div class="seg" data-calc="time"><button aria-pressed="false" data-v="day">Днём, до 18:00</button><button aria-pressed="true" data-v="eve">Вечером</button></div></div>
+          <div><div class="lbl">Длительность</div><div class="seg" data-calc="dur"><button aria-pressed="true" data-v="1">1 час</button><button aria-pressed="false" data-v="2">2 часа</button></div></div>
+          <div class="total"><span>Стоимость игры</span><output id="calcOut">1 500 ₽</output></div>
+          <a class="btn btn--accent" href="#booking">Забронировать</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="booking">
+    <div class="wrap">
+      <div class="head">
+        <div><span class="eyebrow" data-rv>Онлайн-бронь</span><h2 data-rv style="--d:80ms">Займите <em>дорожку</em></h2></div>
+        <p data-rv style="--d:160ms">Выберите дату и время, стоимость посчитается сразу. Администратор подтвердит бронь по телефону.</p>
+      </div>
+      <div class="booking">
+        <form class="form" id="form" novalidate data-rv>
+          <div class="form-body" style="display:grid;gap:1.4rem">
+            <div class="row three">
+              <label class="field"><span>Дата</span><input class="input" id="bDate" type="date"></label>
+              <label class="field"><span>Начало</span><select class="input" id="bTime"></select></label>
+              <label class="field"><span>Длительность</span><select class="input" id="bDur"><option value="1">1 час</option><option value="2">2 часа</option></select></label>
+            </div>
+            <div class="row two">
+              <div class="field"><span>Игроков</span><div class="stepper"><button type="button" id="minus" aria-label="Меньше">−</button><output id="players">4</output><button type="button" id="plus" aria-label="Больше">+</button></div></div>
+              <label class="field" id="fName"><span>Имя</span><input class="input" id="bName" autocomplete="name" placeholder="Как к вам обращаться"><span class="err">Напишите имя</span></label>
+            </div>
+            <label class="field" id="fPhone"><span>Телефон</span><input class="input" id="bPhone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+7 (___) ___-__-__"><span class="err">Проверьте номер телефона</span></label>
+            <label class="check"><input type="checkbox" id="bTable"><span><b>Забронировать стол в ресторане «Яхонт» после игры</b><small>Передадим пожелание администратору ресторана.</small></span></label>
+            <div class="form-foot">
+              <span class="stub">Прототип: заявка никуда не отправляется. В рабочей версии подключим бронь к YClients или администратору.</span>
+              <button class="btn btn--accent" type="submit" id="bSend">Отправить заявку</button>
+            </div>
+          </div>
+          <div class="done-card" role="status">
+            <div class="big"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+            <h3>Заявка на орбите!</h3>
+            <p id="doneText">Администратор перезвонит, чтобы подтвердить бронь.</p>
+            <button class="btn btn--line" type="button" id="again">Новая заявка</button>
+          </div>
+        </form>
+        <aside class="side" data-rv style="--d:120ms">
+          <div class="ticket">
+            <div class="lbl">Посадочный талон</div>
+            <div class="v" id="tWhen">—</div>
+            <div class="lbl">Экипаж</div>
+            <div class="v" id="tCrew">4 игрока</div>
+            <div class="sum"><span class="lbl" style="margin:0">Игра</span><output id="tSum">—</output></div>
+          </div>
+          <div class="mini">Удобнее позвонить? <b><a href="tel:+74957758678">+7 (495) 775-86-78</a></b></div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="head"><div><span class="eyebrow" data-rv>Отзывы</span><h2 data-rv style="--d:80ms">Сигналы <em>с Земли</em></h2></div></div>
+      <div class="reviews">
+        <figure class="review" data-rv><div class="stars">★★★★★</div><p>«27 января корпоратив отмечали, место волшебное, порадовала очень вкусная еда. Обслуживание и сервис на лучшем уровне.»</p><small>Отзыв гостя</small></figure>
+        <figure class="review" data-rv style="--d:80ms"><div class="stars">★★★★★</div><p>«Здесь недавно моя дочка отмечала с подругами свой день рождения. Они остались очень довольны. Очень уютная обстановка, хорошая еда и вполне умеренные цены.»</p><small>Отзыв гостя</small></figure>
+        <figure class="review" data-rv style="--d:160ms"><div class="stars">★★★★★</div><p>«Пиво действительно очень вкусное, закуски и пиццу принесли горячими, прям с пылу с жару. Гренки чесночные шикарные.»</p><small>Отзыв гостя</small></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="contacts">
+    <div class="wrap">
+      <div class="head"><div><span class="eyebrow" data-rv>Контакты</span><h2 data-rv style="--d:80ms">Координаты <em>посадки</em></h2></div></div>
+      <div class="contacts">
+        <div class="cc" data-rv>
+          <div class="line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><div><b>Химки, Ленинский проспект, 2Б</b>Этажи 1–2, в центре городского парка</div></div>
+          <div class="line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg><div><b><a href="tel:+74957758678">+7 (495) 775-86-78</a></b>Бронирование</div></div>
+          <div class="line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg><div><b><a href="tel:+74957850000">+7 (495) 785-00-00</a></b>Общий номер</div></div>
+          <a class="sister" href="../yakhont/">
+            <span><b>Ресторан и пивоварня «Яхонт»</b>В том же здании: кухня и живое пиво</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+        <div class="map" data-rv style="--d:120ms">
+          <iframe title="Карта: Химки, Ленинский проспект 2Б" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=37.4516%2C55.8912%2C37.4656%2C55.8973&amp;layer=mapnik&amp;marker=55.89427%2C37.45857"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© Боулинг «Космос», Химки</span>
+    <span>Демо-версия сайта · сделано <a href="https://t.me/lilbunnych" target="_blank" rel="noopener">@lilbunnych</a></span>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const rub = n => n.toLocaleString('ru-RU') + ' ₽';
+
+  // Reveal on scroll
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('[data-rv]').forEach(el => io.observe(el));
+
+  // Card spotlight
+  document.querySelectorAll('.card').forEach(c => c.addEventListener('pointermove', e => {
+    const r = c.getBoundingClientRect();
+    c.style.setProperty('--mx', (e.clientX - r.left) + 'px'); c.style.setProperty('--my', (e.clientY - r.top) + 'px');
+  }));
+
+  /* ----- Tariffs (from the venue's online booking) ----- */
+  const RATE = { wd: { day: 800, eve: 1500 }, fr: { day: 1500, eve: 2100 }, we: { day: 2100, eve: 2100 } };
+  const kind = d => { const w = d.getDay(); return w === 5 ? 'fr' : (w === 6 || w === 0) ? 'we' : 'wd'; };
+  const closeHour = k => k === 'fr' ? 26 : 24; // Friday runs to 02:00
+  const hourRate = (k, h) => RATE[k][h >= 18 || h < 11 ? 'eve' : 'day'];
+  const cost = (k, start, dur) => { let s = 0; for (let i = 0; i < dur; i++) s += hourRate(k, (start + i) % 24 + (start + i >= 24 ? 0 : 0)); return s; };
+
+  // Today's hours + highlighted row
+  const now = new Date(), k0 = kind(now);
+  $('#todayHours').textContent = k0 === 'fr' ? '11:00–02:00' : '11:00–24:00';
+  const h0 = now.getHours();
+  const rowKey = k0 === 'we' ? 'we' : k0 + (h0 >= 18 || h0 < 11 ? '-eve' : '-day');
+  document.querySelector(`tr[data-k="${rowKey}"]`)?.classList.add('now');
+
+  // Calculator
+  const calc = { day: k0, time: 'eve', dur: 1 };
+  document.querySelectorAll('[data-calc="day"] button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === k0)));
+  $('#calcOut').textContent = rub(RATE[k0].eve);
+  document.querySelectorAll('[data-calc]').forEach(g => g.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    g.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    calc[g.dataset.calc] = g.dataset.calc === 'dur' ? +b.dataset.v : b.dataset.v;
+    $('#calcOut').textContent = rub(RATE[calc.day][calc.time] * calc.dur);
+  }));
+
+  /* ----- Booking stub ----- */
+  const iso = d => new Date(d.getTime() - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
+  const bDate = $('#bDate'), bTime = $('#bTime'), bDur = $('#bDur');
+  bDate.min = iso(now); bDate.value = iso(now);
+  let players = 4;
+  function fillTimes(){
+    const d = new Date(bDate.value + 'T12:00'), k = kind(d), dur = +bDur.value, keep = bTime.value;
+    const last = closeHour(k) - dur;
+    bTime.innerHTML = '';
+    for (let h = 11; h <= last; h++){
+      if (bDate.value === iso(now) && h <= now.getHours()) continue;
+      const o = document.createElement('option'); o.value = h; o.textContent = String(h % 24).padStart(2, '0') + ':00';
+      bTime.appendChild(o);
+    }
+    if (!bTime.options.length){ const o = document.createElement('option'); o.value = ''; o.textContent = 'Нет слотов'; bTime.appendChild(o); }
+    if ([...bTime.options].some(o => o.value === keep)) bTime.value = keep;
+    else if ([...bTime.options].some(o => o.value === '19')) bTime.value = '19';
+    ticket();
+  }
+  function ticket(){
+    const d = new Date(bDate.value + 'T12:00'), k = kind(d), h = +bTime.value, dur = +bDur.value;
+    if (!bTime.value){ $('#tWhen').textContent = 'Выберите другую дату'; $('#tSum').textContent = '—'; return; }
+    const hh = x => String(x % 24).padStart(2, '0') + ':00';
+    $('#tWhen').textContent = d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', weekday: 'short' }) + ', ' + hh(h) + '–' + hh(h + dur);
+    $('#tCrew').textContent = players + ' ' + (players === 1 ? 'игрок' : players < 5 ? 'игрока' : 'игроков');
+    $('#tSum').textContent = rub(cost(k, h, dur));
+  }
+  bDate.addEventListener('input', fillTimes); bDur.addEventListener('input', fillTimes); bTime.addEventListener('input', ticket);
+  $('#minus').onclick = () => { players = Math.max(1, players - 1); $('#players').textContent = players; ticket(); };
+  $('#plus').onclick = () => { players = Math.min(12, players + 1); $('#players').textContent = players; ticket(); };
+  fillTimes();
+
+  const form = $('#form');
+  form.addEventListener('input', e => e.target.closest('.field')?.classList.remove('bad'));
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const okName = $('#bName').value.trim().length > 1;
+    const okPhone = $('#bPhone').value.replace(/\D/g, '').length >= 10;
+    $('#fName').classList.toggle('bad', !okName); $('#fPhone').classList.toggle('bad', !okPhone);
+    if (!okName || !okPhone || !bTime.value) return;
+    const btn = $('#bSend'); btn.disabled = true; btn.textContent = 'Отправляем…';
+    setTimeout(() => {
+      $('#doneText').textContent = `${$('#bName').value.trim()}, заявка на ${$('#tWhen').textContent} принята. Администратор перезвонит, чтобы подтвердить бронь${$('#bTable').checked ? ' и стол в «Яхонте»' : ''}.`;
+      form.classList.add('done'); btn.disabled = false; btn.textContent = 'Отправить заявку';
+    }, 800);
+  });
+  $('#again').onclick = () => { form.classList.remove('done'); $('#bName').value = ''; $('#bPhone').value = ''; };
+})();
+</script>
+
+<script type="importmap">
+{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const canvas = document.getElementById('space');
+let renderer;
+try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' }); }
+catch (e) { canvas.replaceWith(Object.assign(document.createElement('div'), { className: 'hero-fallback' })); }
+
+if (renderer){
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(38, 1, .1, 200);
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), .04).texture;
+
+  /* Nebula backdrop */
+  const nebU = { uTime: { value: 0 }, uFlash: { value: 0 } };
+  const neb = new THREE.Mesh(new THREE.SphereGeometry(90, 32, 16), new THREE.ShaderMaterial({
+    side: THREE.BackSide, depthWrite: false, uniforms: nebU,
+    vertexShader: `varying vec3 vP; void main(){ vP = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.); }`,
+    fragmentShader: `
+      varying vec3 vP; uniform float uTime, uFlash;
+      float h(vec3 p){ return fract(sin(dot(p, vec3(12.9898,78.233,37.719))) * 43758.5453); }
+      float n(vec3 p){ vec3 i = floor(p), f = fract(p); f = f*f*(3.-2.*f);
+        return mix(mix(mix(h(i),h(i+vec3(1,0,0)),f.x),mix(h(i+vec3(0,1,0)),h(i+vec3(1,1,0)),f.x),f.y),
+                   mix(mix(h(i+vec3(0,0,1)),h(i+vec3(1,0,1)),f.x),mix(h(i+vec3(0,1,1)),h(i+vec3(1,1,1)),f.x),f.y),f.z); }
+      float fbm(vec3 p){ float s = 0., a = .5; for (int i = 0; i < 5; i++){ s += a * n(p); p *= 2.03; a *= .5; } return s; }
+      void main(){
+        vec3 p = vP * 2.2 + vec3(uTime * .01, 0., 0.);
+        float c = fbm(p), d = fbm(p * 1.7 + 4.);
+        vec3 col = vec3(.012, .014, .035);
+        col += vec3(.05, .28, .42) * pow(smoothstep(.45, .85, c), 2.) * .9;
+        col += vec3(.36, .08, .38) * pow(smoothstep(.5, .9, d), 2.) * .7;
+        col += vec3(.2, .9, 1.) * uFlash * .08;
+        gl_FragColor = vec4(col, 1.);
+      }`,
+  }));
+  scene.add(neb);
+
+  /* Stars */
+  const SN = 3000, sPos = new Float32Array(SN * 3);
+  for (let i = 0; i < SN; i++){
+    const v = new THREE.Vector3().randomDirection().multiplyScalar(40 + Math.random() * 40);
+    sPos.set([v.x, v.y, v.z], i * 3);
+  }
+  const sGeo = new THREE.BufferGeometry(); sGeo.setAttribute('position', new THREE.BufferAttribute(sPos, 3));
+  const stars = new THREE.Points(sGeo, new THREE.PointsMaterial({ color: '#ffffff', size: .12, sizeAttenuation: true, transparent: true, opacity: .9, depthWrite: false }));
+  scene.add(stars);
+
+  /* Distant planet with an atmosphere rim */
+  const planet = new THREE.Mesh(new THREE.SphereGeometry(6, 64, 32), new THREE.ShaderMaterial({
+    uniforms: { uTime: { value: 0 } },
+    vertexShader: `varying vec3 vN; varying vec3 vP; void main(){ vN = normalize(normalMatrix * normal); vP = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.); }`,
+    fragmentShader: `varying vec3 vN; varying vec3 vP; uniform float uTime;
+      void main(){
+        float lit = clamp(dot(vN, normalize(vec3(.6,.5,.6))), 0., 1.);
+        float bands = sin(vP.y * 2.4 + sin(vP.x * .8 + uTime * .05) * 1.4) * .5 + .5;
+        vec3 base = mix(vec3(.05,.08,.2), vec3(.18,.45,.65), bands * .6);
+        float rim = pow(1. - abs(vN.z), 3.);
+        gl_FragColor = vec4(base * (lit * .9 + .05) + vec3(.3,.95,1.) * rim * .9, 1.);
+      }`,
+  }));
+  planet.position.set(-24, 10, -58);
+  scene.add(planet);
+
+  /* Lane (local +x runs towards the pins) */
+  const lane = new THREE.Group(); scene.add(lane);
+  const laneTex = (() => {
+    const c = document.createElement('canvas'); c.width = 2048; c.height = 256;
+    const x = c.getContext('2d');
+    const g = x.createLinearGradient(0, 0, 0, 256); g.addColorStop(0, '#0d1024'); g.addColorStop(.5, '#141836'); g.addColorStop(1, '#0d1024');
+    x.fillStyle = g; x.fillRect(0, 0, 2048, 256);
+    for (let i = 0; i < 39; i++){ x.fillStyle = i % 2 ? 'rgba(255,255,255,.018)' : 'rgba(0,0,0,.05)'; x.fillRect(0, i * 256 / 39, 2048, 256 / 39); }
+    x.fillStyle = '#45f3ff';
+    for (let i = 0; i < 7; i++){ const y = 30 + i * 32, px = 1500 + Math.abs(3 - i) * 26; x.beginPath(); x.moveTo(px, y - 9); x.lineTo(px + 26, y); x.lineTo(px, y + 9); x.fill(); }
+    for (let i = 0; i < 10; i++){ x.beginPath(); x.arc(420, 18 + i * 24, 3, 0, 7); x.fill(); }
+    const t = new THREE.CanvasTexture(c); t.anisotropy = 8; t.colorSpace = THREE.SRGBColorSpace; return t;
+  })();
+  const LANE_L = 20, LANE_W = 2.2;
+  const laneMesh = new THREE.Mesh(new THREE.PlaneGeometry(LANE_L, LANE_W), new THREE.MeshStandardMaterial({ map: laneTex, emissiveMap: laneTex, emissive: '#ffffff', emissiveIntensity: .35, roughness: .22, metalness: .4 }));
+  laneMesh.rotation.x = -Math.PI / 2; laneMesh.position.x = -LANE_L / 2 + 3.2;
+  lane.add(laneMesh);
+  const neonMat = new THREE.MeshBasicMaterial({ color: '#45f3ff' });
+  [-1, 1].forEach(s => {
+    const edge = new THREE.Mesh(new THREE.BoxGeometry(LANE_L, .04, .04), neonMat);
+    edge.position.set(-LANE_L / 2 + 3.2, .02, s * (LANE_W / 2 + .12)); lane.add(edge);
+    const glow = new THREE.Mesh(new THREE.PlaneGeometry(LANE_L, .6), new THREE.MeshBasicMaterial({ color: '#45f3ff', transparent: true, opacity: .12, blending: THREE.AdditiveBlending, depthWrite: false }));
+    glow.rotation.x = -Math.PI / 2; glow.position.set(-LANE_L / 2 + 3.2, .01, s * (LANE_W / 2 + .12)); lane.add(glow);
+  });
+  // Pin deck glow
+  const deck = new THREE.Mesh(new THREE.CircleGeometry(1.7, 48), new THREE.MeshBasicMaterial({ color: '#45f3ff', transparent: true, opacity: .1, blending: THREE.AdditiveBlending, depthWrite: false }));
+  deck.rotation.x = -Math.PI / 2; deck.position.set(1, .015, 0); lane.add(deck);
+
+  /* Pins */
+  const pinProfile = [[0,0],[.1,0],[.13,.05],[.17,.18],[.185,.3],[.17,.42],[.12,.55],[.075,.64],[.07,.7],[.085,.8],[.09,.87],[.075,.95],[.04,.99],[0,1]].map(([r, y]) => new THREE.Vector2(r, y));
+  const pinGeo = new THREE.LatheGeometry(pinProfile, 40); pinGeo.scale(1, .8, 1);
+  const pinTex = (() => {
+    const c = document.createElement('canvas'); c.width = 8; c.height = 256; const x = c.getContext('2d');
+    x.fillStyle = '#f4f6ff'; x.fillRect(0, 0, 8, 256);
+    x.fillStyle = '#ff2d55'; x.fillRect(0, 256 * (1 - .78), 8, 256 * .035); x.fillRect(0, 256 * (1 - .72), 8, 256 * .035);
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+  })();
+  const pinMat = new THREE.MeshPhysicalMaterial({ map: pinTex, roughness: .18, clearcoat: 1, clearcoatRoughness: .05, transparent: true });
+  const PINS = [];
+  const SPACING = .62;
+  for (let r = 0; r < 4; r++) for (let i = 0; i <= r; i++){
+    const home = new THREE.Vector3(1 + r * SPACING * .866, 0, (i - r / 2) * SPACING);
+    const m = new THREE.Mesh(pinGeo, pinMat.clone());
+    m.position.copy(home); lane.add(m);
+    PINS.push({ m, home, v: new THREE.Vector3(), w: new THREE.Vector3() });
+  }
+
+  /* Ball: glossy "planet" with finger holes */
+  const ballTex = (() => {
+    const c = document.createElement('canvas'); c.width = 1024; c.height = 512; const x = c.getContext('2d');
+    const g = x.createLinearGradient(0, 0, 0, 512); g.addColorStop(0, '#1b0f3a'); g.addColorStop(.5, '#2f1a6e'); g.addColorStop(1, '#0c1030'); x.fillStyle = g; x.fillRect(0, 0, 1024, 512);
+    for (let i = 0; i < 140; i++){ x.strokeStyle = `hsla(${180 + Math.random() * 120},90%,${50 + Math.random() * 25}%,${.08 + Math.random() * .2})`; x.lineWidth = 2 + Math.random() * 14; x.beginPath(); const y = Math.random() * 512; x.moveTo(0, y); for (let k = 0; k <= 1024; k += 64) x.lineTo(k, y + Math.sin(k * .01 + i) * 30); x.stroke(); }
+    x.fillStyle = '#030309'; [[480, 190, 16], [540, 190, 16], [510, 250, 19]].forEach(([a, b, r]) => { x.beginPath(); x.ellipse(a, b, r, r * 1.1, 0, 0, 7); x.fill(); });
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+  })();
+  const BALL_R = .24;
+  const ball = new THREE.Mesh(new THREE.SphereGeometry(BALL_R, 48, 32), new THREE.MeshPhysicalMaterial({ map: ballTex, roughness: .12, clearcoat: 1, clearcoatRoughness: .02, emissive: '#2a1e70', emissiveIntensity: .25 }));
+  lane.add(ball);
+  const ballGlow = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 1.2), new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    map: (() => { const c = document.createElement('canvas'); c.width = c.height = 128; const x = c.getContext('2d'); const g = x.createRadialGradient(64, 64, 0, 64, 64, 64); g.addColorStop(0, 'rgba(69,243,255,.55)'); g.addColorStop(1, 'rgba(69,243,255,0)'); x.fillStyle = g; x.fillRect(0, 0, 128, 128); return new THREE.CanvasTexture(c); })() }));
+  ballGlow.rotation.x = -Math.PI / 2; lane.add(ballGlow);
+
+  /* Strike FX: shock ring + spark burst */
+  const shock = new THREE.Mesh(new THREE.RingGeometry(.9, 1, 64), new THREE.MeshBasicMaterial({ color: '#45f3ff', transparent: true, opacity: 0, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }));
+  shock.rotation.x = -Math.PI / 2; shock.position.set(1.4, .2, 0); lane.add(shock);
+  const SPK = 260, spkPos = new Float32Array(SPK * 3), spkVel = new Float32Array(SPK * 3);
+  const spkGeo = new THREE.BufferGeometry(); spkGeo.setAttribute('position', new THREE.BufferAttribute(spkPos, 3));
+  const spkMat = new THREE.PointsMaterial({ color: '#a6fbff', size: .05, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false });
+  lane.add(new THREE.Points(spkGeo, spkMat));
+
+  scene.add(new THREE.AmbientLight('#8aa0ff', .35));
+  const key = new THREE.DirectionalLight('#ffffff', 1.6); key.position.set(-3, 6, 5); scene.add(key);
+  const flashL = new THREE.PointLight('#45f3ff', 0, 12); scene.add(flashL);
+  const rimL = new THREE.PointLight('#b45cff', 8, 10); rimL.position.set(4, 2, -3); scene.add(rimL);
+
+  /* Framing: pins right-of-centre and low, logo keeps the middle */
+  function resize(){
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    const portrait = camera.aspect < .9;
+    camera.fov = portrait ? 58 : 38;
+    camera.position.set(0, portrait ? 1.6 : 1.1, portrait ? 11 : 9.5);
+    camera.lookAt(0, portrait ? -1.4 : -.9, 0);
+    camera.updateProjectionMatrix();
+    lane.position.set(portrait ? .9 : 2.4, portrait ? -6.4 : -3.05, portrait ? -1 : -.6);
+    lane.rotation.y = portrait ? .95 : .42;
+  }
+  new ResizeObserver(resize).observe(canvas); resize();
+
+  /* Mouse parallax */
+  const par = { x: 0, y: 0, tx: 0, ty: 0 };
+  addEventListener('pointermove', e => { par.tx = (e.clientX / innerWidth - .5); par.ty = (e.clientY / innerHeight - .5); });
+
+  /* Strike loop state machine */
+  const START_X = -12, IMPACT_X = 1 - BALL_R - .1;
+  let phase = 'ready', t = 0, strikes = 0, bx = START_X, shake = 0, flash = 0;
+  const strikesEl = document.getElementById('strikes'), tag = document.getElementById('strikeTag'), logo = document.getElementById('logo');
+  function resetPins(drop){
+    PINS.forEach(p => { p.m.position.copy(p.home); if (drop) p.m.position.y = 2.5 + Math.random(); p.m.rotation.set(0, Math.random() * 6, 0); p.m.material.opacity = 1; p.v.set(0, 0, 0); p.w.set(0, 0, 0); });
+  }
+  function strike(){
+    PINS.forEach(p => {
+      const lat = p.home.z;
+      p.v.set(2.2 + Math.random() * 2.4, 1.6 + Math.random() * 2.6, lat * 3 + (Math.random() - .5) * 2.4);
+      p.w.set((Math.random() - .5) * 10, (Math.random() - .5) * 6, -4 - Math.random() * 8);
+    });
+    for (let i = 0; i < SPK; i++){
+      spkPos.set([1.2, .3, 0], i * 3);
+      const d = new THREE.Vector3().randomDirection(); d.x = Math.abs(d.x) * .8 + .2; d.y = Math.abs(d.y);
+      d.multiplyScalar(2 + Math.random() * 5); spkVel.set([d.x, d.y, d.z], i * 3);
+    }
+    spkGeo.attributes.position.needsUpdate = true;
+    strikes++; strikesEl.textContent = String(strikes).padStart(3, '0');
+    tag.classList.add('on'); logo.classList.add('flash');
+    setTimeout(() => { tag.classList.remove('on'); logo.classList.remove('flash'); }, 1300);
+    shake = 1; flash = 1;
+  }
+  resetPins(false);
+
+  const clock = new THREE.Clock();
+  let visible = true;
+  new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible) clock.getDelta(); }).observe(canvas);
+
+  function frame(){
+    requestAnimationFrame(frame);
+    if (!visible) return;
+    const dt = Math.min(clock.getDelta(), .05), time = clock.elapsedTime;
+    t += dt;
+
+    if (RM){ phase = 'still'; bx = -2; }
+    if (phase === 'ready' && t > 1.1){ phase = 'roll'; t = 0; bx = START_X; }
+    if (phase === 'roll'){
+      const speed = 8.5;
+      bx += speed * dt;
+      if (bx >= IMPACT_X){ phase = 'fly'; t = 0; strike(); }
+    }
+    if (phase === 'fly'){
+      bx += 6 * dt;
+      PINS.forEach(p => {
+        p.v.y -= 1.1 * dt;                      // low "space" gravity
+        p.m.position.addScaledVector(p.v, dt);
+        p.m.rotation.x += p.w.x * dt; p.m.rotation.y += p.w.y * dt; p.m.rotation.z += p.w.z * dt;
+        if (t > 3.2) p.m.material.opacity = clamp(1 - (t - 3.2) / .8, 0, 1);
+      });
+      if (t > 4.2){ phase = 'reset'; t = 0; resetPins(true); }
+    }
+    if (phase === 'reset'){
+      PINS.forEach(p => { p.m.position.y = Math.max(0, p.m.position.y - dt * 5); });
+      if (t > 1.2){ phase = 'ready'; t = 0; }
+    }
+
+    // Ball: roll with a gentle hook
+    const hook = phase === 'roll' ? Math.sin(clamp((bx - START_X) / (IMPACT_X - START_X), 0, 1) * Math.PI) * .35 : 0;
+    ball.position.set(bx, BALL_R, -hook);
+    ball.rotation.z = -bx / BALL_R;
+    ball.visible = phase === 'roll' || phase === 'fly' || phase === 'still';
+    ballGlow.position.set(bx, .02, -hook); ballGlow.visible = ball.visible;
+
+    // FX
+    flash = Math.max(0, flash - dt * 1.6); shake = Math.max(0, shake - dt * 2.5);
+    flashL.intensity = flash * 60;
+    const fw = new THREE.Vector3(1.3, .6, 0); lane.localToWorld(fw); flashL.position.copy(fw);
+    nebU.uFlash.value = flash;
+    const sp = phase === 'fly' ? clamp(t / .9, 0, 1) : 1;
+    shock.scale.setScalar(.2 + sp * 4); shock.material.opacity = (1 - sp) * .8;
+    spkMat.opacity = phase === 'fly' ? clamp(1 - t / 1.6, 0, 1) : 0;
+    if (phase === 'fly'){ for (let i = 0; i < SPK * 3; i += 3){ spkPos[i] += spkVel[i] * dt; spkPos[i+1] += spkVel[i+1] * dt; spkPos[i+2] += spkVel[i+2] * dt; spkVel[i+1] -= 1.5 * dt; } spkGeo.attributes.position.needsUpdate = true; }
+
+    // Camera drift + shake
+    par.x += (par.tx - par.x) * .05; par.y += (par.ty - par.y) * .05;
+    const base = camera.position.clone();
+    camera.position.x += par.x * .6 + (Math.random() - .5) * shake * .12;
+    camera.position.y += -par.y * .3 + (Math.random() - .5) * shake * .12;
+    stars.rotation.y = time * .006; neb.rotation.y = time * .003;
+    planet.rotation.y = time * .02; planet.material.uniforms.uTime.value = time;
+    nebU.uTime.value = time;
+    renderer.render(scene, camera);
+    camera.position.copy(base);
+  }
+  requestAnimationFrame(frame);
+}
+</script>
+<!-- DEMO BANNER: portfolio notice, keep on every demo page -->
+<script>
+(() => {
+  const host = document.createElement('div');
+  const root = host.attachShadow({ mode: 'open' });
+  root.innerHTML = `
+    <style>
+      :host{ all:initial }
+      .wrap{ position:fixed; right:0; top:30%; z-index:2147483647; display:flex; align-items:flex-start; font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif; cursor:auto }
+      .tab{ all:unset; box-sizing:border-box; width:28px; padding:12px 0; cursor:pointer; display:flex; align-items:center; justify-content:center;
+        background:#ffd400; color:#111; border:2px solid #111; border-right:0; border-radius:8px 0 0 8px; box-shadow:-4px 4px 14px rgba(0,0,0,.28) }
+      .tab span{ writing-mode:vertical-rl; transform:rotate(180deg); font-weight:900; font-size:16px; letter-spacing:.22em; line-height:1 }
+      .tab:focus-visible{ outline:3px solid #111; outline-offset:2px }
+      .panel{ display:none; width:240px; margin-right:-2px; padding:14px 16px; background:#111; color:#fff; border:2px solid #111; border-radius:10px 0 0 10px;
+        font-size:13px; line-height:1.45; box-shadow:-6px 8px 24px rgba(0,0,0,.35) }
+      .panel b{ color:#ffd400; letter-spacing:.12em } .panel a{ color:#ffd400 }
+      .wrap.open .panel{ display:block }
+      @media (max-width:560px){ .tab{ width:22px; padding:9px 0 } .tab span{ font-size:12px } }
+    </style>
+    <div class="wrap">
+      <div class="panel" role="note" id="demo-note"><b>ДЕМО</b><br>Прототип сайта боулинга «Космос» от <a href="https://t.me/lilbunnych" target="_blank" rel="noopener">@lilbunnych</a>. Цены, адрес и отзывы взяты с сайта и онлайн-записи заведения. Логотип и 3D-сцена сделаны для демо. Онлайн-бронь — заглушка.</div>
+      <button class="tab" aria-expanded="false" aria-controls="demo-note" aria-label="Демо-версия: подробнее"><span>DEMO</span></button>
+    </div>`;
+  const wrap = root.querySelector('.wrap'), tab = root.querySelector('.tab');
+  tab.addEventListener('click', () => { const o = wrap.classList.toggle('open'); tab.setAttribute('aria-expanded', String(o)); });
+  const mount = () => document.body.appendChild(host);
+  document.body ? mount() : addEventListener('DOMContentLoaded', mount);
+})();
+</script>
+<!-- /DEMO BANNER -->
+</body>
+</html>

@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Яхонт — ресторан и пивоварня в Химках</title>
+<meta name="description" content="Ресторан «Яхонт» со своей пивоварней: живое пиво без консервантов и пастеризации, кухня на весь вечер и боулинг «Космос» в том же здании.">
+<meta name="theme-color" content="#120a05">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/*
+  Theme: amber brewery. Deep stout background, one accent (amber), foam cream for light surfaces.
+  Oswald (condensed, brewery-label feel) for display, Onest for text.
+  Shape rule: panels 1.25rem, controls full pill, inputs .75rem.
+*/
+:root{
+  --bg:#120a05; --bg2:#1a0f07; --ink:#fff3e0; --muted:#c4ab8a; --faint:#8a755b;
+  --line:rgba(255,220,170,.12); --glass:rgba(255,200,120,.04);
+  --accent:#f5a524; --accent-ink:#1a0d02; --accent-soft:rgba(245,165,36,.14); --foam:#fff6e4;
+  --r:1.25rem; --r-in:.75rem;
+  --display:'Oswald', system-ui, sans-serif; --sans:'Onest', system-ui, sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{ margin:0; padding:0; box-sizing:border-box }
+html{ -webkit-font-smoothing:antialiased; background:var(--bg); scroll-behavior:smooth }
+body{ font-family:var(--sans); color:var(--ink); background:var(--bg); overflow-x:clip; line-height:1.6 }
+a{ color:inherit; text-decoration:none }
+button, input, select, textarea{ font:inherit; color:inherit }
+button{ background:none; border:0; cursor:pointer }
+img{ display:block; max-width:100% }
+:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:.3rem }
+.wrap{ max-width:80rem; margin-inline:auto; padding-inline:1.25rem }
+@media (min-width:900px){ .wrap{ padding-inline:2rem } }
+
+/* Header */
+.header{ position:fixed; top:1rem; inset-inline:1rem; z-index:30; display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:.45rem .45rem .45rem 1rem; border-radius:999px; background:rgba(26,15,7,.6); border:1px solid var(--line); backdrop-filter:blur(14px) saturate(140%); -webkit-backdrop-filter:blur(14px) saturate(140%) }
+.brand{ display:flex; align-items:center; gap:.55rem; font-family:var(--display); font-weight:600; letter-spacing:.2em; font-size:1.05rem }
+.brand svg{ width:1.5rem; height:1.5rem }
+.nav{ display:none; gap:1.6rem; font-size:.92rem; color:var(--muted) }
+.nav a:hover{ color:var(--ink) }
+.head-r{ display:flex; align-items:center; gap:.9rem }
+.tel{ display:none; font-size:.88rem; color:var(--muted) } .tel:hover{ color:var(--ink) }
+@media (min-width:1000px){ .nav{ display:flex } .header{ inset-inline:2rem; top:1.25rem } }
+@media (min-width:1200px){ .tel{ display:inline } }
+.btn{ display:inline-flex; align-items:center; justify-content:center; gap:.5rem; height:2.8rem; padding:0 1.35rem; border-radius:999px; font-weight:600; font-size:.93rem; white-space:nowrap; transition:transform .15s, background .25s, box-shadow .25s, border-color .25s, color .25s }
+.btn:active{ transform:scale(.98) }
+.btn--accent{ background:var(--accent); color:var(--accent-ink); box-shadow:0 10px 30px -10px rgba(245,165,36,.7) }
+.btn--accent:hover{ background:#ffb83f; box-shadow:0 0 0 6px rgba(245,165,36,.15), 0 10px 40px -8px rgba(245,165,36,.8) }
+.btn--line{ border:1px solid rgba(255,230,190,.28); background:rgba(0,0,0,.12) } .btn--line:hover{ border-color:var(--ink) }
+.btn--dark{ background:var(--bg); color:var(--foam) } .btn--dark:hover{ background:#2a170a }
+.btn svg{ width:1rem; height:1rem }
+
+/* Hero: you are inside a glass of beer */
+.hero{ position:relative; height:100vh; height:100svh; min-height:40rem; overflow:hidden; isolation:isolate }
+.beer{ position:absolute; inset:0; width:100%; height:100%; display:block; z-index:0 }
+.beer-fallback{ position:absolute; inset:0; background:linear-gradient(#fff3dc 0 16%, #ffc34a 17%, #d97f12 60%, #7a3a05) }
+.hero-c{ position:absolute; inset:0; z-index:2; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8rem 1.25rem 5rem; color:#2a1403 }
+.logo{ display:flex; flex-direction:column; align-items:center }
+.logo .gem{ width:clamp(4.2rem,9vw,6.5rem); height:auto; filter:drop-shadow(0 10px 24px rgba(90,40,0,.45)) }
+.logo h1{ margin-top:1rem; font-family:var(--display); font-weight:600; font-size:clamp(4rem,14vw,11rem); line-height:.9; letter-spacing:.14em; margin-right:-.14em; color:#2a1403; text-shadow:0 1px 0 rgba(255,235,190,.5), 0 20px 50px rgba(90,40,0,.35) }
+.logo .sub{ margin-top:.9rem; display:flex; align-items:center; gap:.9rem; font-family:var(--display); font-weight:500; font-size:clamp(.8rem,1.8vw,1.05rem); letter-spacing:.42em; margin-right:-.42em; color:#4a2406 }
+.logo .sub i{ width:2.4rem; height:1px; background:#4a2406 }
+.hero-lead{ margin-top:1.6rem; max-width:32rem; font-size:1.08rem; color:#3a1c05; font-weight:500 }
+.hero-ctas{ margin-top:2rem; display:flex; flex-wrap:wrap; justify-content:center; gap:.8rem }
+.hero .btn--line{ border-color:rgba(42,20,3,.35); color:#2a1403; background:rgba(255,240,210,.18) } .hero .btn--line:hover{ border-color:#2a1403 }
+.hero-foot{ position:absolute; z-index:3; left:0; right:0; bottom:1.5rem; display:flex; justify-content:center; font-size:.8rem; letter-spacing:.24em; text-transform:uppercase; color:rgba(42,20,3,.7); font-family:var(--display) }
+.hero::after{ content:""; position:absolute; inset:auto 0 0 0; height:18%; z-index:1; background:linear-gradient(to top, rgba(18,10,5,.85), transparent); pointer-events:none }
+.hero-foot{ color:rgba(255,230,190,.8) }
+
+/* Sections */
+section.block{ position:relative; padding-top:7rem }
+@media (min-width:900px){ section.block{ padding-top:9rem } }
+.eyebrow{ display:inline-flex; align-items:center; gap:.6rem; font-family:var(--display); font-weight:500; font-size:.85rem; letter-spacing:.24em; text-transform:uppercase; color:var(--accent) }
+.eyebrow::before{ content:""; width:1.6rem; height:1px; background:var(--accent) }
+h2{ margin-top:.9rem; font-family:var(--display); font-weight:500; font-size:clamp(2.2rem,5vw,4rem); line-height:1.02; letter-spacing:.01em; text-transform:uppercase }
+h2 em{ font-style:normal; color:var(--accent) }
+.head{ display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:1.5rem 3rem }
+.head p{ max-width:28rem; color:var(--muted) }
+[data-rv]{ opacity:0; transform:translateY(28px); transition:opacity .9s var(--ease), transform .9s var(--ease); transition-delay:var(--d,0ms) }
+[data-rv].in{ opacity:1; transform:none }
+
+/* Brewery */
+.brew{ margin-top:3rem; display:grid; gap:1.25rem; grid-template-columns:minmax(0,1fr) }
+@media (min-width:980px){ .brew{ grid-template-columns:.9fr 1.1fr; align-items:stretch } }
+.brew-photo{ position:relative; border-radius:1.75rem; overflow:hidden; min-height:26rem }
+.brew-photo img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover }
+.brew-photo::after{ content:""; position:absolute; inset:0; background:linear-gradient(to top, rgba(18,10,5,.85), transparent 55%) }
+.brew-photo figcaption{ position:absolute; z-index:1; left:1.5rem; right:1.5rem; bottom:1.4rem; font-family:var(--display); font-size:1.3rem; letter-spacing:.04em; text-transform:uppercase }
+.brew-r{ display:grid; gap:1.25rem; align-content:start }
+.quote{ position:relative; border-radius:1.75rem; padding:2rem 1.75rem; background:linear-gradient(150deg, rgba(245,165,36,.16), rgba(245,165,36,.02) 70%); border:1px solid rgba(245,165,36,.3); font-size:1.12rem; line-height:1.65 }
+.quote::before{ content:"“"; position:absolute; top:-.8rem; left:1.2rem; font-family:var(--display); font-size:6rem; line-height:1; color:var(--accent); opacity:.6 }
+.quote small{ display:block; margin-top:1rem; font-size:.82rem; color:var(--muted); letter-spacing:.1em; text-transform:uppercase }
+.facts{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem }
+.facts span{ hyphens:auto; -webkit-hyphens:auto; overflow-wrap:anywhere }
+.facts div{ border-radius:var(--r); border:1px solid var(--line); background:var(--glass); padding:1.2rem 1rem }
+.facts b{ display:block; font-family:var(--display); font-weight:500; font-size:clamp(1.6rem,3vw,2.3rem); line-height:1; color:var(--accent) }
+.facts span{ display:block; margin-top:.5rem; font-size:.86rem; color:var(--muted) }
+.ingr{ margin-top:1.25rem; display:grid; gap:1rem; grid-template-columns:repeat(2,1fr) }
+@media (min-width:980px){ .ingr{ grid-template-columns:repeat(4,1fr) } }
+.ing{ border-radius:var(--r); border:1px solid var(--line); background:var(--glass); padding:1.4rem; transition:border-color .3s, transform .4s var(--ease) }
+.ing:hover{ border-color:rgba(245,165,36,.45); transform:translateY(-3px) }
+.ing svg{ width:2.2rem; height:2.2rem; color:var(--accent) }
+.ing b{ display:block; margin-top:1rem; font-family:var(--display); font-weight:500; font-size:1.25rem; letter-spacing:.04em; text-transform:uppercase }
+.ing span{ display:block; margin-top:.3rem; color:var(--muted); font-size:.9rem }
+
+/* Beer spectrum */
+.spectrum{ margin-top:1.25rem; border-radius:1.75rem; border:1px solid var(--line); background:var(--glass); padding:2rem 1.5rem; display:grid; gap:2rem; align-items:center }
+@media (min-width:860px){ .spectrum{ grid-template-columns:auto 1fr; padding:2.5rem 3rem; gap:3.5rem } }
+.pint{ width:9rem; height:auto; justify-self:center; filter:drop-shadow(0 20px 40px rgba(0,0,0,.45)) }
+.spectrum h3{ font-family:var(--display); font-weight:500; font-size:1.8rem; text-transform:uppercase; letter-spacing:.02em }
+.spectrum p{ margin-top:.5rem; color:var(--muted); max-width:34rem }
+.slider{ margin-top:1.6rem }
+.slider input{ -webkit-appearance:none; appearance:none; width:100%; height:.6rem; border-radius:999px; background:linear-gradient(90deg,#f9d86b,#f2b53a,#d98314,#a4500a,#5e2a06,#241006) }
+.slider input::-webkit-slider-thumb{ -webkit-appearance:none; width:1.6rem; height:1.6rem; border-radius:50%; background:var(--foam); border:4px solid var(--bg); box-shadow:0 0 0 2px var(--accent), 0 6px 16px rgba(0,0,0,.4); cursor:grab }
+.slider input::-moz-range-thumb{ width:1.2rem; height:1.2rem; border-radius:50%; background:var(--foam); border:4px solid var(--bg); cursor:grab }
+.slider-l{ margin-top:.8rem; display:flex; justify-content:space-between; font-family:var(--display); font-size:.85rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted) }
+.style-name{ margin-top:1.2rem; font-family:var(--display); font-size:1.4rem; letter-spacing:.04em; text-transform:uppercase; color:var(--accent) }
+
+/* Tsunami (sticky full-screen wave) */
+.tsunami{ position:relative; height:320vh; margin-top:8rem }
+.ts-stick{ position:sticky; top:0; height:100vh; height:100svh; overflow:hidden }
+.ts-canvas{ position:absolute; inset:0; width:100%; height:100%; display:block }
+.ts-text{ position:absolute; inset:0; display:grid; place-items:center; text-align:center; padding:0 1.25rem; pointer-events:none }
+.ts-text > div{ transition:opacity .5s, transform .6s var(--ease) }
+.ts-a{ font-family:var(--display); font-weight:600; font-size:clamp(2.6rem,9vw,7.5rem); line-height:.95; text-transform:uppercase; letter-spacing:.01em }
+.ts-a em{ font-style:normal; color:var(--accent) }
+.ts-a small{ display:block; margin-top:1.2rem; font-family:var(--sans); font-weight:500; font-size:clamp(.95rem,1.6vw,1.15rem); letter-spacing:.02em; text-transform:none; color:var(--muted) }
+.ts-b{ color:#2a1403; opacity:0; transform:translateY(30px) }
+.ts-b .ts-a{ color:#2a1403 }
+.ts-b p{ margin-top:1.2rem; font-weight:500; font-size:1.1rem; color:#3a1c05 }
+.ts-b .btn{ margin-top:1.8rem; pointer-events:auto }
+.ts-on .ts-b{ opacity:1; transform:none }
+.ts-gone .ts-t1{ opacity:0; transform:translateY(-30px) }
+.ts-t1 .ts-a{ text-shadow:0 10px 40px rgba(0,0,0,.35) }
+
+/* Booking on amber */
+.amber{ position:relative; background:linear-gradient(#b0580a, #7a3a07 25%, #2a1406 70%, var(--bg) 100%); padding:6rem 0 3rem; margin-top:-1px }
+.amber .eyebrow{ color:#ffe1a8 } .amber .eyebrow::before{ background:#ffe1a8 }
+.amber h2 em{ color:#ffd479 }
+.amber .head p{ color:#ffe6bf }
+.booking{ margin-top:3rem; display:grid; gap:1.25rem }
+@media (min-width:980px){ .booking{ grid-template-columns:1.25fr .75fr } }
+.form{ border-radius:1.5rem; border:1px solid rgba(255,230,190,.2); background:rgba(26,13,4,.72); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); padding:1.75rem; display:grid; gap:1.4rem; box-shadow:0 40px 80px -40px rgba(0,0,0,.6) }
+@media (min-width:900px){ .form{ padding:2.2rem } }
+.row{ display:grid; gap:1rem }
+@media (min-width:640px){ .row.two{ grid-template-columns:1fr 1fr } .row.three{ grid-template-columns:1fr 1fr 1fr } }
+.field{ display:flex; flex-direction:column; gap:.45rem; min-width:0 }
+.field > span{ font-size:.85rem; color:var(--muted) }
+.input{ width:100%; height:3rem; border-radius:var(--r-in); border:1px solid rgba(255,230,190,.18); background:rgba(0,0,0,.3); padding:0 1rem; font-size:.95rem; color:var(--ink); outline:none; -webkit-appearance:none; appearance:none; color-scheme:dark; transition:border-color .2s, box-shadow .2s }
+.input:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(245,165,36,.18) }
+select.input{ padding-right:2.2rem; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c4ab8a' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right .8rem center; background-size:1rem }
+.stepper{ display:flex; align-items:center; height:3rem; border-radius:var(--r-in); border:1px solid rgba(255,230,190,.18); background:rgba(0,0,0,.3) }
+.stepper button{ width:3rem; height:100%; font-size:1.2rem; color:var(--muted) } .stepper button:hover{ color:var(--accent) }
+.stepper output{ flex:1; text-align:center; font-weight:600 }
+.check{ display:flex; gap:.8rem; align-items:flex-start; padding:1rem; border-radius:var(--r-in); border:1px solid rgba(69,243,255,.28); background:rgba(69,243,255,.05); cursor:pointer; font-size:.93rem }
+.check input{ margin-top:.2rem; width:1.1rem; height:1.1rem; accent-color:#45f3ff }
+.check small{ display:block; color:var(--muted); font-size:.82rem }
+.err{ display:none; color:#ff9d7a; font-size:.8rem }
+.bad .err{ display:block } .bad .input{ border-color:#ff9d7a }
+.form-foot{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:1rem }
+.stub{ font-size:.8rem; color:var(--faint); max-width:24rem }
+.done-card{ display:none; text-align:center; padding:2rem 1rem; gap:1rem; justify-items:center }
+.done-card .big{ width:4.5rem; height:4.5rem; border-radius:50%; display:grid; place-items:center; background:var(--accent-soft); color:var(--accent) }
+.done-card .big svg{ width:2rem; height:2rem }
+.done-card h3{ font-family:var(--display); font-weight:500; font-size:1.8rem; text-transform:uppercase }
+.done-card p{ color:var(--muted); max-width:28rem }
+.form.done .form-body{ display:none } .form.done .done-card{ display:grid }
+.side{ display:grid; gap:1.25rem; align-content:start }
+.check-card{ border-radius:1.5rem; padding:1.6rem; background:var(--foam); color:#2a1403; box-shadow:0 30px 60px -30px rgba(0,0,0,.6); position:relative; overflow:hidden }
+.check-card::after{ content:""; position:absolute; left:0; right:0; bottom:-6px; height:12px; background:radial-gradient(circle at 6px 0, transparent 6px, var(--foam) 6.5px) 0 0/12px 12px repeat-x; transform:rotate(180deg) }
+.check-card h4{ font-family:var(--display); font-weight:500; font-size:1.1rem; letter-spacing:.2em; text-transform:uppercase; text-align:center; padding-bottom:1rem; border-bottom:1px dashed rgba(42,20,3,.3) }
+.check-card dl{ margin-top:1rem; display:grid; gap:.7rem; font-size:.93rem }
+.check-card dl div{ display:flex; justify-content:space-between; gap:1rem }
+.check-card dt{ color:#7a5a3a } .check-card dd{ font-weight:600; text-align:right }
+.check-card .tot{ margin-top:1rem; padding-top:1rem; border-top:1px dashed rgba(42,20,3,.3); font-size:.85rem; color:#7a5a3a }
+
+/* Bowling cross-sell */
+.bowl{ position:relative; overflow:hidden; border-radius:2rem; padding:2.5rem 1.6rem; background:radial-gradient(90% 120% at 100% 0%, rgba(69,243,255,.22), transparent 55%), linear-gradient(160deg, #0d1330, #05060d); border:1px solid rgba(69,243,255,.28); color:#eef1ff; display:grid; gap:2rem }
+@media (min-width:900px){ .bowl{ grid-template-columns:1.1fr .9fr; padding:3.5rem; align-items:center } }
+.bowl::before{ content:""; position:absolute; inset:0; pointer-events:none; opacity:.6; background-image:radial-gradient(1px 1px at 30px 40px,#fff 50%,transparent 51%), radial-gradient(1px 1px at 120px 150px,#cfe 50%,transparent 51%), radial-gradient(1.5px 1.5px at 200px 70px,#fff 50%,transparent 51%); background-size:240px 200px }
+.bowl > *{ position:relative }
+.bowl .eyebrow{ color:#45f3ff } .bowl .eyebrow::before{ background:#45f3ff }
+.bowl h2 em{ color:#45f3ff }
+.bowl p{ margin-top:1rem; color:#b9bfdc; max-width:32rem }
+.bowl .btn{ margin-top:1.8rem; background:#45f3ff; color:#031216; box-shadow:0 10px 30px -10px rgba(69,243,255,.6) }
+.bowl ul{ list-style:none; display:grid; gap:.7rem }
+.bowl li{ display:flex; justify-content:space-between; gap:1rem; padding:1rem 1.2rem; border-radius:1rem; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1) }
+.bowl li b{ font-family:var(--display); font-weight:500; font-size:1.2rem; color:#45f3ff; white-space:nowrap }
+.bowl small{ display:block; margin-top:.4rem; font-size:.78rem; color:#7d84a3 }
+
+/* Dishes */
+.dishes{ margin-top:3rem; display:grid; gap:1.25rem; grid-template-columns:1fr }
+@media (min-width:700px){ .dishes{ grid-template-columns:repeat(2,1fr) } }
+@media (min-width:1100px){ .dishes{ grid-template-columns:repeat(3,1fr) } }
+.dish{ border-radius:1.5rem; overflow:hidden; background:var(--bg2); border:1px solid var(--line); transition:transform .5s var(--ease), border-color .3s }
+.dish:hover{ transform:translateY(-4px); border-color:rgba(245,165,36,.4) }
+.dish .ph{ aspect-ratio:4/3; overflow:hidden }
+.dish img{ width:100%; height:100%; object-fit:cover; transition:transform 1.2s var(--ease) }
+.dish:hover img{ transform:scale(1.06) }
+.dish div:last-child{ padding:1.3rem 1.4rem 1.5rem }
+.dish h3{ font-family:var(--display); font-weight:500; font-size:1.35rem; letter-spacing:.03em; text-transform:uppercase }
+.dish p{ margin-top:.4rem; color:var(--muted); font-size:.93rem }
+
+/* Menu */
+.menu{ margin-top:2.5rem; border-radius:1.75rem; border:1px solid var(--line); background:var(--glass); padding:1.5rem }
+@media (min-width:900px){ .menu{ padding:2.2rem 2.5rem } }
+.tabs{ display:flex; gap:.5rem; overflow-x:auto; padding-bottom:.4rem; scrollbar-width:none; -webkit-overflow-scrolling:touch }
+.tabs::-webkit-scrollbar{ display:none }
+.tabs button{ flex-shrink:0; height:2.5rem; padding:0 1.1rem; border-radius:999px; border:1px solid var(--line); font-size:.9rem; color:var(--muted); transition:all .2s }
+.tabs button:hover{ color:var(--ink); border-color:rgba(255,230,190,.35) }
+.tabs button[aria-selected="true"]{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); font-weight:600 }
+.items{ margin-top:1.6rem; display:grid; gap:0 3rem; grid-template-columns:1fr }
+@media (min-width:860px){ .items{ grid-template-columns:1fr 1fr } }
+.item{ display:flex; align-items:baseline; gap:.7rem; padding:.85rem 0; border-bottom:1px solid var(--line) }
+.item span{ min-width:0 }
+.item small{ display:block; color:var(--faint); font-size:.8rem }
+.item i{ flex:1; border-bottom:1px dotted rgba(255,220,170,.25); transform:translateY(-.3rem); min-width:1rem }
+.item b{ font-family:var(--display); font-weight:500; font-size:1.1rem; color:var(--accent); white-space:nowrap }
+.menu-note{ margin-top:1.4rem; font-size:.82rem; color:var(--faint) }
+
+/* Events */
+.events{ margin-top:3rem; display:grid; gap:1.25rem }
+@media (min-width:980px){ .events{ grid-template-columns:1.1fr .9fr } }
+.ev-photo{ position:relative; border-radius:1.75rem; overflow:hidden; min-height:24rem }
+.ev-photo img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover }
+.ev-photo::after{ content:""; position:absolute; inset:0; background:linear-gradient(to top, rgba(18,10,5,.8), transparent 50%) }
+.ev-photo span{ position:absolute; z-index:1; left:1.5rem; bottom:1.3rem; font-family:var(--display); font-size:1.2rem; letter-spacing:.06em; text-transform:uppercase }
+.ev-list{ display:grid; gap:1rem; align-content:start }
+.ev{ border-radius:var(--r); border:1px solid var(--line); background:var(--glass); padding:1.4rem 1.5rem }
+.ev b{ font-family:var(--display); font-weight:500; font-size:1.3rem; letter-spacing:.03em; text-transform:uppercase }
+.ev span{ display:block; margin-top:.35rem; color:var(--muted); font-size:.94rem }
+
+/* Reviews */
+.reviews{ margin-top:3rem; display:grid; gap:1.25rem }
+@media (min-width:900px){ .reviews{ grid-template-columns:repeat(3,1fr) } }
+.review{ border-radius:var(--r); border:1px solid var(--line); background:var(--glass); padding:1.6rem; display:flex; flex-direction:column; gap:1rem }
+.review small{ margin-top:auto; font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; color:var(--faint) }
+.stars{ color:var(--accent); letter-spacing:.2em }
+
+/* Contacts */
+.contacts{ margin-top:3rem; display:grid; gap:1.25rem }
+@media (min-width:980px){ .contacts{ grid-template-columns:.9fr 1.1fr } }
+.cc{ border-radius:1.5rem; border:1px solid var(--line); background:var(--glass); padding:2rem; display:grid; gap:1.4rem; align-content:start }
+.line{ display:flex; gap:.9rem; color:var(--muted) }
+.line svg{ width:1.25rem; height:1.25rem; flex-shrink:0; color:var(--accent); margin-top:.15rem }
+.line b{ display:block; color:var(--ink) }
+.map{ border-radius:1.5rem; overflow:hidden; border:1px solid var(--line); min-height:22rem; background:#1a0f07 }
+.map iframe{ width:100%; height:100%; min-height:22rem; border:0; filter:sepia(.55) saturate(.8) brightness(.8) contrast(1.05) }
+
+footer{ margin-top:7rem; border-top:1px solid var(--line) }
+footer .wrap{ display:flex; flex-wrap:wrap; justify-content:space-between; gap:1rem; padding-block:2rem 3rem; font-size:.85rem; color:var(--faint) }
+footer a{ text-decoration:underline; text-underline-offset:3px }
+
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto }
+  *{ animation:none !important; transition:none !important }
+  [data-rv]{ opacity:1; transform:none }
+  .tsunami{ height:auto } .ts-stick{ position:relative }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <a class="brand" href="#top" aria-label="Яхонт, на главную">
+    <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M14 22 22 10h20l8 12-18 32z" fill="#f5a524"/><path d="M14 22h36M22 10l4 12 6 32M42 10l-4 12-6 32M26 22l6-12 6 12" fill="none" stroke="#1a0d02" stroke-width="2" stroke-linejoin="round"/></svg>
+    ЯХОНТ
+  </a>
+  <nav class="nav" aria-label="Разделы">
+    <a href="#brewery">Пивоварня</a>
+    <a href="#booking">Бронь</a>
+    <a href="#bowling">Боулинг</a>
+    <a href="#menu">Меню</a>
+    <a href="#contacts">Контакты</a>
+  </nav>
+  <div class="head-r">
+    <a class="tel" href="tel:+74957758678">+7 (495) 775-86-78</a>
+    <a class="btn btn--accent" href="#booking">Забронировать стол</a>
+  </div>
+</header>
+
+<section class="hero" id="top" aria-label="Ресторан Яхонт">
+  <canvas class="beer" id="beer" aria-hidden="true"></canvas>
+  <div class="hero-c">
+    <div class="logo" data-rv>
+      <svg class="gem" viewBox="0 0 120 110" aria-hidden="true">
+        <defs>
+          <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe7a8"/><stop offset=".5" stop-color="#f5a524"/><stop offset="1" stop-color="#8a3d05"/></linearGradient>
+          <linearGradient id="g2" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd27a"/><stop offset="1" stop-color="#6b2d03"/></linearGradient>
+        </defs>
+        <path d="M22 34 38 12h44l16 22-38 64z" fill="url(#g1)"/>
+        <path d="M22 34h76L60 98z" fill="url(#g2)" opacity=".85"/>
+        <path d="M38 12l10 22L60 12l12 22 10-22" fill="none" stroke="#2a1403" stroke-width="2.2" stroke-linejoin="round"/>
+        <path d="M22 34h76M48 34l12 64 12-64" fill="none" stroke="#2a1403" stroke-width="2.2" stroke-linejoin="round"/>
+        <path d="M22 34 38 12h44l16 22-38 64z" fill="none" stroke="#2a1403" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M44 16l-6 12" stroke="#fff6e4" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+      </svg>
+      <h1>ЯХОНТ</h1>
+      <div class="sub"><i></i>Ресторан · Пивоварня<i></i></div>
+    </div>
+    <p class="hero-lead" data-rv style="--d:160ms">Живое пиво, которое варят прямо в стенах ресторана. Без консервантов и пастеризации.</p>
+    <div class="hero-ctas" data-rv style="--d:260ms">
+      <a class="btn btn--dark" href="#booking">Забронировать стол</a>
+      <a class="btn btn--line" href="#brewery">О пивоварне</a>
+    </div>
+  </div>
+  <div class="hero-foot" aria-hidden="true">Химки · Ленинский проспект, 2Б</div>
+</section>
+
+<main>
+  <section class="block" id="brewery">
+    <div class="wrap">
+      <div class="head">
+        <div><span class="eyebrow" data-rv>Пивоварня «Яхонт»</span><h2 data-rv style="--d:80ms">Настоящее крафтовое пиво <em>собственного производства</em></h2></div>
+      </div>
+      <div class="brew">
+        <figure class="brew-photo" data-rv>
+          <img loading="lazy" src="img/brewer.jpg" alt="Пивовар наливает пиво из медной ёмкости">
+          <figcaption>Варим прямо в стенах ресторана</figcaption>
+        </figure>
+        <div class="brew-r">
+          <blockquote class="quote" data-rv style="--d:80ms">Мы варим живое пиво прямо в стенах ресторана. Только натуральные ингредиенты: солод, хмель, вода и дрожжи. Без консервантов и пастеризации. Каждый сорт имеет свой характер — от освежающего светлого лагера до насыщенного тёмного стаута.<small>Пивоварня «Яхонт»</small></blockquote>
+          <div class="facts" data-rv style="--d:160ms">
+            <div><b>0</b><span>консервантов</span></div>
+            <div><b>0</b><span>пастеризации: пиво остаётся живым</span></div>
+            <div><b>4</b><span>ингредиента, и ничего лишнего</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="ingr">
+        <div class="ing" data-rv><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 29V9M16 13c-3-1-5-3-5-6 3 0 5 2 5 6zM16 13c3-1 5-3 5-6-3 0-5 2-5 6zM16 19c-3-1-5-3-5-6 3 0 5 2 5 6zM16 19c3-1 5-3 5-6-3 0-5 2-5 6zM16 25c-3-1-5-3-5-6 3 0 5 2 5 6zM16 25c3-1 5-3 5-6-3 0-5 2-5 6zM16 9V3"/></svg><b>Солод</b><span>Основа вкуса, цвета и тела пива.</span></div>
+        <div class="ing" data-rv style="--d:80ms"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4c-5 3-7 8-7 13a7 7 0 0 0 14 0c0-5-2-10-7-13z"/><path d="M11 12c2 1 3 1 5 0 2 1 3 1 5 0M10 17c2 1 4 1 6 0 2 1 4 1 6 0M11 22c2 1 3 1 5 0 2 1 3 1 5 0M16 4V1"/></svg><b>Хмель</b><span>Горчинка и аромат.</span></div>
+        <div class="ing" data-rv style="--d:160ms"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3s-9 10-9 17a9 9 0 0 0 18 0c0-7-9-17-9-17z"/><path d="M12 21a4 4 0 0 0 4 4"/></svg><b>Вода</b><span>Самая большая часть каждой кружки.</span></div>
+        <div class="ing" data-rv style="--d:240ms"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="12" r="5"/><circle cx="21" cy="10" r="3"/><circle cx="20" cy="21" r="6"/><circle cx="9" cy="23" r="2.5"/></svg><b>Дрожжи</b><span>Живые: пиво не пастеризуют.</span></div>
+      </div>
+      <div class="spectrum" data-rv>
+        <svg class="pint" id="pint" viewBox="0 0 120 200" aria-hidden="true">
+          <defs><clipPath id="glass"><path d="M18 20h84l-8 168a8 8 0 0 1-8 7H34a8 8 0 0 1-8-7z"/></clipPath>
+            <linearGradient id="shine" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset=".25" stop-color="#fff" stop-opacity="0"/><stop offset=".8" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity=".18"/></linearGradient></defs>
+          <g clip-path="url(#glass)">
+            <rect x="0" y="0" width="120" height="200" fill="rgba(255,255,255,.05)"/>
+            <rect id="liquid" x="0" y="46" width="120" height="160" fill="#f2b53a"/>
+            <g id="bubbles" fill="#fff" opacity=".45"><circle cx="40" cy="170" r="1.6"/><circle cx="62" cy="150" r="1.2"/><circle cx="80" cy="180" r="1.8"/><circle cx="52" cy="120" r="1.1"/><circle cx="72" cy="100" r="1.4"/><circle cx="46" cy="80" r="1"/></g>
+            <path d="M0 26q10-10 20 0t20 0 20 0 20 0 20 0 20 0v24H0z" fill="#fff6e4"/>
+            <rect x="0" y="0" width="120" height="200" fill="url(#shine)"/>
+          </g>
+          <path d="M18 20h84l-8 168a8 8 0 0 1-8 7H34a8 8 0 0 1-8-7z" fill="none" stroke="rgba(255,240,210,.5)" stroke-width="2"/>
+        </svg>
+        <div>
+          <h3>От лагера до стаута</h3>
+          <p>У каждого сорта свой характер. Проведите по шкале и посмотрите, как меняется пиво в кружке. Что сейчас на кранах, подскажет бармен.</p>
+          <div class="slider"><input type="range" id="srm" min="0" max="100" value="22" aria-label="От светлого лагера к тёмному стауту"></div>
+          <div class="slider-l"><span>Светлый лагер</span><span>Тёмный стаут</span></div>
+          <div class="style-name" id="styleName">Освежающий светлый</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tsunami" id="tsunami" aria-label="Пивное цунами">
+    <div class="ts-stick" id="tsStick">
+      <canvas class="ts-canvas" id="ts" aria-hidden="true"></canvas>
+      <div class="ts-text">
+        <div class="ts-t1"><div class="ts-a">Сварено <em>здесь</em>.<br>Налито <em>сейчас</em>.<small>Листайте дальше — осторожно, будет волна</small></div></div>
+      </div>
+      <div class="ts-text">
+        <div class="ts-b"><div class="ts-a">Стол ждёт.<br>Пиво уже налито.</div><p>Забронируйте столик онлайн за минуту.</p><a class="btn btn--dark" href="#booking">Забронировать стол</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="amber" id="booking">
+    <div class="wrap">
+      <div class="head">
+        <div><span class="eyebrow" data-rv>Онлайн-бронь</span><h2 data-rv style="--d:80ms">Забронируйте <em>стол</em></h2></div>
+        <p data-rv style="--d:160ms">Выберите дату, время и количество гостей. Администратор перезвонит и подтвердит бронь.</p>
+      </div>
+      <div class="booking">
+        <form class="form" id="form" novalidate data-rv>
+          <div class="form-body" style="display:grid;gap:1.4rem">
+            <div class="row three">
+              <label class="field"><span>Дата</span><input class="input" id="rDate" type="date"></label>
+              <label class="field"><span>Время</span><select class="input" id="rTime"></select></label>
+              <div class="field"><span>Гостей</span><div class="stepper"><button type="button" id="minus" aria-label="Меньше">−</button><output id="guests">2</output><button type="button" id="plus" aria-label="Больше">+</button></div></div>
+            </div>
+            <div class="row two">
+              <label class="field"><span>Повод</span><select class="input" id="rOcc"><option>Просто ужин</option><option>День рождения</option><option>Свидание</option><option>Корпоратив</option><option>Встреча с друзьями</option></select></label>
+              <label class="field" id="fName"><span>Имя</span><input class="input" id="rName" autocomplete="name" placeholder="Как к вам обращаться"><span class="err">Напишите имя</span></label>
+            </div>
+            <label class="field" id="fPhone"><span>Телефон</span><input class="input" id="rPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__"><span class="err">Проверьте номер телефона</span></label>
+            <label class="check"><input type="checkbox" id="rBowl"><span><b>Добавить дорожку в боулинге «Космос»</b><small>В том же здании. От 800 ₽ за час, подберём время до или после ужина.</small></span></label>
+            <div class="form-foot">
+              <span class="stub">Прототип: заявка никуда не отправляется. В рабочей версии подключим бронь к администратору или сервису записи.</span>
+              <button class="btn btn--accent" type="submit" id="rSend">Забронировать</button>
+            </div>
+          </div>
+          <div class="done-card" role="status">
+            <div class="big"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+            <h3>Стол почти ваш</h3>
+            <p id="doneText">Администратор перезвонит, чтобы подтвердить бронь.</p>
+            <button class="btn btn--line" type="button" id="again">Новая бронь</button>
+          </div>
+        </form>
+        <aside class="side" data-rv style="--d:120ms">
+          <div class="check-card">
+            <h4>Ваша бронь</h4>
+            <dl>
+              <div><dt>Дата</dt><dd id="cDate">—</dd></div>
+              <div><dt>Время</dt><dd id="cTime">—</dd></div>
+              <div><dt>Гостей</dt><dd id="cGuests">2</dd></div>
+              <div><dt>Повод</dt><dd id="cOcc">Просто ужин</dd></div>
+              <div><dt>Боулинг</dt><dd id="cBowl">—</dd></div>
+            </dl>
+            <div class="tot">Депозит и детали администратор уточнит по телефону.</div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="bowling">
+    <div class="wrap">
+      <div class="bowl" data-rv>
+        <div>
+          <span class="eyebrow">В том же здании</span>
+          <h2>Ужин + <em>боулинг</em></h2>
+          <p>Боулинг «Космос» работает вместе с рестораном. Сыграйте партию до ужина или спуститесь на дорожки после: пиво и закуски можно заказать прямо к игре.</p>
+          <a class="btn" href="../kosmos/">Сайт боулинга «Космос»</a>
+        </div>
+        <div>
+          <ul>
+            <li>Пн–Чт, днём<b>800 ₽/ч</b></li>
+            <li>Пн–Чт вечером, Пт днём<b>1 500 ₽/ч</b></li>
+            <li>Пт вечером, Сб–Вс<b>2 100 ₽/ч</b></li>
+          </ul>
+          <small>Цены из онлайн-записи боулинга.</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="kitchen">
+    <div class="wrap">
+      <div class="head">
+        <div><span class="eyebrow" data-rv>Кухня</span><h2 data-rv style="--d:80ms">Тонкости вкуса <em>и подачи</em></h2></div>
+        <p data-rv style="--d:160ms">Традиционно каждый сезон. Блюда, ради которых возвращаются.</p>
+      </div>
+      <div class="dishes">
+        <article class="dish" data-rv><div class="ph"><img loading="lazy" src="img/bruschetta.jpg" alt="Брускетта с томатами и сыром"></div><div><h3>Брускетта с томатами и сыром</h3><p>Хрустящий тост с сочными томатами, ароматным базиликом и тянущимся сыром.</p></div></article>
+        <article class="dish" data-rv style="--d:80ms"><div class="ph"><img loading="lazy" src="img/cheeks.jpg" alt="Телячьи щёчки"></div><div><h3>Телячьи щёчки</h3><p>Нежнейшее мясо, томлёное до состояния таяния во рту, в насыщенном соусе.</p></div></article>
+        <article class="dish" data-rv style="--d:160ms"><div class="ph"><img loading="lazy" src="img/borsch.jpg" alt="Борщ"></div><div><h3>Борщ</h3><p>Насыщенный наваристый борщ с говядиной, свёклой и ароматом чеснока.</p></div></article>
+        <article class="dish" data-rv><div class="ph"><img loading="lazy" src="img/mussels.jpg" alt="Мидии в соусе том ям"></div><div><h3>Мидии в соусе том ям</h3><p>Сочетание сливочности, остроты и свежести.</p></div></article>
+        <article class="dish" data-rv style="--d:80ms"><div class="ph"><img loading="lazy" src="img/tomyam.jpg" alt="Том ям"></div><div><h3>Том ям</h3><p>Тайский суп на кокосовом молоке с креветками и травами.</p></div></article>
+        <article class="dish" data-rv style="--d:160ms"><div class="ph"><img loading="lazy" src="img/strudel.jpg" alt="Яблочный штрудель"></div><div><h3>Яблочный штрудель</h3><p>Тёплый, с запечёнными яблоками, корицей и шариком ванильного мороженого.</p></div></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="menu">
+    <div class="wrap">
+      <div class="head"><div><span class="eyebrow" data-rv>Меню 2026</span><h2 data-rv style="--d:80ms">Актуальное <em>меню</em></h2></div></div>
+      <div class="menu" data-rv>
+        <div class="tabs" role="tablist" id="tabs"></div>
+        <div class="items" id="items" role="tabpanel"></div>
+        <p class="menu-note">Цены с сайта заведения. Пиво собственной варки — уточняйте у бармена.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="events">
+    <div class="wrap">
+      <div class="head">
+        <div><span class="eyebrow" data-rv>Мероприятия</span><h2 data-rv style="--d:80ms">Праздник <em>под ключ</em></h2></div>
+        <p data-rv style="--d:160ms">Ресторан, пивоварня и боулинг в одном здании: всё для большого вечера без переездов.</p>
+      </div>
+      <div class="events">
+        <figure class="ev-photo" data-rv><img loading="lazy" src="img/hall.jpg" alt="Зал ресторана «Яхонт»"><span>Зал ресторана</span></figure>
+        <div class="ev-list">
+          <div class="ev" data-rv><b>Корпоративы</b><span>Ужин для команды, пиво своей варки и турнир на дорожках «Космоса».</span></div>
+          <div class="ev" data-rv style="--d:80ms"><b>Дни рождения</b><span>Стол в ресторане и игра в боулинг для гостей любого возраста.</span></div>
+          <div class="ev" data-rv style="--d:160ms"><b>Встречи с друзьями</b><span>Закуски к пиву, пицца и пара партий в боулинг.</span></div>
+          <a class="btn btn--accent" href="tel:+74957758678" style="justify-self:start" data-rv>Обсудить праздник</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="head"><div><span class="eyebrow" data-rv>Отзывы</span><h2 data-rv style="--d:80ms">Что говорят <em>гости</em></h2></div></div>
+      <div class="reviews">
+        <figure class="review" data-rv><div class="stars">★★★★★</div><p>«Пиво действительно очень вкусное, закуски и пиццу принесли горячими, прям с пылу с жару. Гренки чесночные шикарные.»</p><small>Отзыв гостя</small></figure>
+        <figure class="review" data-rv style="--d:80ms"><div class="stars">★★★★★</div><p>«Корпоратив отмечали, место волшебное, порадовала очень вкусная еда. Обслуживание и сервис на лучшем уровне.»</p><small>Отзыв гостя</small></figure>
+        <figure class="review" data-rv style="--d:160ms"><div class="stars">★★★★★</div><p>«Отличное место в центре городского парка. Очень уютная обстановка, хорошая еда и вполне умеренные цены.»</p><small>Отзыв гостя</small></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="contacts">
+    <div class="wrap">
+      <div class="head"><div><span class="eyebrow" data-rv>Контакты</span><h2 data-rv style="--d:80ms">Ждём <em>в гости</em></h2></div></div>
+      <div class="contacts">
+        <div class="cc" data-rv>
+          <div class="line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><div><b>Химки, Ленинский проспект, 2Б</b>Этажи 1–2, в центре городского парка</div></div>
+          <div class="line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg><div><b><a href="tel:+74957758678">+7 (495) 775-86-78</a></b>Бронирование</div></div>
+          <div class="line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg><div><b><a href="tel:+74957850000">+7 (495) 785-00-00</a></b>Общий номер</div></div>
+          <a class="btn btn--accent" href="#booking" style="justify-self:start">Забронировать стол</a>
+        </div>
+        <div class="map" data-rv style="--d:120ms">
+          <iframe title="Карта: Химки, Ленинский проспект 2Б" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=37.4516%2C55.8912%2C37.4656%2C55.8973&amp;layer=mapnik&amp;marker=55.89427%2C37.45857"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© Ресторан и пивоварня «Яхонт», Химки</span>
+    <span>Демо-версия сайта · сделано <a href="https://t.me/lilbunnych" target="_blank" rel="noopener">@lilbunnych</a></span>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('[data-rv]').forEach(el => io.observe(el));
+
+  /* ----- Beer spectrum ----- */
+  const STOPS = [[0, [249,216,107], 'Освежающий светлый'], [30, [242,181,58], 'Золотистый'], [55, [217,131,20], 'Янтарный'], [75, [164,80,10], 'Медно-красный'], [90, [94,42,6], 'Тёмный'], [100, [36,16,6], 'Насыщенный тёмный стаут']];
+  const srm = $('#srm');
+  function pour(){
+    const v = +srm.value;
+    let i = 0; while (i < STOPS.length - 2 && v > STOPS[i + 1][0]) i++;
+    const [a, ca] = STOPS[i], [b, cb] = STOPS[i + 1], t = (v - a) / (b - a);
+    const c = ca.map((x, k) => Math.round(x + (cb[k] - x) * t));
+    $('#liquid').setAttribute('fill', `rgb(${c})`);
+    $('#styleName').textContent = STOPS[t < .5 ? i : i + 1][2];
+  }
+  srm.addEventListener('input', pour); pour();
+
+  /* ----- Menu (prices from the venue's site) ----- */
+  const MENU = {
+    'Горячие закуски': [['Сыр фри с брусничным соусом', 450], ['Кольца кальмара с соусом тар-тар', 490], ['Крылья куриные, 6 шт', 520, 'один соус на выбор'], ['Крылья куриные, 12 шт', 950, 'два соуса на выбор'], ['Крылья куриные, 24 шт', 1800, 'четыре соуса на выбор'], ['Луковые кольца с чесночным соусом', 390], ['Наггетсы куриные с кетчупом', 350], ['Фиш-фри с соусом тар-тар', 350], ['Ржаные гренки с чесночным соусом', 250], ['Гора картофеля фри', 650], ['Гора картофеля по-деревенски', 650], ['Креветки', 890, 'отварные или жареные'], ['Жульен с шампиньонами', 390], ['Жульен с курицей', 390], ['Жульен с креветками', 490]],
+    'Салаты': [['Цезарь с цыплёнком', 550], ['Цезарь с креветками', 590], ['Греческий', 490], ['Оливье', 390], ['Зелёный с сыром страчателла', 650], ['Тёплый баклажан с кальмаром', 490], ['С пряным лососем', 550], ['Средиземноморский', 690], ['Креветки с киноа', 590], ['Овощной с заправкой на выбор', 450], ['Руккола с креветками', 690]],
+    'Горячие блюда': [['Говядина с белыми грибами и картофелем', 850], ['Бефстроганов с картофельным пюре', 550], ['Телячьи щёчки с картофельным пюре', 650], ['Стейк свиной BBQ с картофелем фри', 550], ['Бургер с говядиной', 550], ['Стейк индейки с овощами', 450], ['Скоблянка из свинины', 490], ['Пельмени ручной лепки', 550], ['Паста карбонара', 590], ['Паста с индейкой и белыми грибами', 750], ['Паста с лососем и брокколи', 650], ['Паста с креветками и сыром дорблю', 490], ['Котлета по-киевски', 650], ['Стейк лосося с брокколи и кунжутным маслом', 990], ['Мидии в соусе том ям', 950], ['Мидии в соусе дорблю', 950], ['Сибас гриль', 890]],
+    'Холодные закуски': [['Рулеты из баклажанов с крем-чизом и песто', 450], ['Тар-тар из говядины', 590], ['Брускетты с лососем малой соли и крем-чизом', 450], ['Мясное ассорти', 690], ['Брускетты с томатами и страчателлой', 390], ['Филе сельди с печёным картофелем', 490], ['Карпаччо из говядины с трюфельной заправкой', 590], ['Томаты с моцареллой', 450], ['Вителло тоннато', 590], ['Овощи с зеленью', 450]],
+    'К пиву': [['Рыбные палочки с соусом тар-тар', 390], ['Гренки с чесночным соусом', 250], ['Гора картофеля фри', 650], ['Гора картофеля по-деревенски', 650], ['Жульен с курицей', 390], ['Жульен с шампиньонами', 390], ['Жульен с креветками', 490], ['Креветки жареные или отварные', 890], ['Сыр фри с брусничным соусом', 450], ['Кольца кальмара', 490], ['Крылья куриные', 390], ['Луковые кольца с чесночным соусом', 390], ['Куриные наггетсы с кетчупом', 350]],
+    'Пицца': [['Четыре сыра', 590], ['Пепперони', 490], ['Маргарита', 390], ['BBQ', 590], ['Цезарь', 690], ['Баварская', 550], ['Мексиканская', 550], ['Ветчина-грибы', 450], ['Гавайская', 650], ['Диабло', 690], ['Лосось с рукколой', 850]],
+  };
+  const tabs = $('#tabs'), items = $('#items');
+  const esc = s => s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+  function show(cat){
+    tabs.querySelectorAll('button').forEach(b => b.setAttribute('aria-selected', String(b.textContent === cat)));
+    items.innerHTML = MENU[cat].map(([n, p, note]) => `<div class="item"><span>${esc(n)}${note ? `<small>${esc(note)}</small>` : ''}</span><i></i><b>${p.toLocaleString('ru-RU')} ₽</b></div>`).join('');
+  }
+  Object.keys(MENU).forEach(cat => {
+    const b = document.createElement('button'); b.type = 'button'; b.role = 'tab'; b.textContent = cat;
+    b.onclick = () => show(cat); tabs.appendChild(b);
+  });
+  show('К пиву');
+
+  /* ----- Booking stub ----- */
+  const iso = d => new Date(d.getTime() - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
+  const now = new Date(), rDate = $('#rDate'), rTime = $('#rTime');
+  rDate.min = iso(now); rDate.value = iso(now);
+  let guests = 2;
+  function fillTimes(){
+    const keep = rTime.value; rTime.innerHTML = '';
+    for (let m = 12 * 60; m <= 22 * 60 + 30; m += 30){
+      if (rDate.value === iso(now) && m <= now.getHours() * 60 + now.getMinutes() + 30) continue;
+      const o = document.createElement('option'); o.value = o.textContent = String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); rTime.appendChild(o);
+    }
+    if (!rTime.options.length){ const o = document.createElement('option'); o.value = ''; o.textContent = 'Выберите другую дату'; rTime.appendChild(o); }
+    rTime.value = [...rTime.options].some(o => o.value === keep) ? keep : ([...rTime.options].find(o => o.value === '19:00') || rTime.options[0]).value;
+    receipt();
+  }
+  function receipt(){
+    $('#cDate').textContent = rDate.value ? new Date(rDate.value + 'T12:00').toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', weekday: 'short' }) : '—';
+    $('#cTime').textContent = rTime.value || '—';
+    $('#cGuests').textContent = guests;
+    $('#cOcc').textContent = $('#rOcc').value;
+    $('#cBowl').textContent = $('#rBowl').checked ? 'добавить дорожку' : '—';
+  }
+  rDate.addEventListener('input', fillTimes);
+  ['#rTime', '#rOcc', '#rBowl'].forEach(s => $(s).addEventListener('input', receipt));
+  $('#minus').onclick = () => { guests = Math.max(1, guests - 1); $('#guests').textContent = guests; receipt(); };
+  $('#plus').onclick = () => { guests = Math.min(40, guests + 1); $('#guests').textContent = guests; receipt(); };
+  fillTimes();
+  const form = $('#form');
+  form.addEventListener('input', e => e.target.closest('.field')?.classList.remove('bad'));
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const okName = $('#rName').value.trim().length > 1, okPhone = $('#rPhone').value.replace(/\D/g, '').length >= 10;
+    $('#fName').classList.toggle('bad', !okName); $('#fPhone').classList.toggle('bad', !okPhone);
+    if (!okName || !okPhone || !rTime.value) return;
+    const btn = $('#rSend'); btn.disabled = true; btn.textContent = 'Бронируем…';
+    setTimeout(() => {
+      $('#doneText').textContent = `${$('#rName').value.trim()}, заявка на ${$('#cDate').textContent}, ${rTime.value}, ${guests} гост${guests === 1 ? 'ь' : guests < 5 ? 'я' : 'ей'} принята${$('#rBowl').checked ? ', дорожку в «Космосе» тоже подберём' : ''}. Администратор перезвонит для подтверждения.`;
+      form.classList.add('done'); btn.disabled = false; btn.textContent = 'Забронировать';
+    }, 800);
+  });
+  $('#again').onclick = () => { form.classList.remove('done'); $('#rName').value = ''; $('#rPhone').value = ''; };
+
+  /* ----- WebGL: shared helper for the two full-screen beer shaders ----- */
+  const COMMON = `
+    precision highp float;
+    uniform vec2 uRes; uniform float uTime;
+    float h1(float n){ return fract(sin(n * 127.1) * 43758.5453); }
+    float h2(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+    float noise(vec2 p){ vec2 i = floor(p), f = fract(p); f = f*f*(3.-2.*f);
+      return mix(mix(h2(i), h2(i+vec2(1,0)), f.x), mix(h2(i+vec2(0,1)), h2(i+vec2(1,1)), f.x), f.y); }
+    float fbm(vec2 p){ float s = 0., a = .5; for (int i = 0; i < 4; i++){ s += a * noise(p); p *= 2.1; a *= .5; } return s; }
+    // Rising bubbles: several layers of columns, each bubble a soft ring with a highlight
+    float bubbles(vec2 uv, float t, float aspect){
+      float acc = 0.;
+      for (int L = 0; L < 3; L++){
+        float fl = float(L), sc = 7. + fl * 6.;
+        vec2 p = vec2(uv.x * aspect, uv.y) * sc;
+        float id = floor(p.x);
+        p.y -= t * (.5 + h1(id + fl * 17.) * .9) * (1. + fl * .35) - h1(id * 3.1 + fl) * 9.;
+        vec2 cell = floor(p), f = fract(p) - .5;
+        f.x += sin(p.y * 2.1 + id * 4.) * .14;
+        float rnd = h2(cell + fl * 13.1);
+        float r = (.07 + h2(cell * 1.7 + 3.) * .13) * step(.55, rnd);
+        float d = length(f);
+        float ring = smoothstep(r, r * .78, d) * (1. - smoothstep(r * .7, r * .2, d) * .75);
+        float hi = smoothstep(r * .38, 0., length(f - vec2(-r * .35, r * .35)));
+        acc += (ring * .7 + hi) * (1. - fl * .25);
+      }
+      return acc;
+    }
+    vec3 beerCol(float depth){ // depth 0 = just under the foam, 1 = bottom
+      vec3 a = vec3(1., .80, .33), b = vec3(.93, .56, .09), c = vec3(.55, .24, .02);
+      return depth < .5 ? mix(a, b, depth * 2.) : mix(b, c, (depth - .5) * 2.);
+    }
+    vec3 foamCol(vec2 uv, float t){
+      float n = fbm(uv * vec2(22., 14.) + vec2(0., t * .05));
+      float cells = smoothstep(.35, .8, noise(uv * vec2(70., 45.) + t * .02));
+      return mix(vec3(1., .96, .88), vec3(.96, .88, .72), n * .6 + cells * .25);
+    }`;
+  function makeGL(canvas, frag){
+    const gl = canvas.getContext('webgl', { antialias: false, premultipliedAlpha: false });
+    if (!gl) return null;
+    const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) { console.error(gl.getShaderInfoLog(s)); return null; } return s; };
+    const vs = sh(gl.VERTEX_SHADER, 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0., 1.); }');
+    const fs = sh(gl.FRAGMENT_SHADER, COMMON + frag);
+    if (!vs || !fs) return null;
+    const pr = gl.createProgram(); gl.attachShader(pr, vs); gl.attachShader(pr, fs); gl.linkProgram(pr); gl.useProgram(pr);
+    const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    const U = {}; ['uRes', 'uTime', 'uTilt', 'uP'].forEach(n => U[n] = gl.getUniformLocation(pr, n));
+    const dpr = Math.min(devicePixelRatio, 1.5);
+    const size = () => { canvas.width = canvas.clientWidth * dpr; canvas.height = canvas.clientHeight * dpr; gl.viewport(0, 0, canvas.width, canvas.height); };
+    new ResizeObserver(size).observe(canvas); size();
+    return { gl, U, draw(t, extra){ gl.uniform2f(U.uRes, canvas.width, canvas.height); gl.uniform1f(U.uTime, t); for (const k in extra) if (U[k]) gl.uniform1f(U[k], extra[k]); gl.drawArrays(gl.TRIANGLES, 0, 3); } };
+  }
+
+  /* Hero: the view from inside a glass */
+  const HERO = `
+    uniform float uTilt;
+    void main(){
+      vec2 uv = gl_FragCoord.xy / uRes; float aspect = uRes.x / uRes.y;
+      float t = uTime;
+      float surf = .82 + .012 * sin(uv.x * 9. + t * 1.1) + .008 * sin(uv.x * 23. - t * 1.7) + uTilt * (uv.x - .5) * .08;
+      float foamTop = surf + .16 + .01 * sin(uv.x * 7. + t * .7);
+      vec3 col;
+      if (uv.y < surf){
+        float depth = clamp((surf - uv.y) / surf, 0., 1.);
+        col = beerCol(depth * .9);
+        float shafts = pow(noise(vec2(uv.x * 5. + uv.y * 1.2, t * .15)), 3.) * (1. - depth);
+        col += vec3(1., .85, .5) * shafts * .35;
+        col += vec3(1., .95, .8) * bubbles(uv, t, aspect) * .35 * (1. - depth * .5);
+        float band = smoothstep(surf - .05, surf, uv.y);
+        col = mix(col, vec3(1., .88, .6), band * .5);
+      } else if (uv.y < foamTop){
+        col = foamCol(uv, t) * (.9 + .1 * smoothstep(surf, foamTop, uv.y));
+        col *= 1. - .12 * smoothstep(surf + .02, surf, uv.y);
+      } else {
+        col = mix(vec3(.2, .11, .05), vec3(.07, .04, .02), smoothstep(foamTop, 1., uv.y));
+      }
+      float glass = smoothstep(.06, 0., uv.x) + smoothstep(.94, 1., uv.x);
+      col += vec3(1., .9, .7) * glass * .18;
+      col += vec3(1.) * smoothstep(.015, 0., abs(uv.x - .12 - .01 * sin(uv.y * 3.))) * .1;
+      col *= 1. - .35 * pow(length((uv - .5) * vec2(1., .8)), 2.);
+      gl_FragColor = vec4(col, 1.);
+    }`;
+  const heroGL = makeGL($('#beer'), HERO);
+  if (!heroGL) $('#beer').replaceWith(Object.assign(document.createElement('div'), { className: 'beer-fallback' }));
+
+  /* Tsunami: a curling wave of beer sweeps the screen as you scroll */
+  const TS = `
+    uniform float uP;
+    void main(){
+      vec2 uv = gl_FragCoord.xy / uRes; float aspect = uRes.x / uRes.y;
+      float t = uTime, p = uP;
+      float e = p * p * (3. - 2. * p);
+      float crestX = mix(-.4, 1.5, e);
+      float level = mix(-.25, 1.35, smoothstep(.05, .95, p));
+      float crest = .38 * exp(-pow((uv.x - crestX) * 3.2, 2.)) * (1. - smoothstep(.75, 1., p));
+      float slope = .3 * (1. - uv.x) * (1. - smoothstep(.6, 1., p));
+      float surf = level + crest + slope + .03 * sin(uv.x * 11. - t * 3.) + .015 * sin(uv.x * 29. + t * 4.3) + .02 * (fbm(vec2(uv.x * 6. - t * .8, t * .3)) - .5);
+      vec3 bg = mix(vec3(.07, .04, .02), vec3(.13, .07, .03), uv.y);
+      vec3 col = bg;
+      float d = surf - uv.y;
+      if (d > 0.){
+        float depth = clamp(d / max(surf, .35), 0., 1.);
+        col = beerCol(depth * .85);
+        col += vec3(1., .95, .8) * bubbles(uv + vec2(0., -t * .02), t, aspect) * .35 * (1. - depth * .4);
+        col += vec3(1., .85, .5) * pow(noise(vec2(uv.x * 4. + uv.y, t * .3)), 3.) * .3;
+        float foam = smoothstep(.07 + .04 * noise(vec2(uv.x * 20., t)), 0., d);
+        col = mix(col, foamCol(uv, t), foam);
+      }
+      // spray above the crest
+      float spray = step(.0, -d) * smoothstep(.12, 0., -d) * step(.72, noise(uv * vec2(90., 60.) + vec2(-t * 3., t * 2.)));
+      spray *= exp(-pow((uv.x - crestX) * 2.5, 2.)) * (1. - smoothstep(.8, 1., p));
+      col = mix(col, vec3(1., .96, .88), spray);
+      gl_FragColor = vec4(col, 1.);
+    }`;
+  const tsCanvas = $('#ts'), tsGL = makeGL(tsCanvas, TS);
+  const tsSec = $('#tsunami'), tsStick = $('#tsStick');
+
+  let tilt = 0, tiltT = 0, heroOn = true, tsOn = false;
+  addEventListener('pointermove', e => { tiltT = (e.clientX / innerWidth - .5) * 2; });
+  new IntersectionObserver(([e]) => heroOn = e.isIntersecting).observe($('#top'));
+  new IntersectionObserver(([e]) => tsOn = e.isIntersecting).observe(tsSec);
+  const t0 = performance.now();
+  function loop(){
+    requestAnimationFrame(loop);
+    const t = RM ? 3 : (performance.now() - t0) / 1000;
+    tilt += (tiltT - tilt) * .04;
+    if (heroGL && heroOn) heroGL.draw(t, { uTilt: tilt });
+    if (tsOn){
+      const r = tsSec.getBoundingClientRect();
+      const p = RM ? 1 : clamp(-r.top / (r.height - innerHeight), 0, 1);
+      if (tsGL) tsGL.draw(t, { uP: p });
+      tsStick.classList.toggle('ts-on', p > .74);
+      tsStick.classList.toggle('ts-gone', p > .42);
+    }
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+<!-- DEMO BANNER: portfolio notice, keep on every demo page -->
+<script>
+(() => {
+  const host = document.createElement('div');
+  const root = host.attachShadow({ mode: 'open' });
+  root.innerHTML = `
+    <style>
+      :host{ all:initial }
+      .wrap{ position:fixed; right:0; top:30%; z-index:2147483647; display:flex; align-items:flex-start; font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif; cursor:auto }
+      .tab{ all:unset; box-sizing:border-box; width:28px; padding:12px 0; cursor:pointer; display:flex; align-items:center; justify-content:center;
+        background:#ffd400; color:#111; border:2px solid #111; border-right:0; border-radius:8px 0 0 8px; box-shadow:-4px 4px 14px rgba(0,0,0,.28) }
+      .tab span{ writing-mode:vertical-rl; transform:rotate(180deg); font-weight:900; font-size:16px; letter-spacing:.22em; line-height:1 }
+      .tab:focus-visible{ outline:3px solid #111; outline-offset:2px }
+      .panel{ display:none; width:240px; margin-right:-2px; padding:14px 16px; background:#111; color:#fff; border:2px solid #111; border-radius:10px 0 0 10px;
+        font-size:13px; line-height:1.45; box-shadow:-6px 8px 24px rgba(0,0,0,.35) }
+      .panel b{ color:#ffd400; letter-spacing:.12em } .panel a{ color:#ffd400 }
+      .wrap.open .panel{ display:block }
+      @media (max-width:560px){ .tab{ width:22px; padding:9px 0 } .tab span{ font-size:12px } }
+    </style>
+    <div class="wrap">
+      <div class="panel" role="note" id="demo-note"><b>ДЕМО</b><br>Прототип сайта ресторана «Яхонт» от <a href="https://t.me/lilbunnych" target="_blank" rel="noopener">@lilbunnych</a>. Меню, цены, фото и отзывы взяты с сайта заведения. Логотип и анимации сделаны для демо. Онлайн-бронь — заглушка.</div>
+      <button class="tab" aria-expanded="false" aria-controls="demo-note" aria-label="Демо-версия: подробнее"><span>DEMO</span></button>
+    </div>`;
+  const wrap = root.querySelector('.wrap'), tab = root.querySelector('.tab');
+  tab.addEventListener('click', () => { const o = wrap.classList.toggle('open'); tab.setAttribute('aria-expanded', String(o)); });
+  const mount = () => document.body.appendChild(host);
+  document.body ? mount() : addEventListener('DOMContentLoaded', mount);
+})();
+</script>
+<!-- /DEMO BANNER -->
+</body>
+</html>
