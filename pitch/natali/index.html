@@ -5,512 +5,885 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
 <title>Натали — цветочная мастерская в Химках</title>
-<meta name="description" content="Авторские букеты, сухоцветы, интерьерные композиции и комнатные растения в Химках. Доставка по Москве и области, фото букета перед отправкой.">
-<meta name="theme-color" content="#f6f3ee">
+<meta name="description" content="Авторские букеты под ваш повод, бюджет и палитру. Фото перед отправкой, доставка по Москве и области, предзаказ без предоплаты.">
+<meta name="theme-color" content="#f1eff4">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* Botanical boutique: paper, olive, dusty rose. Serif is justified: florist brand with a hand-drawn lily mark. */
+/*
+  Theme: light "pearl glass" stage, one accent (rose). Futuristic via Unbounded display + mono HUD.
+  Shape rule: panels 1.5rem, controls full pill, inputs .875rem.
+  Z-index scale: canvas 0, content 10, HUD/rail 20, mobile CTA 25, header 30.
+*/
 :root{
-  --paper:#f6f3ee; --paper2:#efe9e0; --card:#fffdf9; --ink:#23261f; --muted:#6c6f66; --line:#e2dccf;
-  --olive:#5d6b45; --olive-d:#48543a; --rose:#c98b8b; --rose-l:#f2dede;
-  --serif:'Cormorant Garamond', Georgia, serif; --sans:'Manrope', system-ui, sans-serif;
+  --bg:#f1eff4; --bg2:#f7f6f9; --ink:#111016; --muted:#5d5a66; --faint:#8d8996;
+  --line:rgba(17,16,22,.1); --panel:rgba(255,255,255,.58); --panel-solid:#ffffff;
+  --accent:#d23a6f; --accent-soft:rgba(210,58,111,.12);
+  --r-panel:1.5rem; --r-input:.875rem;
+  --display:'Unbounded', system-ui, sans-serif; --sans:'Manrope', system-ui, sans-serif; --mono:'JetBrains Mono', ui-monospace, monospace;
   --ease:cubic-bezier(.16,1,.3,1);
 }
-*{ box-sizing:border-box; margin:0; padding:0 }
-html{ scroll-behavior:smooth; -webkit-font-smoothing:antialiased }
-body{ background:var(--paper); color:var(--ink); font-family:var(--sans); line-height:1.6; overflow-x:clip }
-a{ color:inherit }
-button, input, textarea{ font:inherit; color:inherit }
-button{ cursor:pointer; background:none; border:0 }
+*{ margin:0; padding:0; box-sizing:border-box }
+html{ -webkit-font-smoothing:antialiased; background:var(--bg) }
+body{ font-family:var(--sans); color:var(--ink); background:var(--bg); overflow-x:clip; line-height:1.55 }
+a{ color:inherit; text-decoration:none }
+button, input, textarea, select{ font:inherit; color:inherit }
+button{ background:none; border:0; cursor:pointer }
 img{ display:block; max-width:100% }
-:focus-visible{ outline:2px solid var(--olive); outline-offset:3px; border-radius:6px }
-.wrap{ max-width:76rem; margin:0 auto; padding:0 1.25rem }
-@media (min-width:768px){ .wrap{ padding:0 2.5rem } }
-.serif{ font-family:var(--serif) }
-h1,h2,h3,output,.care li::before{ font-variant-numeric:lining-nums }
-[data-rv]{ opacity:0; transform:translateY(24px); transition:opacity .9s var(--ease), transform .9s var(--ease); transition-delay:var(--d,0ms) }
-[data-rv].in{ opacity:1; transform:none }
+:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:.3rem }
+html.lenis, html.lenis body{ height:auto }
+.lenis.lenis-smooth{ scroll-behavior:auto !important }
+.lenis.lenis-stopped{ overflow:clip }
+
+#stage{ position:fixed; inset:0; width:100%; height:100%; z-index:0; display:block; touch-action:pan-y }
+.stage-fallback{ position:fixed; inset:0; z-index:0; background:radial-gradient(40% 40% at 70% 45%, #ffd1dc, transparent 70%), radial-gradient(60% 50% at 30% 70%, #e6defa, var(--bg)) }
 
 /* Header */
-.top{ position:sticky; top:0; z-index:40; background:color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-bottom:1px solid transparent; transition:border-color .3s }
-.top.scrolled{ border-bottom-color:var(--line) }
-.top .wrap{ display:flex; align-items:center; justify-content:space-between; gap:1rem; height:4.25rem }
-.logo{ display:flex; align-items:center; gap:.6rem; text-decoration:none }
-.logo img{ width:2.6rem; height:2.6rem; object-fit:contain; border-radius:50%; background:#fff; padding:.2rem; border:1px solid var(--line) }
-.logo b{ font-family:var(--serif); font-size:1.5rem; font-weight:600; letter-spacing:.08em; line-height:1 }
-.logo small{ display:block; font-family:var(--serif); font-style:italic; font-size:.85rem; color:var(--muted); letter-spacing:0 }
+.header{ position:fixed; top:1rem; inset-inline:1rem; z-index:30; display:flex; justify-content:space-between; align-items:center; gap:1rem; padding:.45rem .45rem .45rem .6rem; border-radius:999px; background:var(--panel); border:1px solid rgba(255,255,255,.75); box-shadow:0 10px 30px -18px rgba(40,20,40,.35), inset 0 1px 0 rgba(255,255,255,.85); backdrop-filter:blur(16px) saturate(160%); -webkit-backdrop-filter:blur(16px) saturate(160%) }
+.logo{ display:flex; align-items:center; gap:.6rem }
+.logo img{ width:2.3rem; height:2.3rem; border-radius:50%; background:#fff; padding:.15rem; object-fit:contain }
+.logo b{ font-family:var(--display); font-weight:500; font-size:.95rem; letter-spacing:.14em }
 .nav{ display:none; gap:1.75rem; font-size:.92rem; color:var(--muted) }
-.nav a{ text-decoration:none } .nav a:hover{ color:var(--ink) }
-@media (min-width:980px){ .nav{ display:flex } }
-.btn{ display:inline-flex; align-items:center; justify-content:center; gap:.5rem; height:2.9rem; padding:0 1.4rem; border-radius:999px; font-weight:600; font-size:.95rem; text-decoration:none; white-space:nowrap; transition:transform .15s, background .25s, color .25s, border-color .25s }
+.nav a:hover{ color:var(--ink) }
+.btn{ display:inline-flex; align-items:center; justify-content:center; gap:.5rem; height:2.75rem; padding:0 1.3rem; border-radius:999px; font-weight:600; font-size:.93rem; white-space:nowrap; transition:transform .15s, background .25s, color .25s, border-color .25s, box-shadow .25s }
 .btn:active{ transform:scale(.98) }
-.btn-olive{ background:var(--olive); color:#fff } .btn-olive:hover{ background:var(--olive-d) }
-.btn-line{ border:1px solid var(--ink); color:var(--ink) } .btn-line:hover{ background:var(--ink); color:var(--paper) }
-.btn-sm{ height:2.5rem; padding:0 1.1rem; font-size:.88rem }
-.btn svg{ width:1.1rem; height:1.1rem }
+.btn--ink{ background:var(--ink); color:#fff } .btn--ink:hover{ background:#2b2833 }
+.btn--accent{ background:var(--accent); color:#fff; box-shadow:0 10px 30px -10px rgba(210,58,111,.65) } .btn--accent:hover{ background:#bb2f60 }
+.btn--line{ border:1px solid var(--line); background:rgba(255,255,255,.45) } .btn--line:hover{ border-color:var(--ink) }
+.btn svg{ width:1rem; height:1rem }
+@media (min-width:980px){ .header{ top:1.25rem; inset-inline:2rem } .nav{ display:flex } }
 
-/* Hero */
-.hero{ position:relative; padding:2.5rem 0 4rem; overflow:hidden }
-.hero .wrap{ display:grid; gap:2.5rem; align-items:center }
-@media (min-width:900px){ .hero{ padding:4rem 0 6rem } .hero .wrap{ grid-template-columns:1.05fr .95fr; gap:4rem } }
-.kicker{ display:inline-flex; align-items:center; gap:.5rem; font-size:.85rem; color:var(--olive); font-weight:600 }
-.kicker i{ width:.5rem; height:.5rem; border-radius:50%; background:#6fb35c; box-shadow:0 0 0 4px rgba(111,179,92,.18) }
-.hero h1{ margin-top:1rem; font-family:var(--serif); font-weight:500; font-size:clamp(2.7rem,6.4vw,5rem); line-height:1; letter-spacing:-.01em }
-.hero h1 em{ color:var(--rose); font-style:italic }
-.hero p.lead{ margin-top:1.25rem; max-width:32rem; font-size:1.08rem; color:var(--muted) }
-.hero .ctas{ margin-top:2rem; display:flex; flex-wrap:wrap; gap:.75rem }
-.trust{ margin-top:2rem; display:flex; flex-wrap:wrap; gap:.6rem 1.5rem; font-size:.88rem; color:var(--muted) }
-.trust span{ display:inline-flex; align-items:center; gap:.45rem }
-.trust svg{ width:1.05rem; height:1.05rem; color:var(--olive) }
-.portrait{ position:relative; justify-self:center; width:min(100%, 26rem) }
-.portrait .frame{ position:relative; z-index:1; aspect-ratio:4/5; border-radius:14rem 14rem 1.5rem 1.5rem; overflow:hidden; box-shadow:0 30px 60px -30px rgba(52,48,30,.45) }
-.portrait .frame img{ width:100%; height:100%; object-fit:cover; object-position:center 30%; transform:scale(1.05); transition:transform 1.4s var(--ease) }
-.portrait:hover .frame img{ transform:scale(1.1) }
-.portrait .lily{ position:absolute; z-index:0; width:78%; right:-26%; top:-8%; opacity:.5; mix-blend-mode:multiply; transform:rotate(12deg) }
-.portrait .note{ position:absolute; z-index:2; left:-1rem; bottom:1.5rem; background:var(--card); border:1px solid var(--line); border-radius:1rem; padding:.8rem 1rem; box-shadow:0 18px 40px -24px rgba(52,48,30,.5); max-width:15rem; font-size:.85rem }
-.portrait .note b{ font-family:var(--serif); font-size:1.15rem; display:block; line-height:1.1 }
-@media (max-width:520px){ .portrait .note{ left:.5rem } }
-.petal{ position:absolute; z-index:0; width:14px; height:18px; border-radius:60% 60% 60% 0; background:var(--rose); opacity:.55; pointer-events:none; animation:fall linear infinite }
-@keyframes fall{ from{ transform:translate(0,-10vh) rotate(0) } to{ transform:translate(var(--dx),110vh) rotate(540deg) } }
+/* Chapter rail + HUD */
+.rail{ position:fixed; right:2.6rem; top:50%; transform:translateY(-50%); z-index:20; display:none; flex-direction:column; gap:1rem; transition:opacity .4s }
+.rail button{ display:flex; align-items:center; justify-content:flex-end; gap:.75rem; font-family:var(--mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--faint); transition:color .3s }
+.rail button::after{ content:""; width:1.25rem; height:1px; background:currentColor; transition:width .5s var(--ease) }
+.rail button.on{ color:var(--ink) } .rail button.on::after{ width:2.75rem; background:var(--accent) }
+.hud{ position:fixed; left:2rem; bottom:1.75rem; z-index:20; display:none; gap:2rem; font-family:var(--mono); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:var(--faint); transition:opacity .4s }
+.hud b{ display:block; color:var(--ink); font-weight:500; font-size:.95rem; letter-spacing:.02em; margin-top:.2rem }
+.gone{ opacity:0; pointer-events:none }
+@media (min-width:980px){ .rail, .hud{ display:flex } }
 
-/* Section heads */
-section.block{ padding:5rem 0 }
-.head{ max-width:40rem }
-.head .eyebrow{ font-size:.8rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--olive) }
-.head h2{ margin-top:.6rem; font-family:var(--serif); font-weight:500; font-size:clamp(2.1rem,4.4vw,3.3rem); line-height:1.05 }
-.head p{ margin-top:.9rem; color:var(--muted); font-size:1.02rem }
+/* Chapters */
+main{ position:relative; z-index:10 }
+.chapter{ min-height:112vh; display:flex; align-items:center; padding:7rem 1.25rem 4rem }
+.chapter:first-child{ min-height:100vh }
+.copy{ width:100%; max-width:34rem }
+h1, h2{ font-family:var(--display); font-weight:500; letter-spacing:-.035em; line-height:1.08 }
+.chapter h1{ font-size:clamp(2.1rem,4.8vw,4.2rem) }
+.chapter h2, .sec h2, .builder h2{ font-size:clamp(1.8rem,3.4vw,3rem) }
+h1 em, h2 em{ font-style:normal; color:var(--accent) }
+.lead{ margin-top:1.4rem; font-size:1.1rem; color:var(--muted); max-width:36ch }
+.label{ display:inline-flex; align-items:center; gap:.5rem; margin-bottom:1.25rem; font-family:var(--mono); font-size:.75rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent) }
+.label i{ width:.45rem; height:.45rem; border-radius:50%; background:var(--accent); box-shadow:0 0 0 4px var(--accent-soft); animation:pulse 2.4s infinite }
+@keyframes pulse{ 50%{ box-shadow:0 0 0 8px transparent } }
+.ctas{ margin-top:2rem; display:flex; flex-wrap:wrap; gap:.75rem }
+.chips{ margin-top:1.75rem; display:flex; flex-wrap:wrap; gap:.5rem }
+.chips span{ font-size:.85rem; padding:.4rem .85rem; border-radius:999px; background:rgba(255,255,255,.55); border:1px solid rgba(255,255,255,.8); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px) }
+.readout{ margin-top:2rem; display:inline-flex; align-items:baseline; gap:.6rem; font-family:var(--mono); color:var(--ink) }
+.readout b{ font-size:2.1rem; font-weight:500; letter-spacing:-.04em }
+.readout span{ color:var(--muted); font-size:.85rem }
+.ticks{ margin-top:1.5rem; display:grid; gap:.6rem; font-size:1rem }
+.ticks li{ list-style:none; display:flex; gap:.6rem; align-items:flex-start }
+.ticks svg{ width:1.2rem; height:1.2rem; color:var(--accent); flex-shrink:0; margin-top:.15rem }
+@media (min-width:980px){ .chapter{ padding-inline:max(2rem, calc((100vw - 80rem)/2 + 2rem)) } }
+@media (max-width:979px){
+  .chapter{ align-items:flex-end; padding-bottom:6rem }
+  .chapter .copy{ padding:1.5rem; border-radius:var(--r-panel); background:var(--panel); border:1px solid rgba(255,255,255,.75); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px) }
+  .chapter:first-child .copy{ background:none; border:0; backdrop-filter:none; -webkit-backdrop-filter:none; padding:0 }
+}
 
-/* Bouquet builder */
-.builder{ background:var(--ink); color:var(--paper); border-radius:2rem; padding:2rem 1.25rem; margin-top:2.5rem; display:grid; gap:2rem; position:relative; overflow:hidden }
-@media (min-width:900px){ .builder{ grid-template-columns:1.25fr .75fr; padding:3rem } }
-.builder .lily-bg{ position:absolute; right:-6rem; bottom:-6rem; width:26rem; opacity:.08; filter:invert(1); pointer-events:none }
-.step{ margin-bottom:1.75rem; position:relative }
-.step-t{ display:flex; align-items:center; gap:.7rem; font-weight:700; margin-bottom:.9rem }
-.step-t i{ font-style:normal; display:grid; place-items:center; width:1.8rem; height:1.8rem; border-radius:50%; background:var(--rose); color:var(--ink); font-size:.85rem }
-.chips{ display:flex; flex-wrap:wrap; gap:.5rem }
-.chip{ padding:.55rem 1rem; border-radius:999px; border:1px solid rgba(246,243,238,.25); font-size:.92rem; transition:all .2s }
-.chip:hover{ border-color:var(--paper) }
-.chip[aria-pressed="true"]{ background:var(--paper); color:var(--ink); border-color:var(--paper) }
+[data-reveal]{ opacity:0; transform:translateY(24px); transition:opacity 1s var(--ease), transform 1s var(--ease); transition-delay:var(--d,0ms) }
+[data-reveal].in{ opacity:1; transform:none }
+
+/* Builder (transparent: the 3D flower is the live preview) */
+.builder{ position:relative; z-index:10; padding:7rem 1.25rem 7rem }
+.builder__in{ max-width:80rem; margin-inline:auto }
+.builder .copy{ max-width:36rem }
+.panel{ margin-top:2rem; max-width:36rem; border-radius:var(--r-panel); background:rgba(255,255,255,.68); border:1px solid rgba(255,255,255,.85); box-shadow:0 30px 60px -40px rgba(40,20,40,.45), inset 0 1px 0 #fff; backdrop-filter:blur(18px) saturate(150%); -webkit-backdrop-filter:blur(18px) saturate(150%); padding:1.5rem; display:grid; gap:1.4rem }
+.step-t{ display:flex; align-items:center; gap:.6rem; font-weight:700; font-size:.95rem; margin-bottom:.7rem }
+.step-t i{ font-style:normal; font-family:var(--mono); font-size:.7rem; color:var(--accent); padding:.15rem .45rem; border-radius:999px; background:var(--accent-soft) }
+.seg{ display:flex; flex-wrap:wrap; gap:.45rem }
+.seg button{ height:2.4rem; padding:0 .95rem; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.6); font-size:.88rem; color:var(--muted); transition:all .2s }
+.seg button:hover{ color:var(--ink); border-color:var(--ink) }
+.seg button[aria-pressed="true"]{ background:var(--ink); border-color:var(--ink); color:#fff }
 .budget{ display:flex; align-items:center; gap:1rem }
-.budget output{ font-family:var(--serif); font-size:2rem; min-width:7.5rem }
-input[type=range]{ -webkit-appearance:none; appearance:none; flex:1; height:4px; border-radius:4px; background:linear-gradient(90deg, var(--rose) var(--p,30%), rgba(246,243,238,.2) var(--p,30%)) }
-input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; width:22px; height:22px; border-radius:50%; background:var(--paper); border:4px solid var(--rose); cursor:pointer }
-input[type=range]::-moz-range-thumb{ width:16px; height:16px; border-radius:50%; background:var(--paper); border:4px solid var(--rose); cursor:pointer }
-.swatches{ display:flex; flex-wrap:wrap; gap:.6rem }
-.sw{ display:flex; flex-direction:column; align-items:center; gap:.35rem; font-size:.75rem; color:rgba(246,243,238,.7) }
-.sw span{ width:2.8rem; height:2.8rem; border-radius:50%; border:3px solid transparent; transition:transform .2s, border-color .2s; box-shadow:inset 0 0 0 1px rgba(0,0,0,.1) }
-.sw[aria-pressed="true"] span{ border-color:var(--paper); transform:scale(1.08) }
-.sw[aria-pressed="true"]{ color:var(--paper) }
+.budget output{ font-family:var(--display); font-size:1.4rem; min-width:7.5rem; letter-spacing:-.03em }
+input[type=range]{ -webkit-appearance:none; appearance:none; flex:1; min-width:0; height:4px; border-radius:4px; background:linear-gradient(90deg, var(--accent) var(--p,15%), rgba(17,16,22,.12) var(--p,15%)) }
+input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; width:22px; height:22px; border-radius:50%; background:#fff; border:5px solid var(--accent); box-shadow:0 4px 14px rgba(210,58,111,.45); cursor:pointer }
+input[type=range]::-moz-range-thumb{ width:14px; height:14px; border-radius:50%; background:#fff; border:5px solid var(--accent); cursor:pointer }
+.swatches{ display:flex; flex-wrap:wrap; gap:.5rem }
+.sw{ display:flex; align-items:center; gap:.45rem; height:2.4rem; padding:0 .8rem 0 .35rem; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.6); font-size:.85rem; color:var(--muted); transition:all .2s }
+.sw span{ width:1.7rem; height:1.7rem; border-radius:50%; box-shadow:inset 0 0 0 1px rgba(0,0,0,.08) }
+.sw[aria-pressed="true"]{ border-color:var(--ink); color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink) }
 .row2{ display:grid; gap:.75rem; grid-template-columns:1fr 1fr }
-.field{ display:flex; flex-direction:column; gap:.35rem; font-size:.85rem; color:rgba(246,243,238,.7) }
-.field input, .field textarea, .field select{ background:rgba(246,243,238,.07); border:1px solid rgba(246,243,238,.2); border-radius:.8rem; padding:.7rem .85rem; color:var(--paper); outline:none; color-scheme:dark }
-.field input:focus, .field textarea:focus, .field select:focus{ border-color:var(--rose) }
-.field textarea{ resize:vertical; min-height:4.5rem }
-.field input, .field select{ height:2.9rem; -webkit-appearance:none; appearance:none }
-.field select{ padding-right:2rem; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f6f3ee' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right .7rem center; background-size:1rem }
-.field select option{ color:#23261f }
-.summary{ position:relative; background:var(--paper); color:var(--ink); border-radius:1.5rem; padding:1.5rem; align-self:start; display:grid; gap:1rem }
-@media (min-width:900px){ .summary{ position:sticky; top:6rem } }
-.summary h3{ font-family:var(--serif); font-size:1.7rem; font-weight:500; line-height:1.1 }
-.bouquet{ height:9rem; display:grid; place-items:center; border-radius:1rem; background:var(--paper2); overflow:hidden }
-.bouquet svg{ height:100%; width:auto }
-.msg{ font-size:.92rem; white-space:pre-line; background:var(--card); border:1px dashed var(--line); border-radius:.9rem; padding:.9rem 1rem; color:var(--ink) }
+.field{ display:flex; flex-direction:column; gap:.35rem; font-size:.82rem; color:var(--muted); min-width:0 }
+.input{ width:100%; height:2.9rem; border:1px solid var(--line); background:rgba(255,255,255,.85); border-radius:var(--r-input); padding:0 .9rem; font-size:.93rem; color:var(--ink); outline:none; -webkit-appearance:none; appearance:none; transition:border-color .2s, box-shadow .2s }
+textarea.input{ height:auto; min-height:4.5rem; padding:.7rem .9rem; resize:vertical }
+select.input{ padding-right:2rem; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111016' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right .75rem center; background-size:1rem }
+.input:focus{ border-color:var(--ink); box-shadow:0 0 0 3px rgba(17,16,22,.07) }
+.summary{ border-top:1px dashed rgba(17,16,22,.18); padding-top:1.3rem; display:grid; gap:1rem }
+.summary-top{ display:flex; justify-content:space-between; align-items:baseline; gap:1rem; font-family:var(--mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--faint) }
+.summary-top b{ color:var(--accent); font-size:.8rem; letter-spacing:.04em }
+.msg{ font-size:.9rem; white-space:pre-line; background:rgba(255,255,255,.8); border:1px solid var(--line); border-radius:var(--r-input); padding:.9rem 1rem }
 .summary .btn{ width:100% }
-.summary small{ color:var(--muted); font-size:.8rem; text-align:center }
-.copied{ color:var(--olive); font-weight:600 }
+.note{ font-size:.8rem; color:var(--muted); text-align:center }
+.note b{ color:var(--accent) }
 
-/* Directions: bento */
+/* Solid sheet (covers the stage) */
+.sheet{ position:relative; z-index:10; background:var(--bg2); border-radius:2.25rem 2.25rem 0 0; box-shadow:0 -30px 60px -30px rgba(40,20,40,.2) }
+.ticker{ overflow:hidden; border-bottom:1px solid var(--line); padding:1.2rem 0; font-family:var(--mono); font-size:.8rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); white-space:nowrap }
+.ticker div{ display:inline-flex; animation:tick 40s linear infinite }
+.ticker span{ padding-right:2.5rem }
+.ticker span::before{ content:"✦"; color:var(--accent); margin-right:2.5rem }
+@keyframes tick{ to{ transform:translateX(-50%) } }
+.sec{ max-width:80rem; margin-inline:auto; padding:5.5rem 1.25rem 0 }
+.sec-head{ display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:1.5rem }
+.sec-head p{ max-width:26rem; color:var(--muted) }
+@media (min-width:980px){ .sec{ padding-inline:2rem; padding-top:7.5rem } }
+
+/* Collection: tilt cards */
 .bento{ margin-top:2.5rem; display:grid; gap:1rem; grid-template-columns:1fr }
-@media (min-width:700px){ .bento{ grid-template-columns:repeat(2,1fr) } }
-@media (min-width:1000px){ .bento{ grid-template-columns:repeat(4,1fr); grid-auto-rows:15rem } .b-a{ grid-column:span 2; grid-row:span 2 } .b-d, .b-w{ grid-column:span 2 } }
-.tile{ position:relative; border-radius:1.5rem; overflow:hidden; min-height:15rem; background:var(--card); border:1px solid var(--line); display:flex; flex-direction:column; justify-content:flex-end; padding:1.3rem; text-decoration:none; transition:transform .5s var(--ease), box-shadow .5s var(--ease) }
-.tile:hover{ transform:translateY(-4px); box-shadow:0 24px 50px -30px rgba(52,48,30,.5) }
-.tile.photo{ color:#fff; border:0 }
-.tile.photo img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:transform 1.2s var(--ease) }
-.tile.photo:hover img{ transform:scale(1.05) }
-.tile.photo::before{ content:""; position:absolute; inset:0; z-index:1; background:linear-gradient(to top, rgba(28,28,20,.85) 10%, rgba(28,28,20,.35) 55%, transparent 80%) }
-.tile > *:not(img){ position:relative; z-index:2 }
-.tile h3{ font-family:var(--serif); font-weight:600; font-size:1.55rem; line-height:1.1 }
-.tile p{ font-size:.9rem; opacity:.85; margin-top:.3rem; max-width:24rem }
-.tile .price{ position:absolute; top:1rem; right:1rem; z-index:2; background:var(--card); color:var(--ink); font-weight:700; font-size:.82rem; padding:.35rem .7rem; border-radius:999px }
-.tile.soft{ background:var(--rose-l); border:0 }
-.tile.olive{ background:var(--olive); color:#fff; border:0 }
-.tile .ic{ position:absolute; top:1.2rem; left:1.3rem; width:2.2rem; height:2.2rem; opacity:.8 }
+@media (min-width:700px){ .bento{ grid-template-columns:repeat(2,1fr) } .b-big{ grid-column:span 2 } }
+@media (min-width:1000px){ .bento{ grid-template-columns:repeat(4,1fr); grid-auto-rows:16rem } .b-big{ grid-column:span 2; grid-row:span 2 } .b-wide{ grid-column:span 2 } .b-full{ grid-column:1 / -1 } }
+.tile{ position:relative; min-height:17rem; border-radius:var(--r-panel); overflow:hidden; color:#fff; display:flex; flex-direction:column; justify-content:flex-end; padding:1.4rem; transform:perspective(1000px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)); transition:transform .5s var(--ease), box-shadow .5s var(--ease); box-shadow:0 20px 40px -30px rgba(40,20,40,.5) }
+.tile:hover{ box-shadow:0 30px 60px -30px rgba(40,20,40,.6) }
+.tile img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:transform 1.2s var(--ease) }
+.tile:hover img{ transform:scale(1.06) }
+.tile::before{ content:""; position:absolute; inset:0; z-index:1; background:linear-gradient(to top, rgba(17,12,20,.88) 8%, rgba(17,12,20,.3) 55%, transparent 80%) }
+.tile::after{ content:""; position:absolute; inset:0; z-index:2; pointer-events:none; opacity:0; transition:opacity .4s; background:radial-gradient(420px circle at var(--gx,50%) var(--gy,50%), rgba(255,255,255,.28), transparent 45%) }
+.tile:hover::after{ opacity:1 }
+.tile > *:not(img){ position:relative; z-index:3 }
+.tile h3{ font-family:var(--display); font-weight:500; font-size:1.15rem; letter-spacing:-.02em; line-height:1.25 }
+.tile p{ margin-top:.4rem; font-size:.9rem; opacity:.85; max-width:26rem }
+.tile .tag{ position:absolute; top:1rem; left:1rem; font-family:var(--mono); font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; padding:.35rem .65rem; border-radius:999px; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.35); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px) }
+.tile .price{ position:absolute; top:1rem; right:1rem; font-weight:700; font-size:.82rem; padding:.35rem .7rem; border-radius:999px; background:#fff; color:var(--ink) }
 
-/* Why us */
-.why{ margin-top:2.5rem; display:grid; gap:1rem }
-@media (min-width:760px){ .why{ grid-template-columns:repeat(2,1fr) } }
-@media (min-width:1100px){ .why{ grid-template-columns:repeat(4,1fr) } }
-.why div{ background:var(--card); border:1px solid var(--line); border-radius:1.25rem; padding:1.4rem }
-.why svg{ width:2rem; height:2rem; color:var(--olive) }
-.why b{ display:block; margin-top:.9rem; font-size:1.05rem }
-.why span{ display:block; margin-top:.3rem; color:var(--muted); font-size:.92rem }
+/* Steps */
+.steps{ margin-top:2.5rem; display:grid; gap:1rem; counter-reset:s }
+@media (min-width:860px){ .steps{ grid-template-columns:repeat(3,1fr) } }
+.steps li{ list-style:none; counter-increment:s; position:relative; padding:1.6rem; border-radius:var(--r-panel); background:var(--panel-solid); border:1px solid var(--line) }
+.steps li::before{ content:"0" counter(s); font-family:var(--mono); font-size:.75rem; color:var(--accent); letter-spacing:.08em }
+.steps b{ display:block; margin-top:1.4rem; font-family:var(--display); font-weight:500; font-size:1.1rem; letter-spacing:-.02em; line-height:1.3 }
+.steps span{ display:block; margin-top:.5rem; color:var(--muted); font-size:.95rem }
+.pay{ margin-top:1.25rem; display:flex; flex-wrap:wrap; gap:.5rem 1.5rem; font-size:.92rem; color:var(--muted) }
+.pay b{ color:var(--ink) }
+
+/* Events: dark futuristic card */
+.events{ position:relative; overflow:hidden; border-radius:2rem; background:#121017; color:#f4f1f7; padding:2.5rem 1.5rem; display:grid; gap:2rem; isolation:isolate }
+.events::before{ content:""; position:absolute; inset:-40%; z-index:-1; background:conic-gradient(from 0deg, transparent, rgba(210,58,111,.6), transparent 30%, rgba(143,111,224,.5), transparent 60%); animation:spin 14s linear infinite; filter:blur(40px) }
+.events::after{ content:""; position:absolute; inset:0; z-index:-1; background:radial-gradient(90% 130% at 100% 0%, rgba(18,16,23,.35), #121017 72%) }
+@keyframes spin{ to{ transform:rotate(1turn) } }
+.events h2{ font-size:clamp(1.7rem,3.2vw,2.7rem) }
+.events p{ margin-top:1rem; color:rgba(244,241,247,.74); max-width:34rem }
+.events ul{ list-style:none; display:grid; gap:.75rem; align-content:center }
+.events li{ display:flex; justify-content:space-between; gap:1rem; padding:1rem 1.1rem; border-radius:1rem; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); font-size:.95rem; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px) }
+.events li span{ font-family:var(--mono); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:rgba(244,241,247,.6); align-self:center; text-align:right }
+.events .label{ color:#ff8fb3 }
+.events .btn--line{ color:#fff; border-color:rgba(255,255,255,.3); background:transparent } .events .btn--line:hover{ border-color:#fff }
+@media (min-width:900px){ .events{ grid-template-columns:1.1fr .9fr; padding:3.5rem } }
 
 /* Care */
-.care{ background:var(--paper2); border-radius:2rem; padding:2.5rem 1.25rem; display:grid; gap:2rem; align-items:center }
-@media (min-width:900px){ .care{ grid-template-columns:.9fr 1.1fr; padding:3.5rem } }
-.care ol{ list-style:none; display:grid; gap:1rem; counter-reset:c }
-.care li{ counter-increment:c; display:grid; grid-template-columns:3rem 1fr; gap:1rem; align-items:start; background:var(--card); border-radius:1.1rem; padding:1.1rem 1.2rem }
-.care li::before{ content:counter(c); font-family:var(--serif); font-size:2.3rem; line-height:1; color:var(--rose) }
-.care li b{ display:block } .care li span{ color:var(--muted); font-size:.92rem }
-.care .tip{ margin-top:1rem; font-size:.9rem; color:var(--muted); border-left:3px solid var(--rose); padding-left:.9rem }
+.care{ margin-top:2.5rem; display:grid; gap:1rem }
+@media (min-width:860px){ .care{ grid-template-columns:repeat(3,1fr) } }
+.care div{ padding:1.5rem; border-radius:var(--r-panel); border:1px solid var(--line); background:var(--panel-solid) }
+.care b{ display:block; font-weight:700 }
+.care span{ display:block; margin-top:.35rem; color:var(--muted); font-size:.93rem }
+.care div:first-child{ background:var(--accent); color:#fff; border-color:var(--accent) } .care div:first-child span{ color:rgba(255,255,255,.88) }
 
 /* FAQ */
-.faq{ margin-top:2rem; max-width:52rem }
+.faq{ margin-top:2rem; max-width:54rem }
 .faq details{ border-bottom:1px solid var(--line) }
-.faq summary{ list-style:none; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:1rem; padding:1.15rem 0; font-weight:600; font-size:1.05rem }
+.faq summary{ list-style:none; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:1rem; padding:1.2rem 0; font-weight:600; font-size:1.05rem }
 .faq summary::-webkit-details-marker{ display:none }
-.faq summary i{ font-style:normal; font-size:1.5rem; line-height:1; color:var(--olive); transition:transform .35s var(--ease) }
-.faq details[open] summary i{ transform:rotate(45deg) }
-.faq .a{ padding:0 0 1.2rem; color:var(--muted); max-width:44rem }
+.faq summary i{ flex-shrink:0; display:grid; place-items:center; width:2rem; height:2rem; border-radius:50%; border:1px solid var(--line); font-style:normal; transition:transform .35s var(--ease), background .3s, color .3s }
+.faq details[open] summary i{ transform:rotate(45deg); background:var(--ink); color:#fff }
+.faq .a{ padding:0 0 1.3rem; color:var(--muted); max-width:46rem }
+.faq .a a{ color:var(--accent); text-decoration:underline }
 
-/* Contacts */
-.contact{ display:grid; gap:1.5rem }
-@media (min-width:900px){ .contact{ grid-template-columns:1fr 1.2fr } }
-.contact .card{ background:var(--card); border:1px solid var(--line); border-radius:1.5rem; padding:1.8rem; display:grid; gap:1.1rem; align-content:start }
-.contact .card h3{ font-family:var(--serif); font-size:2rem; font-weight:500; line-height:1.1 }
-.contact .line{ display:flex; gap:.8rem; align-items:flex-start; color:var(--muted) }
-.contact .line svg{ width:1.3rem; height:1.3rem; color:var(--olive); flex-shrink:0; margin-top:.15rem }
-.contact .line b{ color:var(--ink); display:block }
-.map{ border-radius:1.5rem; overflow:hidden; min-height:20rem; border:1px solid var(--line); background:var(--paper2) }
-.map iframe{ width:100%; height:100%; min-height:20rem; border:0; filter:grayscale(.35) sepia(.15) }
+/* Final CTA + contacts */
+.final{ display:grid; gap:1rem }
+@media (min-width:900px){ .final{ grid-template-columns:1fr 1.15fr } }
+.final .card{ border-radius:var(--r-panel); background:var(--panel-solid); border:1px solid var(--line); padding:2rem; display:grid; gap:1.2rem; align-content:start }
+.final h2{ font-size:clamp(1.7rem,3vw,2.5rem) }
+.line{ display:flex; gap:.8rem; align-items:flex-start; color:var(--muted) }
+.line svg{ width:1.25rem; height:1.25rem; color:var(--accent); flex-shrink:0; margin-top:.15rem }
+.line b{ display:block; color:var(--ink) }
+.line a{ text-decoration:underline; text-underline-offset:3px }
+.map{ border-radius:var(--r-panel); overflow:hidden; min-height:22rem; border:1px solid var(--line); background:#e9e6ee }
+.map iframe{ width:100%; height:100%; min-height:22rem; border:0; filter:grayscale(1) contrast(.95) brightness(1.05) }
 
-footer{ padding:2.5rem 0 3rem; color:var(--muted); font-size:.85rem }
-footer .wrap{ display:flex; flex-wrap:wrap; justify-content:space-between; gap:1rem; border-top:1px solid var(--line); padding-top:1.5rem }
+.footer{ max-width:80rem; margin-inline:auto; padding:4rem 1.25rem 3rem }
+.footer__in{ display:flex; flex-wrap:wrap; justify-content:space-between; gap:1rem; border-top:1px solid var(--line); padding-top:1.75rem; font-size:.85rem; color:var(--muted) }
+.footer a{ text-decoration:underline; text-underline-offset:3px }
+@media (min-width:980px){ .footer{ padding-inline:2rem } }
 
-/* Floating order button on phones */
-.fab{ position:fixed; left:1rem; right:1rem; bottom:1rem; z-index:30; display:none }
-@media (max-width:700px){ .fab{ display:flex } .fab .btn{ width:100%; box-shadow:0 14px 30px -12px rgba(52,60,30,.6) } body{ padding-bottom:4.5rem } }
-.fab.hide{ opacity:0; pointer-events:none; transform:translateY(20px) } .fab{ transition:opacity .3s, transform .3s }
+/* Mobile order bar */
+.fab{ position:fixed; left:1rem; right:1rem; bottom:1rem; z-index:25; display:none; transition:opacity .3s, transform .3s }
+.fab .btn{ width:100%; height:3.1rem }
+.fab.gone{ transform:translateY(20px) }
+@media (max-width:979px){ .fab{ display:flex } .footer{ padding-bottom:6rem } }
 
-@media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto } *{ transition:none !important; animation:none !important } [data-rv]{ opacity:1; transform:none } .petal{ display:none } }
+@media (prefers-reduced-motion: reduce){
+  *{ transition:none !important; animation:none !important }
+  [data-reveal]{ opacity:1; transform:none }
+}
 </style>
 </head>
 <body>
 
-<header class="top" id="top">
-  <div class="wrap">
-    <a class="logo" href="#home" aria-label="Натали, цветочная мастерская">
-      <img src="img/lily.png" alt="">
-      <span><b>НАТАЛИ</b><small>цветочная мастерская</small></span>
-    </a>
-    <nav class="nav" aria-label="Разделы">
-      <a href="#builder">Собрать букет</a>
-      <a href="#directions">Направления</a>
-      <a href="#care">Уход</a>
-      <a href="#faq">Вопросы</a>
-      <a href="#contacts">Контакты</a>
-    </nav>
-    <a class="btn btn-olive btn-sm" href="#builder">Заказать букет</a>
-  </div>
+<canvas id="stage" aria-hidden="true"></canvas>
+
+<header class="header">
+  <a class="logo" href="#bud" aria-label="Натали, цветочная мастерская">
+    <img src="img/lily.png" alt="">
+    <b>НАТАЛИ</b>
+  </a>
+  <nav class="nav" aria-label="Разделы">
+    <a href="#builder">Собрать букет</a>
+    <a href="#collection">Коллекция</a>
+    <a href="#how">Доставка</a>
+    <a href="#faq">Вопросы</a>
+    <a href="#contacts">Контакты</a>
+  </nav>
+  <a class="btn btn--ink" href="#builder">Заказать</a>
 </header>
 
-<main id="home">
-  <!-- Hero -->
-  <section class="hero" id="hero">
-    <div class="wrap">
-      <div>
-        <span class="kicker" data-rv><i></i>Химки · доставка по Москве и области</span>
-        <h1 data-rv style="--d:80ms">Букеты, которые собирают <em>для вас,</em> а не для витрины</h1>
-        <p class="lead" data-rv style="--d:160ms">Расскажите повод, бюджет и любимые цвета, остальное Натали сделает сама. Пришлём фото букета перед отправкой.</p>
-        <div class="ctas" data-rv style="--d:240ms">
-          <a class="btn btn-olive" href="#builder">Собрать букет</a>
-          <a class="btn btn-line" href="https://telegram.me/natali_flowers_himki" target="_blank" rel="noopener">Наш Telegram</a>
-        </div>
-        <div class="trust" data-rv style="--d:320ms">
-          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg>Фото перед отправкой</span>
-          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.6-7 10-7 10z"/></svg>Анонимная доставка-сюрприз</span>
-          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Предзаказ без предоплаты</span>
-        </div>
+<nav class="rail" id="rail" aria-label="Главы">
+  <button data-go="bud">Бутон</button>
+  <button data-go="story">Повод</button>
+  <button data-go="bloom">Цветение</button>
+  <button data-go="forever">Навсегда</button>
+  <button data-go="builder">Ваш букет</button>
+</nav>
+
+<div class="hud" id="hud" aria-hidden="true">
+  <div>Химки<b>55.9056° N · 37.4681° E</b></div>
+  <div>Раскрытие<b id="hudOpen">004%</b></div>
+  <div>Лепестков<b id="hudCount">090</b></div>
+</div>
+
+<main id="chapters">
+  <section class="chapter" id="bud">
+    <div class="copy">
+      <span class="label" data-reveal><i></i>Цветочная мастерская · Химки</span>
+      <h1 data-reveal style="--d:120ms">Цветы, которые скажут <em>всё за вас</em></h1>
+      <p class="lead" data-reveal style="--d:240ms">Авторские букеты под ваш повод, бюджет и любимые цвета. Покажем фото до отправки и доставим по Москве и области.</p>
+      <div class="ctas" data-reveal style="--d:360ms">
+        <a class="btn btn--accent" href="#builder">Собрать букет</a>
+        <a class="btn btn--line" href="#story">Как он раскрывается
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+        </a>
       </div>
-      <figure class="portrait" data-rv style="--d:200ms">
-        <img class="lily" src="img/lily.png" alt="" aria-hidden="true">
-        <div class="frame"><img src="img/natali.jpg" alt="Флорист Натали с большим полевым букетом" fetchpriority="high"></div>
-        <figcaption class="note"><b>Натали</b>флорист и хозяйка мастерской. Каждый букет собирает сама.</figcaption>
-      </figure>
+      <div class="chips" data-reveal style="--d:480ms"><span>Предзаказ без предоплаты</span><span>Фото перед отправкой</span><span>от 1 500 ₽</span></div>
     </div>
   </section>
 
-  <!-- Builder -->
-  <section class="block" id="builder">
-    <div class="wrap">
-      <div class="head" data-rv>
-        <span class="eyebrow">Собрать букет</span>
-        <h2>Три шага, и Натали всё поймёт</h2>
-        <p>Выберите повод, бюджет и палитру. Мы соберём из этого готовое сообщение, останется только отправить его в Telegram.</p>
-      </div>
-
-      <div class="builder" data-rv style="--d:120ms">
-        <img class="lily-bg" src="img/lily.png" alt="" aria-hidden="true">
-        <div>
-          <div class="step">
-            <div class="step-t"><i>1</i>Повод</div>
-            <div class="chips" data-group="occasion" role="group" aria-label="Повод">
-              <button class="chip" aria-pressed="true">День рождения</button>
-              <button class="chip" aria-pressed="false">Свидание</button>
-              <button class="chip" aria-pressed="false">Юбилей</button>
-              <button class="chip" aria-pressed="false">Первое сентября</button>
-              <button class="chip" aria-pressed="false">Извиниться</button>
-              <button class="chip" aria-pressed="false">Просто так</button>
-              <button class="chip" aria-pressed="false">В интерьер</button>
-            </div>
-          </div>
-          <div class="step">
-            <div class="step-t"><i>2</i>Бюджет</div>
-            <div class="budget">
-              <output id="budgetOut">3 500 ₽</output>
-              <input id="budget" type="range" min="1500" max="15000" step="500" value="3500" aria-label="Бюджет в рублях">
-            </div>
-          </div>
-          <div class="step">
-            <div class="step-t"><i>3</i>Палитра</div>
-            <div class="swatches" data-group="palette" role="group" aria-label="Палитра">
-              <button class="sw" aria-pressed="true" data-c="#f4c6cf,#e98ea3,#fbe4e7,#8fae7a"><span style="background:linear-gradient(135deg,#f4c6cf,#e98ea3)"></span>Нежная</button>
-              <button class="sw" aria-pressed="false" data-c="#fbfaf5,#efe6d2,#dfe7d5,#9bb08a"><span style="background:linear-gradient(135deg,#ffffff,#e6e0cf)"></span>Белая</button>
-              <button class="sw" aria-pressed="false" data-c="#ffd24d,#ff9f43,#ffe08a,#7ea86a"><span style="background:linear-gradient(135deg,#ffd24d,#ff8f3f)"></span>Солнечная</button>
-              <button class="sw" aria-pressed="false" data-c="#b0243a,#e24d62,#f39aa8,#5f7d4b"><span style="background:linear-gradient(135deg,#e24d62,#8e1b2e)"></span>Яркая</button>
-              <button class="sw" aria-pressed="false" data-c="#b7a4d9,#7e6bb8,#dcd2ef,#8aa383"><span style="background:linear-gradient(135deg,#c9b8e6,#7e6bb8)"></span>Лавандовая</button>
-              <button class="sw" aria-pressed="false" data-c="#c9a27a,#e3c9a1,#a9754c,#8c8a5a"><span style="background:linear-gradient(135deg,#e3c9a1,#9c6b45)"></span>Сухоцветы</button>
-            </div>
-          </div>
-          <div class="step">
-            <div class="step-t"><i>+</i>Когда и как</div>
-            <div class="row2">
-              <label class="field">Дата<input id="date" type="date"></label>
-              <label class="field">Получение
-                <select id="how">
-                  <option>Заберу сам(а)</option><option>Доставка</option><option>Анонимная доставка</option>
-                </select>
-              </label>
-            </div>
-            <label class="field" style="margin-top:.75rem">Пожелания (необязательно)<textarea id="wish" placeholder="Например: любит пионы, без лилий, добавить открытку"></textarea></label>
-          </div>
-        </div>
-
-        <aside class="summary" aria-live="polite">
-          <h3>Ваш букет</h3>
-          <div class="bouquet" id="bouquet" aria-hidden="true"></div>
-          <div class="msg" id="msg"></div>
-          <button class="btn btn-olive" id="send">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg>
-            Отправить в Telegram
-          </button>
-          <small id="sendNote">Текст скопируется, останется вставить его в чат.</small>
-        </aside>
-      </div>
+  <section class="chapter" id="story">
+    <div class="copy">
+      <span class="label" data-reveal>01 · Повод</span>
+      <h2 data-reveal style="--d:80ms">Каждый букет начинается с <em>вашей истории</em></h2>
+      <p class="lead" data-reveal style="--d:180ms">День рождения, свидание, извинение или «просто так». Мы собираем не с витрины, а под человека, которому он предназначен.</p>
+      <div class="readout" data-reveal style="--d:260ms"><b id="palName">Нежная</b><span>палитра</span></div>
     </div>
   </section>
 
-  <!-- Directions -->
-  <section class="block" id="directions" style="padding-top:1rem">
-    <div class="wrap">
-      <div class="head" data-rv>
-        <span class="eyebrow">Что мы делаем</span>
-        <h2>Не только букеты</h2>
-      </div>
-      <div class="bento">
-        <a class="tile photo b-a" href="#builder" data-rv>
-          <img loading="lazy" src="img/p11.jpg" alt="Композиция из сухоцветов в вазе-скульптуре">
-          <span class="price">от 2 500 ₽</span>
-          <h3>Сухоцветы и стабилизированные цветы</h3>
-          <p>Соберём композицию под ваш интерьер или подберём из готовых. Стоят годами без воды.</p>
-        </a>
-        <a class="tile photo" href="#builder" data-rv style="--d:80ms">
-          <img loading="lazy" src="img/p13.jpg" alt="Мини-букет с хлопком и лавандой">
-          <span class="price">от 1 500 ₽</span>
-          <h3>Мини-букеты с магнитом</h3>
-          <p>На холодильник или приборную панель авто.</p>
-        </a>
-        <a class="tile photo" href="#builder" data-rv style="--d:160ms">
-          <img loading="lazy" src="img/p12.jpg" alt="Интерьерная композиция в корзине">
-          <h3>Интерьерные композиции</h3>
-          <p>Для дома, офиса, кафе.</p>
-        </a>
-        <a class="tile photo b-d" href="#contacts" data-rv>
-          <img loading="lazy" src="img/p15.jpg" alt="Комнатные растения и суккуленты в кашпо">
-          <h3>Комнатные растения</h3>
-          <p>Только здоровые экземпляры с крепкими корнями. Подберём кашпо и расскажем, как ухаживать.</p>
-        </a>
-        <a class="tile soft b-w" href="#faq" data-rv style="--d:80ms">
-          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c-2 3-2 5 0 8 2-3 2-5 0-8zM7 8c-1 3 0 5 4 6-.5-3-1.5-5-4-6zM17 8c-2.5 1-3.5 3-4 6 4-1 5-3 4-6z"/><path d="M12 14v7"/></svg>
-          <h3>Оформление торжеств</h3>
-          <p>Свадьбы, дни рождения, юбилеи. Живые цветы и сухоцветы.</p>
-        </a>
-        <a class="tile olive b-w" href="#faq" data-rv style="--d:160ms">
-          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16M6 20V9l6-5 6 5v11"/><path d="M10 20v-5h4v5"/></svg>
-          <h3>Мастер-классы</h3>
-          <p>Индивидуальные и групповые. Подберём тему и время.</p>
-        </a>
-      </div>
+  <section class="chapter" id="bloom">
+    <div class="copy">
+      <span class="label" data-reveal>02 · Цветение</span>
+      <h2 data-reveal style="--d:80ms">Вы увидите букет <em>раньше, чем они</em></h2>
+      <ul class="ticks" data-reveal style="--d:180ms">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Пришлём фото букета перед отправкой</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Доставка курьерами Яндекса по Москве и области</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Анонимно, если сюрприз должен остаться сюрпризом</li>
+      </ul>
+      <div class="readout" data-reveal style="--d:260ms"><b id="openVal">100%</b><span>раскрытие</span></div>
     </div>
   </section>
 
-  <!-- Why -->
-  <section class="block" style="padding-top:1rem">
-    <div class="wrap">
-      <div class="head" data-rv><span class="eyebrow">Почему у нас</span><h2>Спокойно, даже если заказываете впервые</h2></div>
-      <div class="why">
-        <div data-rv><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg><b>Фото до отправки</b><span>Просто напишите, и мы покажем букет перед тем, как он уедет.</span></div>
-        <div data-rv style="--d:80ms"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="7" width="13" height="10" rx="1"/><path d="M14 10h4l3 3v4h-7z"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg><b>Доставка по Москве и МО</b><span>Курьерами Яндекса, быстро и аккуратно.</span></div>
-        <div data-rv style="--d:160ms"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.6-7 10-7 10z"/></svg><b>Сюрприз и анонимность</b><span>Организуем анонимную доставку, если нужно сохранить интригу.</span></div>
-        <div data-rv style="--d:240ms"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg><b>Удобная оплата</b><span>Картой, по ссылке онлайн или наличными при получении. Предзаказ без предоплаты.</span></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Care -->
-  <section class="block" id="care" style="padding-top:1rem">
-    <div class="wrap">
-      <div class="care">
-        <div class="head" data-rv>
-          <span class="eyebrow">Советы флориста</span>
-          <h2>Как букету прожить дольше</h2>
-          <p>Правильный уход продлевает жизнь срезанных цветов в разы.</p>
-          <p class="tip">Ножницы — главный враг цветка: они сжимают стебель, и цветок пьёт не в полную силу.</p>
-        </div>
-        <ol data-rv style="--d:120ms">
-          <li><div><b>Меняйте воду каждый день</b><span>Свежая вода — самое важное для срезанных цветов.</span></div></li>
-          <li><div><b>Мойте вазу с моющим средством</b><span>Бактерии в вазе быстрее всего губят букет.</span></div></li>
-          <li><div><b>Обновляйте срез секатором или ножом</b><span>Не ножницами: они пережимают стебель.</span></div></li>
-        </ol>
-      </div>
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section class="block" id="faq" style="padding-top:1rem">
-    <div class="wrap">
-      <div class="head" data-rv><span class="eyebrow">Вопросы</span><h2>Частые вопросы</h2></div>
-      <div class="faq" data-rv style="--d:100ms">
-        <details><summary>Можно ли заказать букет с доставкой?<i>+</i></summary><p class="a">Да, доставляем букеты по Москве и Московской области курьерами Яндекса.</p></details>
-        <details><summary>Как сделать предзаказ?<i>+</i></summary><p class="a">Напишите нам в любой удобный мессенджер сумму, на которую рассчитываете, пожелания по цветовой гамме, дату и время, когда удобно забрать заказ. Предоплата не потребуется. Проще всего собрать заявку в <a href="#builder">конструкторе выше</a>.</p></details>
-        <details><summary>Возможна ли анонимная доставка или сюрприз?<i>+</i></summary><p class="a">Да, организуем анонимную доставку, сохраняя элемент сюрприза.</p></details>
-        <details><summary>Как получить фотографию букета перед отправкой?<i>+</i></summary><p class="a">Просто напишите, что нужно фото до отправки.</p></details>
-        <details><summary>Какие есть варианты оплаты?<i>+</i></summary><p class="a">Банковской картой, по специальной ссылке при оформлении по телефону или онлайн, наличными при получении заказа.</p></details>
-        <details><summary>Проводите ли вы мастер-классы?<i>+</i></summary><p class="a">Да, индивидуальные и групповые. Напишите нам, и мы подберём тему и время.</p></details>
-        <details><summary>Занимаетесь ли вы оформлением свадеб?<i>+</i></summary><p class="a">Оформляем свадьбы и другие торжества. Работаем с живыми цветами, сухоцветами и стабилизированными растениями. Достаточно озвучить тематику, бюджет и цветовую гамму.</p></details>
-      </div>
-    </div>
-  </section>
-
-  <!-- Contacts -->
-  <section class="block" id="contacts" style="padding-top:1rem">
-    <div class="wrap contact">
-      <div class="card" data-rv>
-        <h3>Приходите в гости</h3>
-        <div class="line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><div><b>Химки, Ленинский проспект, 22</b>Московская область</div></div>
-        <div class="line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4z"/></svg><div><b>Telegram-канал</b><a href="https://telegram.me/natali_flowers_himki" target="_blank" rel="noopener">@natali_flowers_himki</a></div></div>
-        <div class="line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M8 9h8M8 13h5"/></svg><div><b>Канал в MAX</b><a href="https://max.ru/join/ID5ow4hC4yhhYX5KL3OgeUwiYNQlYBdWoTSca_DEpsc" target="_blank" rel="noopener">Подписаться</a></div></div>
-        <a class="btn btn-olive" href="#builder" style="justify-self:start">Собрать букет</a>
-      </div>
-      <div class="map" data-rv style="--d:120ms">
-        <iframe title="Карта: Химки, Ленинский проспект 22" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=37.4611%2C55.9025%2C37.4751%2C55.9086&amp;layer=mapnik&amp;marker=55.9055734%2C37.4681059"></iframe>
-      </div>
+  <section class="chapter" id="forever">
+    <div class="copy">
+      <span class="label" data-reveal>03 · Навсегда</span>
+      <h2 data-reveal style="--d:80ms">А этот <em>не завянет</em> никогда</h2>
+      <p class="lead" data-reveal style="--d:180ms">Сухоцветы и стабилизированные цветы стоят годами без воды. Композиции для дома, офиса и кафе, а мини-букет с магнитом украсит холодильник или приборную панель авто.</p>
+      <div class="ctas" data-reveal style="--d:260ms"><a class="btn btn--line" href="#collection">Смотреть коллекцию</a></div>
     </div>
   </section>
 </main>
 
-<footer>
-  <div class="wrap">
-    <span>© Цветочная мастерская «Натали», Химки</span>
-    <span>Демо-версия сайта · сделано <a href="https://t.me/lilbunnych">@lilbunnych</a></span>
+<section class="builder" id="builder">
+  <div class="builder__in">
+    <div class="copy">
+      <span class="label" data-reveal>04 · Ваш букет</span>
+      <h2 data-reveal style="--d:80ms">Соберите букет <em>прямо здесь</em></h2>
+      <p class="lead" data-reveal style="--d:160ms">Меняйте повод, бюджет и палитру: цветок рядом меняется вместе с вами. Готовая заявка уйдёт Натали в Telegram одним нажатием.</p>
+    </div>
+
+    <div class="panel" data-reveal style="--d:200ms">
+      <div>
+        <div class="step-t"><i>01</i>Повод</div>
+        <div class="seg" data-group="occasion" role="group" aria-label="Повод">
+          <button aria-pressed="true">День рождения</button>
+          <button aria-pressed="false">Свидание</button>
+          <button aria-pressed="false">Юбилей</button>
+          <button aria-pressed="false">Первое сентября</button>
+          <button aria-pressed="false">Извиниться</button>
+          <button aria-pressed="false">Просто так</button>
+          <button aria-pressed="false">В интерьер</button>
+        </div>
+      </div>
+      <div>
+        <div class="step-t"><i>02</i>Бюджет</div>
+        <div class="budget">
+          <output id="budgetOut">3 500 ₽</output>
+          <input id="budget" type="range" min="1500" max="15000" step="500" value="3500" aria-label="Бюджет в рублях">
+        </div>
+      </div>
+      <div>
+        <div class="step-t"><i>03</i>Палитра</div>
+        <div class="swatches" data-group="palette" role="group" aria-label="Палитра">
+          <button class="sw" aria-pressed="true" data-p="0"><span style="background:linear-gradient(135deg,#ffd6e1,#ff5c8a)"></span>Нежная</button>
+          <button class="sw" aria-pressed="false" data-p="1"><span style="background:linear-gradient(135deg,#ffffff,#d9e4f5)"></span>Белая</button>
+          <button class="sw" aria-pressed="false" data-p="2"><span style="background:linear-gradient(135deg,#ffe7a6,#ff9e1f)"></span>Солнечная</button>
+          <button class="sw" aria-pressed="false" data-p="3"><span style="background:linear-gradient(135deg,#ff7a93,#c3143f)"></span>Яркая</button>
+          <button class="sw" aria-pressed="false" data-p="4"><span style="background:linear-gradient(135deg,#dccfff,#7b5ad6)"></span>Лавандовая</button>
+          <button class="sw" aria-pressed="false" data-p="5"><span style="background:linear-gradient(135deg,#ecd3ad,#9a6440)"></span>Сухоцветы</button>
+        </div>
+      </div>
+      <div>
+        <div class="step-t"><i>04</i>Когда и как</div>
+        <div class="row2">
+          <label class="field">Дата<input class="input" id="date" type="date"></label>
+          <label class="field">Получение
+            <select class="input" id="how"><option>Заберу сам(а)</option><option>Доставка</option><option>Анонимная доставка</option></select>
+          </label>
+        </div>
+        <label class="field" style="margin-top:.75rem">Пожелания (необязательно)<textarea class="input" id="wish" placeholder="Например: любит пионы, без лилий, добавить открытку"></textarea></label>
+      </div>
+      <div class="summary" aria-live="polite">
+        <div class="summary-top"><span>Ваша заявка</span><b id="petals">48 лепестков в 3D</b></div>
+        <div class="msg" id="msg"></div>
+        <button class="btn btn--accent" id="send">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg>
+          Отправить Натали в Telegram
+        </button>
+        <p class="note" id="sendNote">Текст скопируется, останется вставить его в чат. Предоплата не нужна.</p>
+      </div>
+    </div>
   </div>
-</footer>
+</section>
 
-<div class="fab" id="fab"><a class="btn btn-olive" href="#builder">Собрать букет</a></div>
+<div class="sheet" id="sheet">
+  <div class="ticker" aria-hidden="true"><div>
+    <span>День рождения</span><span>Свидание</span><span>Юбилей</span><span>Первое сентября</span><span>Свадьба</span><span>Извинение</span><span>Просто так</span><span>В интерьер</span>
+    <span>День рождения</span><span>Свидание</span><span>Юбилей</span><span>Первое сентября</span><span>Свадьба</span><span>Извинение</span><span>Просто так</span><span>В интерьер</span>
+  </div></div>
 
-<script>
-(() => {
-  const $ = s => document.querySelector(s);
-  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const TG = 'https://telegram.me/natali_flowers_himki';
+  <section class="sec" id="collection">
+    <div class="sec-head">
+      <div><span class="label" data-reveal>Коллекция</span><h2 data-reveal style="--d:80ms">Не только букеты</h2></div>
+      <p data-reveal style="--d:160ms">Всё на фото собрано в мастерской. Любую позицию можно повторить или собрать по мотивам.</p>
+    </div>
+    <div class="bento">
+      <a class="tile b-big" href="#builder" data-reveal>
+        <img loading="lazy" src="img/p11.jpg" alt="Композиция из сухоцветов в вазе-скульптуре">
+        <span class="tag">Хит</span><span class="price">от 2 500 ₽</span>
+        <h3>Сухоцветы и стабилизированные цветы</h3>
+        <p>Соберём под ваш интерьер или подберём из готовых. Стоят годами без воды.</p>
+      </a>
+      <a class="tile" href="#builder" data-reveal style="--d:80ms">
+        <img loading="lazy" src="img/p13.jpg" alt="Мини-букет с хлопком и лавандой">
+        <span class="price">от 1 500 ₽</span>
+        <h3>Мини-букет с магнитом</h3>
+        <p>На холодильник или приборную панель авто.</p>
+      </a>
+      <a class="tile" href="#builder" data-reveal style="--d:160ms">
+        <img loading="lazy" src="img/p12.jpg" alt="Интерьерная композиция в корзине">
+        <h3>Интерьерные композиции</h3>
+        <p>Для дома, офиса, кафе.</p>
+      </a>
+      <a class="tile b-wide" href="#contacts" data-reveal>
+        <img loading="lazy" src="img/p15.jpg" alt="Комнатные растения и суккуленты в кашпо">
+        <span class="tag">В мастерской</span>
+        <h3>Комнатные растения</h3>
+        <p>Только здоровые экземпляры с крепкими корнями. Подберём кашпо и расскажем, как ухаживать.</p>
+      </a>
+      <a class="tile b-wide b-full" href="#builder" data-reveal style="--d:80ms">
+        <img loading="lazy" src="img/p14.jpg" alt="Мини-букеты из сухоцветов">
+        <h3>Подарок, который останется</h3>
+        <p>Мини-композиции из сухоцветов: знак внимания, который не придётся выбрасывать через неделю.</p>
+      </a>
+    </div>
+  </section>
 
-  // Reveal on scroll
-  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
-  document.querySelectorAll('[data-rv]').forEach(el => io.observe(el));
+  <section class="sec" id="how">
+    <div class="sec-head">
+      <div><span class="label" data-reveal>Как это работает</span><h2 data-reveal style="--d:80ms">Три шага до <em>идеального букета</em></h2></div>
+    </div>
+    <ol class="steps">
+      <li data-reveal><b>Напишите повод, бюджет и цвета</b><span>В любом мессенджере или через конструктор выше. Укажите дату и время, когда удобно забрать заказ.</span></li>
+      <li data-reveal style="--d:80ms"><b>Натали соберёт и покажет</b><span>Попросите фото, и вы увидите букет до того, как он уедет.</span></li>
+      <li data-reveal style="--d:160ms"><b>Заберите или получите курьером</b><span>Доставка курьерами Яндекса по Москве и области. Можно анонимно.</span></li>
+    </ol>
+    <div class="pay" data-reveal><span><b>Оплата:</b> картой, по ссылке онлайн или наличными при получении</span><span><b>Предзаказ:</b> без предоплаты</span></div>
+  </section>
 
-  // Header border + floating button visibility
-  const top = $('#top'), fab = $('#fab'), builder = $('#builder');
-  const onScroll = () => {
-    top.classList.toggle('scrolled', scrollY > 10);
-    const r = builder.getBoundingClientRect();
-    fab.classList.toggle('hide', scrollY < 300 || (r.top < innerHeight && r.bottom > 0));
-  };
-  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  <section class="sec">
+    <div class="events" data-reveal>
+      <div>
+        <span class="label">Для больших поводов</span>
+        <h2>Свадьбы, торжества и мастер-классы</h2>
+        <p>Оформим праздник живыми цветами, сухоцветами и стабилизированными растениями. Достаточно назвать тематику, бюджет и цветовую гамму. А если хочется научиться самим, проведём мастер-класс.</p>
+        <div class="ctas"><a class="btn btn--line" href="https://telegram.me/natali_flowers_himki" target="_blank" rel="noopener">Обсудить в Telegram</a></div>
+      </div>
+      <ul>
+        <li>Оформление свадеб<span>живые · сухие</span></li>
+        <li>Дни рождения и юбилеи<span>под тематику</span></li>
+        <li>Мастер-классы<span>1 : 1 · группы</span></li>
+      </ul>
+    </div>
+  </section>
 
-  // Falling petals in the hero
-  if (!RM) {
-    const hero = $('#hero');
-    for (let i = 0; i < 9; i++) {
-      const p = document.createElement('span'); p.className = 'petal';
-      p.style.left = Math.random() * 100 + '%';
-      p.style.setProperty('--dx', (Math.random() * 120 - 60) + 'px');
-      p.style.animationDuration = 9 + Math.random() * 8 + 's';
-      p.style.animationDelay = -Math.random() * 12 + 's';
-      p.style.opacity = .25 + Math.random() * .35;
-      p.style.transform = 'scale(' + (.6 + Math.random() * .6) + ')';
-      hero.appendChild(p);
-    }
+  <section class="sec" id="care">
+    <div class="sec-head">
+      <div><span class="label" data-reveal>Советы флориста</span><h2 data-reveal style="--d:80ms">Пусть букет стоит дольше</h2></div>
+    </div>
+    <div class="care">
+      <div data-reveal><b>Меняйте воду каждый день</b><span>Свежая вода — главное, что нужно срезанным цветам.</span></div>
+      <div data-reveal style="--d:80ms"><b>Мойте вазу</b><span>С моющим средством: бактерии в вазе быстрее всего губят букет.</span></div>
+      <div data-reveal style="--d:160ms"><b>Срез секатором, не ножницами</b><span>Ножницы пережимают стебель, и цветок пьёт не в полную силу.</span></div>
+    </div>
+  </section>
+
+  <section class="sec" id="faq">
+    <div class="sec-head"><div><span class="label" data-reveal>Вопросы</span><h2 data-reveal style="--d:80ms">Частые вопросы</h2></div></div>
+    <div class="faq" data-reveal style="--d:120ms">
+      <details><summary>Можно заказать букет с доставкой?<i>+</i></summary><p class="a">Да, доставляем по Москве и Московской области курьерами Яндекса.</p></details>
+      <details><summary>Как сделать предзаказ?<i>+</i></summary><p class="a">Напишите сумму, на которую рассчитываете, пожелания по цветовой гамме, дату и время, когда удобно забрать заказ. Предоплата не потребуется. Быстрее всего через <a href="#builder">конструктор</a>.</p></details>
+      <details><summary>Возможна анонимная доставка или сюрприз?<i>+</i></summary><p class="a">Да, организуем анонимную доставку и сохраним элемент сюрприза.</p></details>
+      <details><summary>Как получить фото букета перед отправкой?<i>+</i></summary><p class="a">Просто напишите, что нужно фото до отправки.</p></details>
+      <details><summary>Какие варианты оплаты?<i>+</i></summary><p class="a">Банковской картой, по ссылке при оформлении по телефону или онлайн, наличными при получении.</p></details>
+      <details><summary>Проводите мастер-классы?<i>+</i></summary><p class="a">Да, индивидуальные и групповые. Напишите, и мы подберём тему и время.</p></details>
+      <details><summary>Оформляете свадьбы?<i>+</i></summary><p class="a">Оформляем свадьбы и другие торжества живыми цветами, сухоцветами и стабилизированными растениями. Достаточно озвучить тематику, бюджет и цветовую гамму.</p></details>
+    </div>
+  </section>
+
+  <section class="sec" id="contacts">
+    <div class="final">
+      <div class="card" data-reveal>
+        <span class="label" style="margin:0">Контакты</span>
+        <h2>Порадуйте кого-то <em>уже завтра</em></h2>
+        <div class="line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><div><b>Химки, Ленинский проспект, 22</b>Московская область</div></div>
+        <div class="line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4z"/></svg><div><b>Telegram-канал</b><a href="https://telegram.me/natali_flowers_himki" target="_blank" rel="noopener">@natali_flowers_himki</a></div></div>
+        <div class="line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M8 9h8M8 13h5"/></svg><div><b>Канал в MAX</b><a href="https://max.ru/join/ID5ow4hC4yhhYX5KL3OgeUwiYNQlYBdWoTSca_DEpsc" target="_blank" rel="noopener">Подписаться</a></div></div>
+        <div class="ctas" style="margin-top:.25rem"><a class="btn btn--accent" href="#builder">Собрать букет</a></div>
+      </div>
+      <div class="map" data-reveal style="--d:120ms">
+        <iframe title="Карта: Химки, Ленинский проспект 22" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=37.4611%2C55.9025%2C37.4751%2C55.9086&amp;layer=mapnik&amp;marker=55.9055734%2C37.4681059"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer__in">
+      <span>© Цветочная мастерская «Натали», Химки</span>
+      <span>Демо-версия сайта · сделано <a href="https://t.me/lilbunnych" target="_blank" rel="noopener">@lilbunnych</a></span>
+    </div>
+  </footer>
+</div>
+
+<div class="fab gone" id="fab"><a class="btn btn--accent" href="#builder">Собрать букет</a></div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+    "lenis": "https://unpkg.com/lenis@1.3.23/dist/lenis.mjs"
   }
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import Lenis from 'lenis';
 
-  // ----- Bouquet builder -----
-  const state = { occasion: 'День рождения', budget: 3500, palette: 'Нежная', colors: ['#f4c6cf', '#e98ea3', '#fbe4e7', '#8fae7a'] };
-  document.querySelectorAll('[data-group]').forEach(g => g.addEventListener('click', e => {
-    const b = e.target.closest('button'); if (!b) return;
-    g.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
-    if (g.dataset.group === 'occasion') state.occasion = b.textContent.trim();
-    else { state.palette = b.textContent.trim(); state.colors = b.dataset.c.split(','); }
-    render();
-  }));
-  const budget = $('#budget');
-  const rub = n => n.toLocaleString('ru-RU') + ' ₽';
-  budget.addEventListener('input', () => { state.budget = +budget.value; render(); });
-  ['#date', '#how', '#wish'].forEach(s => $(s).addEventListener('input', render));
-  const d = new Date(); d.setDate(d.getDate() + 1);
-  $('#date').min = new Date().toISOString().slice(0, 10);
-  $('#date').value = d.toISOString().slice(0, 10);
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const smooth = t => t * t * (3 - 2 * t);
+const $ = s => document.querySelector(s);
+const TG = 'https://telegram.me/natali_flowers_himki';
 
-  // A small illustrative bouquet: more flowers for a bigger budget, colours from the palette
-  function drawBouquet() {
-    const n = Math.round(5 + (state.budget - 1500) / 13500 * 16);
-    const [a, b, c, leaf] = state.colors;
-    let seed = n * 7 + state.palette.length;
-    const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
-    let stems = '', heads = '', leaves = '';
-    for (let i = 0; i < n; i++) {
-      const t = n === 1 ? .5 : i / (n - 1), ang = (t - .5) * 1.5, len = 58 + rnd() * 26;
-      const x = 100 + Math.sin(ang) * len, y = 118 - Math.cos(ang) * len;
-      stems += `<path d="M100 150 Q${100 + Math.sin(ang) * 20} 128 ${x.toFixed(1)} ${y.toFixed(1)}" stroke="${leaf}" stroke-width="2" fill="none"/>`;
-      const r = 9 + rnd() * 7, col = [a, b, c][i % 3];
-      heads += `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)})">${[0, 72, 144, 216, 288].map(k => `<ellipse cx="0" cy="${-r * .55}" rx="${r * .55}" ry="${r * .7}" fill="${col}" transform="rotate(${k + rnd() * 20})" opacity=".92"/>`).join('')}<circle r="${r * .3}" fill="${b}"/></g>`;
-      if (i % 2) leaves += `<ellipse cx="${(x + 100) / 2}" cy="${(y + 150) / 2}" rx="5" ry="13" fill="${leaf}" transform="rotate(${ang * 57 + 30} ${(x + 100) / 2} ${(y + 150) / 2})" opacity=".85"/>`;
-    }
-    const wrap = `<path d="M70 132 L100 190 L130 132 Z" fill="#e7dcc8" stroke="#cdbfa6"/><path d="M84 150 Q100 158 116 150" stroke="#c98b8b" stroke-width="3" fill="none"/>`;
-    $('#bouquet').innerHTML = `<svg viewBox="0 20 200 175">${stems}${leaves}${heads}${wrap}</svg>`;
-  }
+// Palettes shared by the builder and the 3D flower: [inner, outer, glow, name]
+const PALETTES = [
+  ['#ff4f86', '#ffd9e3', '#ffb86b', 'Нежная'],
+  ['#dfe8ff', '#ffffff', '#ffd66b', 'Белая'],
+  ['#ff9e1f', '#ffe9a8', '#ff5e3a', 'Солнечная'],
+  ['#c3143f', '#ff8aa0', '#ffcf5c', 'Яркая'],
+  ['#7b5ad6', '#e2d8ff', '#ffc2e0', 'Лавандовая'],
+  ['#7a4428', '#d49a66', '#c88f4a', 'Сухоцветы'],
+];
 
-  function message() {
-    const date = $('#date').value ? new Date($('#date').value).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) : 'уточню';
-    const wish = $('#wish').value.trim();
-    return `Здравствуйте! Хочу заказать букет.\nПовод: ${state.occasion}\nБюджет: ${rub(state.budget)}\nПалитра: ${state.palette}\nДата: ${date}\nПолучение: ${$('#how').value}` + (wish ? `\nПожелания: ${wish}` : '');
-  }
+/* ---------- Smooth scroll ---------- */
+const lenis = new Lenis({ smoothWheel: true, lerp: 0.085 });
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[href^="#"], [data-go]');
+  if (!a) return;
+  const id = a.dataset.go || a.getAttribute('href').slice(1);
+  if (!id || !document.getElementById(id)) return;
+  e.preventDefault();
+  lenis.scrollTo('#' + id, { duration: 1.6, offset: document.getElementById(id).closest('.sheet') ? -40 : 0 });
+});
 
-  function render() {
-    $('#budgetOut').textContent = rub(state.budget);
-    budget.style.setProperty('--p', ((state.budget - 1500) / 13500 * 100) + '%');
-    $('#msg').textContent = message();
-    drawBouquet();
-  }
-  render();
+/* ---------- Reveals ---------- */
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+}), { rootMargin: '0px 0px -10% 0px' });
+document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
 
-  $('#send').addEventListener('click', async () => {
-    const text = message();
-    try { await navigator.clipboard.writeText(text); $('#sendNote').innerHTML = '<span class="copied">Текст скопирован.</span> Вставьте его в чат.'; } catch {}
-    window.open(TG, '_blank', 'noopener');
+/* ---------- Builder: one order object drives the message and the flower ---------- */
+const order = { occasion: 'День рождения', budget: 3500, palette: 0 };
+const petalsFor = b => Math.round(34 + (b - 1500) / 13500 * 86);
+const rub = n => n.toLocaleString('ru-RU') + ' ₽';
+const budget = $('#budget');
+document.querySelectorAll('[data-group]').forEach(g => g.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  g.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  if (g.dataset.group === 'occasion') order.occasion = b.textContent.trim();
+  else order.palette = +b.dataset.p;
+  renderOrder();
+}));
+budget.addEventListener('input', () => { order.budget = +budget.value; renderOrder(); });
+['#date', '#how', '#wish'].forEach(s => $(s).addEventListener('input', renderOrder));
+const isoDay = d => new Date(d.getTime() - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
+const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
+$('#date').min = isoDay(new Date()); $('#date').value = isoDay(tomorrow);
+
+function message(){
+  const v = $('#date').value;
+  const date = v ? new Date(v + 'T12:00').toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) : 'уточню';
+  const wish = $('#wish').value.trim();
+  return `Здравствуйте! Хочу заказать букет.\nПовод: ${order.occasion}\nБюджет: ${rub(order.budget)}\nПалитра: ${PALETTES[order.palette][3]}\nДата: ${date}\nПолучение: ${$('#how').value}` + (wish ? `\nПожелания: ${wish}` : '');
+}
+function renderOrder(){
+  $('#budgetOut').textContent = rub(order.budget);
+  budget.style.setProperty('--p', ((order.budget - 1500) / 13500 * 100) + '%');
+  $('#msg').textContent = message();
+  $('#petals').textContent = petalsFor(order.budget) + ' лепестков в 3D';
+}
+renderOrder();
+$('#send').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText(message()); $('#sendNote').innerHTML = '<b>Текст скопирован.</b> Вставьте его в чат с Натали.'; } catch {}
+  window.open(TG, '_blank', 'noopener');
+});
+
+/* ---------- Collection tilt ---------- */
+if (matchMedia('(hover: hover)').matches && !RM){
+  document.querySelectorAll('.tile').forEach(t => {
+    t.addEventListener('pointermove', e => {
+      const r = t.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+      t.style.setProperty('--ry', ((x - .5) * 8).toFixed(2) + 'deg');
+      t.style.setProperty('--rx', ((.5 - y) * 8).toFixed(2) + 'deg');
+      t.style.setProperty('--gx', x * 100 + '%'); t.style.setProperty('--gy', y * 100 + '%');
+    });
+    t.addEventListener('pointerleave', () => { t.style.setProperty('--rx', '0deg'); t.style.setProperty('--ry', '0deg'); });
   });
-})();
+}
+
+/* ---------- Chrome visibility (rail, HUD, mobile CTA) ---------- */
+const sheet = $('#sheet'), railEl = $('#rail'), hud = $('#hud'), fab = $('#fab'), builderEl = $('#builder');
+function chrome(){
+  const s = sheet.getBoundingClientRect(), b = builderEl.getBoundingClientRect();
+  const onSheet = s.top < innerHeight * .6;
+  railEl.classList.toggle('gone', onSheet);
+  hud.classList.toggle('gone', onSheet || b.top < innerHeight * .9);
+  fab.classList.toggle('gone', scrollY < innerHeight * .5 || (b.top < innerHeight * .8 && b.bottom > innerHeight * .2));
+}
+lenis.on('scroll', chrome); chrome();
+
+/* ---------- 3D stage ---------- */
+const canvas = $('#stage');
+let renderer;
+try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' }); }
+catch (err) { canvas.replaceWith(Object.assign(document.createElement('div'), { className: 'stage-fallback' })); }
+
+const C = h => new THREE.Color(h);
+// Story states: bud, story (palette cycles), bloom, forever (dried). The builder state is updated live.
+const STATES = [
+  { open: .03, count: 90,  inner: C('#ff6f9a'), outer: C('#ffe0e8'), glow: C('#ffb86b'), stem: C('#7fcf9a'), trans: .4, rough: .12, irid: .7, bgA: C('#f6f3f8'), bgB: C('#e2dbea'), caustic: .35, size: .92 },
+  { open: .45, count: 90,  inner: C('#ff4f86'), outer: C('#ffd9e3'), glow: C('#ffb86b'), stem: C('#7fcf9a'), trans: .42, rough: .1,  irid: .5, bgA: C('#f7f2f4'), bgB: C('#eadbe3'), caustic: .5,  size: 1 },
+  { open: 1,   count: 110, inner: C('#ff2d6f'), outer: C('#ffd1dc'), glow: C('#ffcf5c'), stem: C('#6fd19b'), trans: .5, rough: .06, irid: .8, bgA: C('#f1f2f8'), bgB: C('#d9dcef'), caustic: .85, size: 1.08 },
+  { open: .8,  count: 96,  inner: C('#7a4428'), outer: C('#d49a66'), glow: C('#c88f4a'), stem: C('#a79a6a'), trans: 0,   rough: .72, irid: 0,  bgA: C('#f5f1ec'), bgB: C('#e4d9cc'), caustic: .25, size: 1 },
+];
+const BUILD = { open: .94, count: 48, inner: C('#ff4f86'), outer: C('#ffd9e3'), glow: C('#ffb86b'), stem: C('#7fcf9a'), trans: .45, rough: .08, irid: .75, bgA: C('#f3f1f6'), bgB: C('#dfd9e8'), caustic: .55, size: 1 };
+const cycle = { i: 0, t: 0 };
+
+if (renderer){
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(32, innerWidth / innerHeight, 0.1, 50);
+  camera.position.set(0, 0, 7);
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
+
+  /* Backdrop: gradient, halo behind the flower, drifting caustics and a faint HUD grid */
+  const bgU = { uTime: { value: 0 }, uA: { value: new THREE.Color() }, uB: { value: new THREE.Color() }, uTint: { value: new THREE.Color() }, uCaustic: { value: 0 }, uAspect: { value: 1 }, uCenter: { value: new THREE.Vector2(.68, .52) } };
+  const backdrop = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.ShaderMaterial({
+    uniforms: bgU, depthWrite: false,
+    vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
+    fragmentShader: `
+      varying vec2 vUv;
+      uniform float uTime, uCaustic, uAspect; uniform vec3 uA, uB, uTint; uniform vec2 uCenter;
+      float caustic(vec2 p, float t){
+        for (int n = 0; n < 3; n++) p += .45 * vec2(sin(p.y * 1.3 + t * (1.0 + float(n) * .3)), cos(p.x * 1.1 - t * (.8 + float(n) * .25)));
+        return pow(1.0 - abs(sin(p.x) * sin(p.y)), 14.0);
+      }
+      void main(){
+        vec2 uv = vUv; uv.x *= uAspect;
+        vec2 d = vUv - uCenter; d.x *= uAspect;
+        vec3 col = mix(uA, uB, smoothstep(0.0, 1.0, length(d) * .9));
+        col = mix(col, uTint, exp(-dot(d, d) * 5.0) * .45);
+        col += vec3(1.0) * caustic(uv * 3.0, uTime * .2) * .2 * uCaustic;
+        float stripes = smoothstep(.6, 1.0, sin(uv.x * 8.0 - uv.y * 2.4 + uTime * .05));
+        col = mix(col, col * .9 + .1, stripes * .3 * uCaustic);
+        vec2 g = abs(fract(uv * 14.0) - .5);
+        col -= smoothstep(.485, .5, max(g.x, g.y)) * .014;
+        gl_FragColor = vec4(col, 1.0);
+      }`,
+  }));
+  backdrop.position.z = -6;
+  scene.add(backdrop);
+
+  const holder = new THREE.Group(); scene.add(holder);
+  const flower = new THREE.Group(); holder.add(flower);
+
+  /* Petal geometry: narrow base, wide belly, rounded tip, cupped sides and a curled tip */
+  function petalGeometry(){
+    const g = new THREE.PlaneGeometry(1, 1, 12, 20);
+    const p = g.attributes.position;
+    for (let i = 0; i < p.count; i++){
+      const u = p.getX(i), v = p.getY(i) + .5;
+      const w = Math.pow(Math.sin(Math.PI * Math.min(.985, Math.pow(v, .85))), .42) * (1 - .12 * v) + .04 * (1 - v);
+      const x = u * w * .95;
+      const z = -1.05 * x * x * (1 + .6 * v) + .22 * v * v * v + .025 * Math.sin(v * 11 + u * 6) * Math.abs(u) * 2;
+      p.setXYZ(i, x, v, z);
+    }
+    g.computeVertexNormals();
+    return g;
+  }
+  const pGeo = petalGeometry();
+  const MAX = 120;
+  const pMat = new THREE.MeshPhysicalMaterial({
+    color: 0xffffff, side: THREE.DoubleSide, roughness: .1, metalness: 0, transmission: .6, thickness: .6, ior: 1.4,
+    clearcoat: 1, clearcoatRoughness: .08, iridescence: .8, iridescenceIOR: 1.35, iridescenceThicknessRange: [120, 480],
+    attenuationColor: new THREE.Color('#ff4f86'), attenuationDistance: .7,
+    sheen: .35, sheenRoughness: .5, sheenColor: new THREE.Color('#ff9fb8'), envMapIntensity: 1,
+  });
+  const petals = new THREE.InstancedMesh(pGeo, pMat, MAX);
+  petals.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+  flower.add(petals);
+  const P = [];
+  for (let i = 0; i < MAX; i++){
+    const t = Math.pow((i + 1) / MAX, .85);
+    P.push({ t, yaw: i * 2.39996, jit: (Math.random() - .5) * .14, len: .92 + Math.random() * .16, vis: 0 });
+    petals.setColorAt(i, new THREE.Color(1, 1, 1));
+  }
+
+  /* Glowing stamens in the heart */
+  const STAM = 46;
+  const sMat = new THREE.MeshStandardMaterial({ color: '#ffd27a', emissive: '#ffb86b', emissiveIntensity: 1.2, roughness: .4 });
+  const stamens = new THREE.InstancedMesh(new THREE.SphereGeometry(.028, 12, 10), sMat, STAM);
+  const stamenPos = [];
+  for (let i = 0; i < STAM; i++){
+    const a = i * 2.39996, r = Math.sqrt(i / STAM) * .13;
+    stamenPos.push(new THREE.Vector3(Math.sin(a) * r, .1 + (1 - r / .13) * .08, Math.cos(a) * r));
+  }
+  flower.add(stamens);
+
+  /* Glass stem and two leaves */
+  const stemMat = new THREE.MeshPhysicalMaterial({ color: '#7fcf9a', roughness: .08, transmission: .7, thickness: .4, ior: 1.4, clearcoat: 1, side: THREE.DoubleSide });
+  const curve = new THREE.CatmullRomCurve3([new THREE.Vector3(0, .05, 0), new THREE.Vector3(.02, -.9, -.05), new THREE.Vector3(.12, -2, .05), new THREE.Vector3(.08, -3.6, 0)]);
+  flower.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 64, .035, 10), stemMat));
+  [[.36, 1, 1.15], [.56, -1, .95]].forEach(([at, side, s]) => {
+    const leaf = new THREE.Mesh(pGeo, stemMat);
+    leaf.position.copy(curve.getPointAt(at));
+    leaf.rotation.set(side * -1.05, side > 0 ? 1.1 : -2, 0, 'YXZ');
+    leaf.scale.set(s * .55, s, s);
+    flower.add(leaf);
+  });
+  flower.position.y = .35;
+
+  /* Futuristic orbit rings */
+  const ringA = new THREE.Mesh(new THREE.RingGeometry(1.95, 1.958, 160), new THREE.MeshBasicMaterial({ color: '#d23a6f', transparent: true, opacity: .35, side: THREE.DoubleSide, depthWrite: false }));
+  const dotsGeo = new THREE.BufferGeometry();
+  const dots = new Float32Array(72 * 3);
+  for (let i = 0; i < 72; i++){ const a = i / 72 * Math.PI * 2; dots[i*3] = Math.cos(a) * 2.3; dots[i*3+1] = Math.sin(a) * 2.3; }
+  dotsGeo.setAttribute('position', new THREE.BufferAttribute(dots, 3));
+  const ringB = new THREE.Points(dotsGeo, new THREE.PointsMaterial({ color: '#111016', size: .025, transparent: true, opacity: .35, depthWrite: false }));
+  const rings = new THREE.Group(); rings.add(ringA, ringB); rings.position.y = .45; holder.add(rings);
+
+  /* Pollen */
+  const sprite = (() => {
+    const c = document.createElement('canvas'); c.width = c.height = 64;
+    const x = c.getContext('2d'), g = x.createRadialGradient(32, 32, 0, 32, 32, 32);
+    g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(.4, 'rgba(255,255,255,.5)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+    x.fillStyle = g; x.fillRect(0, 0, 64, 64);
+    return new THREE.CanvasTexture(c);
+  })();
+  const POLL = 180;
+  const polGeo = new THREE.BufferGeometry();
+  const polPos = new Float32Array(POLL * 3), polSeed = new Float32Array(POLL);
+  for (let i = 0; i < POLL; i++){ polPos[i*3] = (Math.random() - .5) * 10; polPos[i*3+1] = (Math.random() - .5) * 7; polPos[i*3+2] = (Math.random() - .5) * 4; polSeed[i] = Math.random(); }
+  polGeo.setAttribute('position', new THREE.BufferAttribute(polPos, 3));
+  const polMat = new THREE.PointsMaterial({ size: .07, map: sprite, color: '#ff8fb0', transparent: true, opacity: .6, depthWrite: false });
+  scene.add(new THREE.Points(polGeo, polMat));
+
+  const key = new THREE.DirectionalLight('#ffffff', 2); key.position.set(3, 4, 5); scene.add(key);
+  const rim = new THREE.PointLight('#ff7aa5', 6, 8); rim.position.set(-2, 1.5, -1.5); scene.add(rim);
+
+  /* Layout: flower on the right on desktop, upper centre on phones */
+  const layout = { x: 0, y: 0, s: 1 };
+  function resize(){
+    const w = innerWidth, h = innerHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h; camera.updateProjectionMatrix();
+    const dist = camera.position.z - backdrop.position.z;
+    const vh = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * dist;
+    backdrop.scale.set(vh * camera.aspect * 1.05, vh * 1.05, 1);
+    bgU.uAspect.value = camera.aspect;
+    const vw0 = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.position.z * camera.aspect;
+    if (w >= 980){ layout.x = 1.3 * Math.min(1.3, camera.aspect / 1.6); layout.y = -.05; layout.s = 1; bgU.uCenter.value.set(.5 + layout.x / vw0, .56); }
+    else { layout.x = 0; layout.y = .72; layout.s = Math.min(.66, w / 600); bgU.uCenter.value.set(.5, .68); }
+  }
+  addEventListener('resize', resize); resize();
+
+  /* Scroll progress: 0..3 across chapters, plus a builder weight */
+  const chapters = $('#chapters');
+  const railBtns = [...document.querySelectorAll('#rail button')];
+  let target = 0, prog = 0, bTarget = 0, bW = 0;
+  function readScroll(){
+    const r = chapters.getBoundingClientRect();
+    target = clamp(-r.top / (r.height - innerHeight * .9), 0, 1) * 3;
+    const b = builderEl.getBoundingClientRect();
+    bTarget = clamp((innerHeight - b.top) / (innerHeight * .7), 0, 1);
+    const idx = bTarget > .6 ? 4 : clamp(Math.round(target), 0, 3);
+    railBtns.forEach((btn, i) => btn.classList.toggle('on', i === idx));
+  }
+  lenis.on('scroll', readScroll); readScroll();
+
+  /* Drag to turn */
+  let spin = 0, spinV = 0, tilt = 0, dragging = false, lastX = 0, lastY = 0;
+  addEventListener('pointerdown', e => { if (e.target.closest('a,button,input,textarea,select,.panel,.header,.sheet,.copy')) return; dragging = true; lastX = e.clientX; lastY = e.clientY; });
+  addEventListener('pointermove', e => { if (!dragging) return; spinV = (e.clientX - lastX) * .006; spin += spinV; tilt = clamp(tilt + (e.clientY - lastY) * .003, -.4, .4); lastX = e.clientX; lastY = e.clientY; });
+  addEventListener('pointerup', () => dragging = false);
+  addEventListener('pointercancel', () => dragging = false);
+
+  /* State blending */
+  const cur = {}, mid = {};
+  function blendInto(out, a, b, t){
+    for (const k in a){
+      if (a[k] instanceof THREE.Color) (out[k] ||= new THREE.Color()).copy(a[k]).lerp(b[k], t);
+      else out[k] = lerp(a[k], b[k], t);
+    }
+  }
+  const palName = $('#palName'), openVal = $('#openVal'), hudOpen = $('#hudOpen'), hudCount = $('#hudCount');
+  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), e3 = new THREE.Euler(0, 0, 0, 'YXZ'), v3 = new THREE.Vector3(), s3 = new THREE.Vector3(), col = new THREE.Color();
+  const clock = new THREE.Clock();
+  let intro = RM ? 1 : 0, lastHud = '';
+
+  function frame(){
+    const dt = Math.min(clock.getDelta(), .05), time = clock.elapsedTime;
+    lenis.raf(time * 1000);
+    prog += (target - prog) * (RM ? 1 : .06);
+    bW += (bTarget - bW) * (RM ? 1 : .07);
+    intro = Math.min(1, intro + dt * .5);
+
+    // Chapter "story" cycles through the palettes
+    cycle.t += dt;
+    if (cycle.t > 2.4){ cycle.t = 0; cycle.i = (cycle.i + 1) % 5; palName.textContent = PALETTES[cycle.i][3]; }
+    const cp = PALETTES[cycle.i];
+    STATES[1].inner.lerp(col.set(cp[0]), .05); STATES[1].outer.lerp(col.set(cp[1]), .05); STATES[1].glow.lerp(col.set(cp[2]), .05);
+
+    // Builder state follows the order
+    const bp = PALETTES[order.palette], dried = order.palette === 5 ? 1 : 0;
+    BUILD.inner.lerp(col.set(bp[0]), .08); BUILD.outer.lerp(col.set(bp[1]), .08); BUILD.glow.lerp(col.set(bp[2]), .08);
+    BUILD.stem.lerp(col.set(dried ? '#a79a6a' : '#7fcf9a'), .08);
+    BUILD.count = lerp(BUILD.count, petalsFor(order.budget), .12);
+    BUILD.size = lerp(BUILD.size, .88 + (order.budget - 1500) / 13500 * .3, .1);
+    BUILD.trans = lerp(BUILD.trans, dried ? 0 : .45, .08); BUILD.rough = lerp(BUILD.rough, dried ? .72 : .08, .08); BUILD.irid = lerp(BUILD.irid, dried ? 0 : .75, .08);
+
+    const i0 = Math.min(2, Math.floor(prog)), tt = smooth(clamp(prog - i0, 0, 1));
+    blendInto(mid, STATES[i0], STATES[i0 + 1], tt);
+    blendInto(cur, mid, BUILD, smooth(bW));
+
+    // Petals: outer ones open first; the count reveals petals from the centre outwards
+    const open = cur.open * smooth(intro) + (RM ? 0 : Math.sin(time * 1.3) * .015);
+    for (let i = 0; i < MAX; i++){
+      const p = P[i];
+      p.vis += (clamp(cur.count - i, 0, 1) - p.vis) * .12;
+      const o = clamp(open * 1.35 - (1 - p.t) * .35, 0, 1);
+      const pitch = lerp(.06 + p.t * .22, .3 + p.t * 1.28, smooth(o)) + p.jit;
+      const L = (.28 + .82 * Math.pow(p.t, .9)) * p.len * cur.size;
+      const r0 = .02 + .1 * p.t * (.4 + .6 * o);
+      q.setFromEuler(e3.set(pitch, p.yaw, 0));
+      v3.set(Math.sin(p.yaw) * r0, -.06 * p.t * o, Math.cos(p.yaw) * r0);
+      const sv = L * smooth(p.vis) + 1e-4;
+      petals.setMatrixAt(i, m4.compose(v3, q, s3.set(sv * .85, sv, sv)));
+      petals.setColorAt(i, col.copy(cur.inner).lerp(cur.outer, Math.pow(p.t, .7)));
+    }
+    petals.instanceMatrix.needsUpdate = true; petals.instanceColor.needsUpdate = true;
+
+    const so = smooth(clamp((open - .15) / .5, 0, 1));
+    q.identity();
+    for (let i = 0; i < STAM; i++){
+      v3.copy(stamenPos[i]); v3.y += so * .06;
+      const s = so * (.7 + .5 * Math.sin(time * 2 + i));
+      stamens.setMatrixAt(i, m4.compose(v3, q, s3.setScalar(s + 1e-4)));
+    }
+    stamens.instanceMatrix.needsUpdate = true;
+    sMat.color.copy(cur.glow); sMat.emissive.copy(cur.glow);
+
+    pMat.transmission = cur.trans; pMat.attenuationColor.copy(cur.inner); pMat.sheenColor.copy(cur.outer); pMat.roughness = cur.rough; pMat.iridescence = cur.irid; pMat.clearcoat = 1 - cur.rough;
+    stemMat.color.copy(cur.stem); stemMat.transmission = cur.trans; stemMat.roughness = cur.rough;
+    rim.color.copy(cur.inner); polMat.color.copy(cur.inner);
+    bgU.uA.value.copy(cur.bgA); bgU.uB.value.copy(cur.bgB); bgU.uTint.value.copy(cur.outer);
+    bgU.uCaustic.value = cur.caustic; bgU.uTime.value = RM ? 0 : time;
+
+    if (!dragging){ spinV *= .94; spin += spinV + (RM ? 0 : dt * .16); tilt *= .96; }
+    flower.rotation.set(.42 + tilt, spin, -.08);
+    holder.position.set(layout.x, layout.y + (RM ? 0 : Math.sin(time * .6) * .05), 0);
+    holder.scale.setScalar(layout.s * lerp(.55, 1, smooth(intro)));
+    rings.rotation.set(1.25 + Math.sin(time * .3) * .08, 0, time * .1);
+    ringB.rotation.z = -time * .18;
+    ringA.material.opacity = .15 + .25 * cur.irid;
+
+    const sp = polGeo.attributes.position.array;
+    for (let i = 0; i < POLL; i++){
+      sp[i*3+1] += dt * (.05 + polSeed[i] * .14) * (RM ? 0 : 1);
+      sp[i*3] += Math.sin(time * .5 + polSeed[i] * 20) * dt * .03;
+      if (sp[i*3+1] > 3.5) sp[i*3+1] = -3.5;
+    }
+    polGeo.attributes.position.needsUpdate = true;
+
+    const pct = Math.round(cur.open * 100), cnt = Math.round(cur.count), hudStr = pct + '|' + cnt;
+    if (hudStr !== lastHud){
+      lastHud = hudStr;
+      hudOpen.textContent = String(pct).padStart(3, '0') + '%';
+      openVal.textContent = pct + '%';
+      hudCount.textContent = String(cnt).padStart(3, '0');
+    }
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+} else {
+  const raf = t => { lenis.raf(t); requestAnimationFrame(raf); };
+  requestAnimationFrame(raf);
+}
 </script>
 <!-- DEMO BANNER: portfolio notice, keep on every demo page -->
 <script>
@@ -532,7 +905,7 @@ footer .wrap{ display:flex; flex-wrap:wrap; justify-content:space-between; gap:1
       @media (max-width:560px){ .tab{ width:22px; padding:9px 0 } .tab span{ font-size:12px } }
     </style>
     <div class="wrap">
-      <div class="panel" role="note" id="demo-note"><b>ДЕМО</b><br>Демо-версия сайта для цветочной мастерской «Натали». Сделано <a href="https://t.me/lilbunnych" target="_blank" rel="noopener">@lilbunnych</a>. Тексты и фото взяты со страницы мастерской.</div>
+      <div class="panel" role="note" id="demo-note"><b>ДЕМО</b><br>Демо-версия сайта для цветочной мастерской «Натали». Сделано <a href="https://t.me/lilbunnych" target="_blank" rel="noopener">@lilbunnych</a>. Тексты и фото взяты со страницы мастерской, 3D-цветок сгенерирован в коде.</div>
       <button class="tab" aria-expanded="false" aria-controls="demo-note" aria-label="Демо-версия: подробнее"><span>DEMO</span></button>
     </div>`;
   const wrap = root.querySelector('.wrap'), tab = root.querySelector('.tab');
