@@ -1,0 +1,76 @@
+@import "tailwindcss";
+@import "@fontsource-variable/manrope";
+@import "@fontsource-variable/unbounded";
+@import "@fontsource-variable/jetbrains-mono";
+
+/*
+ * Light futurism: mint base, frosted glass panels with a 1px highlight edge, wide display type,
+ * mono for numbers. One accent (lime) used only as a fill behind dark text.
+ * Radius rule: interactive elements are pills, panels are 28px, inner tiles 20px.
+ */
+@theme {
+  --color-background: #eaf3e6;
+  --color-foreground: #0f2417;
+  --color-muted: #4a5f50;
+  --color-leaf: #2f7a37;
+  --color-lime: #c8f25a;
+  --color-mint: #d6ead0;
+  --color-card: #f6faf3;
+  --font-sans: "Manrope Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Unbounded Variable", "Manrope Variable", ui-sans-serif, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+}
+
+@layer base {
+  html { background: var(--color-background); color: var(--color-foreground); -webkit-font-smoothing: antialiased; }
+  body { font-family: var(--font-sans); }
+  h1, h2, h3, blockquote, figcaption, summary, button { text-wrap: balance; }
+  p, li, dd { text-wrap: pretty; }
+  ::selection { background: var(--color-lime); color: var(--color-foreground); }
+  :focus-visible { outline: 2px solid var(--color-leaf); outline-offset: 3px; }
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+}
+
+/* frosted glass (web approximation), with a solid fallback when transparency is reduced */
+@utility glass {
+  background: linear-gradient(135deg, rgb(255 255 255 / .62), rgb(255 255 255 / .32));
+  border: 1px solid rgb(255 255 255 / .7);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / .9), 0 24px 60px -34px rgb(15 36 23 / .45);
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  @media (prefers-reduced-transparency: reduce) { background: var(--color-card); backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+
+@utility glass-dark {
+  background: linear-gradient(135deg, rgb(15 36 23 / .92), rgb(15 36 23 / .82));
+  border: 1px solid rgb(200 242 90 / .18);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / .08), 0 24px 60px -30px rgb(15 36 23 / .6);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+/* soft lime sheen that sweeps across primary buttons on hover */
+@utility sheen {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  &::after {
+    content: ""; position: absolute; inset: 0; z-index: -1;
+    background: linear-gradient(110deg, transparent 30%, rgb(200 242 90 / .45) 50%, transparent 70%);
+    transform: translateX(-120%); transition: transform .7s cubic-bezier(.16, 1, .3, 1);
+  }
+  &:hover::after { transform: translateX(120%); }
+}
+
+@keyframes pulse-dot { 0%, 100% { opacity: 1 } 50% { opacity: .35 } }
+.live-dot { animation: pulse-dot 2s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .live-dot { animation: none; }
+}
