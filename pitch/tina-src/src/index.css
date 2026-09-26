@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+/*
+  Theme: the client's shadcn palette (cream, dusty rose, cocoa), radius 0, hard offset shadows.
+  Signature: a dark brick-wall hero with a 3D neon "TS" sign, like the one in the salon.
+  Fonts: Playfair Display (serif, as the theme's Georgia), Onest (Cyrillic stand-in for DM Sans), JetBrains Mono for labels.
+*/
+@theme {
+  --color-background: #F7F5E9;
+  --color-foreground: #503E33;
+  --color-card: #F7F5E9;
+  --color-primary: #A95C64;
+  --color-primary-foreground: #FFFFFF;
+  --color-secondary: #C3A697;
+  --color-muted: #E9C9BE;
+  --color-muted-foreground: #946F5C;
+  --color-border: #946F5C;
+  --color-chart-3: #C9A188;
+  --color-chart-5: #A87D77;
+  --color-night: #2B2421;
+  --color-night-card: #3C332E;
+  --color-cream: #F7F5E9;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Onest', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', Menlo, monospace;
+  --shadow-hard: 4px 4px 0 0 #503E33;
+  --shadow-hard-lg: 7px 7px 0 0 #503E33;
+  --shadow-hard-rose: 4px 4px 0 0 #A95C64;
+  --ease-out-expo: cubic-bezier(.16, 1, .3, 1);
+  --animate-marquee: marquee var(--marquee-duration, 40s) linear infinite;
+  --animate-marquee-rev: marquee var(--marquee-duration, 40s) linear infinite reverse;
+  @keyframes marquee { to { transform: translateX(-50%) } }
+}
+
+@layer base {
+  html { -webkit-font-smoothing: antialiased; background: var(--color-background) }
+  body { font-family: var(--font-sans); color: var(--color-foreground); background: var(--color-background); overflow-x: clip; line-height: 1.55 }
+  h1, h2, h3 { font-family: var(--font-serif); font-weight: 500; letter-spacing: -.01em; line-height: 1.08 }
+  :focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px }
+  html.lenis, html.lenis body { height: auto }
+  .lenis.lenis-smooth { scroll-behavior: auto !important }
+  ::selection { background: var(--color-primary); color: #fff }
+}
+
+@layer components {
+  /* Hard-shadow "press" controls */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: .55rem; height: 3rem; padding: 0 1.4rem; border: 2px solid var(--color-foreground); font-weight: 600; font-size: .95rem; white-space: nowrap; box-shadow: var(--shadow-hard); transition: transform .15s var(--ease-out-expo), box-shadow .15s var(--ease-out-expo), background .2s, color .2s }
+  .btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 0 var(--color-foreground) }
+  .btn:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 0 var(--color-foreground) }
+  .btn-primary { background: var(--color-primary); color: #fff }
+  .btn-cream { background: var(--color-cream); color: var(--color-foreground) }
+  .btn-ghost-dark { background: transparent; color: var(--color-cream); border-color: var(--color-cream); box-shadow: 4px 4px 0 0 var(--color-primary) }
+  .btn-ghost-dark:hover { box-shadow: 6px 6px 0 0 var(--color-primary) }
+  .card { border: 2px solid var(--color-foreground); background: var(--color-card); box-shadow: var(--shadow-hard) }
+  .card-hover { transition: transform .2s var(--ease-out-expo), box-shadow .2s var(--ease-out-expo) }
+  .card-hover:hover { transform: translate(-3px, -3px); box-shadow: var(--shadow-hard-lg) }
+  .eyebrow { display: inline-flex; align-items: center; gap: .6rem; font-family: var(--font-mono); font-size: .75rem; letter-spacing: .14em; text-transform: uppercase; color: var(--color-primary) }
+  .eyebrow::before { content: ""; width: .6rem; height: .6rem; background: currentColor }
+  .h2 { font-size: clamp(2.2rem, 5vw, 4.2rem) }
+  .chip { height: 2.5rem; padding: 0 1rem; border: 2px solid var(--color-foreground); background: var(--color-card); font-size: .9rem; font-weight: 500; transition: background .2s, color .2s, box-shadow .2s, transform .15s }
+  .chip:hover { box-shadow: 3px 3px 0 0 var(--color-foreground); transform: translate(-1px, -1px) }
+  .chip[aria-pressed="true"], .chip[aria-selected="true"] { background: var(--color-foreground); color: var(--color-cream) }
+  .field { width: 100%; height: 3rem; border: 2px solid var(--color-foreground); background: #fff; padding: 0 .9rem; font-size: .95rem; outline: none; transition: box-shadow .2s }
+  .field:focus { box-shadow: var(--shadow-hard-rose) }
+  textarea.field { height: auto; min-height: 5rem; padding: .7rem .9rem; resize: vertical }
+  .brick { background-color: var(--color-night); background-image:
+      linear-gradient(0deg, rgb(0 0 0 / .22) 2px, transparent 2px),
+      linear-gradient(90deg, rgb(0 0 0 / .22) 2px, transparent 2px),
+      linear-gradient(90deg, rgb(0 0 0 / .22) 2px, transparent 2px);
+    background-size: 100% 34px, 92px 68px, 92px 68px;
+    background-position: 0 0, 0 0, 46px 34px }
+  .scrollbar-none { scrollbar-width: none } .scrollbar-none::-webkit-scrollbar { display: none }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important }
+}
