@@ -1,0 +1,76 @@
+@import "tailwindcss";
+@import "@fontsource/dela-gothic-one";
+@import "@fontsource-variable/golos-text";
+@import "@fontsource-variable/jetbrains-mono";
+
+/*
+ * Street poster: paper white, ink black and the shop's signal red. Heavy Dela Gothic display type,
+ * price "stickers", soft 20px cards and pill buttons. Red is used as a fill behind white text
+ * and as text only at large sizes.
+ */
+@theme {
+  --color-background: #f2efe8;
+  --color-foreground: #111010;
+  --color-muted: #5f5b54;
+  --color-red: #d8120f;
+  --color-accent: #d8120f;
+  --color-sand: #e6e1d6;
+  --color-card: #fbfaf6;
+  --font-sans: "Golos Text Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Dela Gothic One", "Golos Text Variable", ui-sans-serif, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+}
+
+@layer base {
+  html { background: var(--color-background); color: var(--color-foreground); -webkit-font-smoothing: antialiased; }
+  body { font-family: var(--font-sans); }
+  h1, h2, h3, blockquote, figcaption, summary, button { text-wrap: balance; }
+  p, li, dd { text-wrap: pretty; }
+  ::selection { background: var(--color-accent); color: #fff; }
+  :focus-visible { outline: 2px solid var(--color-red); outline-offset: 3px; }
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+}
+
+/* paper card with an ink hairline */
+@utility glass {
+  background: var(--color-card);
+  border: 1px solid rgb(17 16 16 / .1);
+}
+
+/* ink panel for the few things that must pop */
+@utility glass-dark {
+  background: var(--color-foreground);
+  color: var(--color-background);
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+@utility sheen {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  &::after {
+    content: ""; position: absolute; inset: 0; z-index: -1;
+    background: linear-gradient(110deg, transparent 30%, rgb(255 255 255 / .35) 50%, transparent 70%);
+    transform: translateX(-120%); transition: transform .7s cubic-bezier(.16, 1, .3, 1);
+  }
+  &:hover::after { transform: translateX(120%); }
+}
+
+/* torn receipt edge */
+@utility zigzag {
+  --z: 10px;
+  mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / calc(2 * var(--z)) 100%;
+}
+
+@keyframes pulse-dot { 0%, 100% { opacity: 1 } 50% { opacity: .35 } }
+.live-dot { animation: pulse-dot 2s ease-in-out infinite; }
+@keyframes marquee { to { transform: translateX(-50%) } }
+
+@media (prefers-reduced-motion: reduce) {
+  .live-dot { animation: none; }
+}
