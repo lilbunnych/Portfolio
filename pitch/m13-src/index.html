@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>M13, барбершоп в Химках</title>
+    <meta name="description" content="Мужские и детские стрижки, моделирование бороды и опасная бритва в Химках. Рейтинг 5,0, онлайн-запись." />
+    <meta name="theme-color" content="#0f0e0d" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230f0e0d'/%3E%3Ctext x='16' y='22' font-family='Arial' font-weight='700' font-size='14' text-anchor='middle' fill='%23f1ece4'%3EM13%3C/text%3E%3C/svg%3E" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <!-- DEMO BANNER: portfolio notice, keep on every demo page -->
+    <script>
+    (() => {
+      const host = document.createElement('div');
+      const root = host.attachShadow({ mode: 'open' });
+      root.innerHTML = `
+        <style>
+          :host{ all:initial }
+          .wrap{ position:fixed; right:0; top:30%; z-index:2147483647; display:flex; align-items:flex-start; font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif; cursor:auto }
+          .tab{ all:unset; box-sizing:border-box; width:28px; padding:12px 0; cursor:pointer; display:flex; align-items:center; justify-content:center;
+            background:#ffd400; color:#111; border:2px solid #111; border-right:0; border-radius:8px 0 0 8px; box-shadow:-4px 4px 14px rgba(0,0,0,.28) }
+          .tab span{ writing-mode:vertical-rl; transform:rotate(180deg); font-weight:900; font-size:16px; letter-spacing:.22em; line-height:1 }
+          .tab:focus-visible{ outline:3px solid #111; outline-offset:2px }
+          .panel{ display:none; width:240px; margin-right:-2px; padding:14px 16px; background:#111; color:#fff; border:2px solid #111; border-radius:10px 0 0 10px;
+            font-size:13px; line-height:1.45; box-shadow:-6px 8px 24px rgba(0,0,0,.35) }
+          .panel b{ color:#ffd400; letter-spacing:.12em } .panel a{ color:#ffd400 }
+          .wrap.open .panel{ display:block }
+          @media (max-width:560px){ .tab{ width:22px; padding:9px 0 } .tab span{ font-size:12px } }
+        </style>
+        <div class="wrap">
+          <div class="panel" role="note" id="demo-note"><b>ДЕМО</b><br>Прототип сайта для барбершопа M13 от <a href="https://t.me/lilbunnych" target="_blank" rel="noopener">@lilbunnych</a>. Онлайн-запись работает как макет.</div>
+          <button class="tab" aria-expanded="false" aria-controls="demo-note" aria-label="Демо-версия: подробнее"><span>DEMO</span></button>
+        </div>`;
+      const wrap = root.querySelector('.wrap'), tab = root.querySelector('.tab');
+      tab.addEventListener('click', () => { const o = wrap.classList.toggle('open'); tab.setAttribute('aria-expanded', String(o)); });
+      document.body.appendChild(host);
+    })();
+    </script>
+    <!-- /DEMO BANNER -->
+  </body>
+</html>
