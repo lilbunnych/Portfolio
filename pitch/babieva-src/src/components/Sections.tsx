@@ -55,7 +55,7 @@ function ServiceRow({ s }: { s: Row }) {
         <p className="font-semibold leading-snug">
           {s.name}
           {s.hit && (
-            <span className="ml-2 inline-flex translate-y-[-1px] items-center gap-1 rounded-full bg-lime px-2 py-0.5 align-middle font-mono text-[.65rem] font-semibold uppercase">
+            <span className="ml-2 inline-flex translate-y-[-1px] items-center gap-1 rounded-full bg-amber px-2 py-0.5 align-middle font-mono text-[.65rem] font-semibold uppercase">
               <Flame className="h-3 w-3" /> хит
             </span>
           )}
@@ -67,7 +67,7 @@ function ServiceRow({ s }: { s: Row }) {
         onClick={() => booking.toggle(item)}
         aria-pressed={on}
         aria-label={on ? `Убрать «${s.name}» из записи` : `Добавить «${s.name}» в запись`}
-        className={cn('grid h-9 w-9 shrink-0 place-items-center rounded-full border transition-colors', on ? 'border-foreground bg-foreground text-lime' : 'border-foreground/20 hover:border-foreground')}
+        className={cn('grid h-9 w-9 shrink-0 place-items-center rounded-full border transition-colors', on ? 'border-foreground bg-foreground text-amber' : 'border-foreground/20 hover:border-foreground')}
       >
         {on ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
       </button>
@@ -88,7 +88,7 @@ function Group({ title, rows }: { title: string; rows: Row[] }) {
         <AnimatePresence initial={false}>{shown.map((s, i) => <ServiceRow key={s.name + s.price + i} s={s} />)}</AnimatePresence>
       </div>
       {rows.length > PREVIEW && (
-        <button onClick={() => setAll(v => !v)} className="my-2 text-sm font-semibold text-leaf underline-offset-4 hover:underline">
+        <button onClick={() => setAll(v => !v)} className="my-2 text-sm font-semibold text-rust underline-offset-4 hover:underline">
           {all ? 'Свернуть' : `Ещё ${rows.length - PREVIEW}`}
         </button>
       )}
@@ -143,7 +143,7 @@ export function Services() {
               return (
                 <button key={f.id} role="tab" aria-selected={on} onClick={() => { setFilter(f.id); setQ('') }}
                   className={cn('flex h-11 shrink-0 items-center gap-2 rounded-full px-5 text-sm font-semibold transition-colors',
-                    on ? (f.id === 'hits' ? 'bg-lime text-foreground' : 'bg-foreground text-background') : 'glass text-foreground/80 hover:text-foreground')}>
+                    on ? (f.id === 'hits' ? 'bg-amber text-foreground' : 'bg-foreground text-background') : 'glass text-foreground/80 hover:text-foreground')}>
                   {f.id === 'hits' && <Flame className="h-4 w-4" />}
                   {f.label}
                 </button>
@@ -216,10 +216,10 @@ export function Team() {
           {TEAM.map((m, i) => (
             <Reveal key={m.id} delay={i * 0.05}>
               <div className="glass flex items-center gap-5 rounded-[28px] p-5 md:p-6">
-                <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-lime font-display text-xl font-bold">{m.name[0]}</span>
+                <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-amber font-display text-xl font-bold">{m.name[0]}</span>
                 <div className="min-w-0 flex-1">
                   <p className="font-display text-base font-bold uppercase leading-tight">{m.name}</p>
-                  <p className="mt-0.5 tabular-nums text-xs uppercase tracking-wider text-leaf">{m.role}</p>
+                  <p className="mt-0.5 tabular-nums text-xs uppercase tracking-wider text-rust">{m.role}</p>
                   <p className="mt-2 text-sm leading-relaxed text-muted">{m.note}</p>
                 </div>
                 <button onClick={() => booking.open({ master: m.id, cat: m.cats[0] })} aria-label={`Записаться к мастеру ${m.name}`}
@@ -250,7 +250,7 @@ function ReviewCard({ r }: { r: (typeof REVIEWS)[number] }) {
         <span className="rounded-full bg-foreground/5 px-3 py-1 font-mono text-[.7rem] uppercase tracking-wider">{r.tag}</span>
       </div>
       <blockquote className={cn('mt-5 flex-1 leading-relaxed', !open && 'line-clamp-3')}>«{r.text}»</blockquote>
-      <button onClick={() => setOpen(v => !v)} className="mt-2 self-start text-xs font-semibold text-leaf underline-offset-4 hover:underline">{open ? 'Свернуть' : 'Читать полностью'}</button>
+      <button onClick={() => setOpen(v => !v)} className="mt-2 self-start text-xs font-semibold text-rust underline-offset-4 hover:underline">{open ? 'Свернуть' : 'Читать полностью'}</button>
       <figcaption className="mt-5 text-sm"><b>{r.author}</b><span className="block tabular-nums text-xs text-muted">{r.date}</span></figcaption>
     </figure>
   )
@@ -285,7 +285,7 @@ export function Reviews() {
           <div className="glass-dark flex items-center gap-6 rounded-[28px] p-7 text-background">
             <span className="font-display text-7xl font-bold leading-none"><CountUp value={BRAND.ratingValue} decimals={1} /></span>
             <div>
-              <span className="flex gap-1">{Array.from({ length: 5 }, (_, i) => <Star key={i} className="h-4 w-4 fill-lime text-lime" />)}</span>
+              <span className="flex gap-1">{Array.from({ length: 5 }, (_, i) => <Star key={i} className="h-4 w-4 fill-amber text-amber" />)}</span>
               <p className="mt-2 tabular-nums text-sm text-background/70"><CountUp value={BRAND.ratings} /> оценок<br /><CountUp value={BRAND.reviews} /> {reviewWord(BRAND.reviews)}</p>
             </div>
           </div>
@@ -331,7 +331,7 @@ export function Questions() {
           <Reveal className="glass-dark mt-10 rounded-[28px] p-7 text-background">
             <p className="font-display text-lg font-bold uppercase">Не нашли ответ?</p>
             <p className="mt-2 text-sm text-background/70">Администратор ответит на вопросы и подберёт мастера под вашу задачу.</p>
-            <a href={BRAND.phoneHref} className="mt-5 flex h-12 items-center justify-center gap-2 rounded-full bg-lime tabular-nums text-sm font-semibold text-foreground"><Phone className="h-4 w-4" /> {BRAND.phone}</a>
+            <a href={BRAND.phoneHref} className="mt-5 flex h-12 items-center justify-center gap-2 rounded-full bg-amber tabular-nums text-sm font-semibold text-foreground"><Phone className="h-4 w-4" /> {BRAND.phone}</a>
           </Reveal>
         </div>
         <div className="space-y-3">
@@ -368,18 +368,18 @@ export function Contacts() {
       <div className="mt-10 grid gap-3 lg:grid-cols-[1fr_1.35fr]">
         <Reveal className="glass flex flex-col rounded-[28px] p-7 md:p-9">
           <p className="flex items-center gap-2 text-sm font-semibold">
-            <span className={status.open ? 'live-dot h-2 w-2 rounded-full bg-leaf' : 'h-2 w-2 rounded-full bg-foreground/30'} aria-hidden />{status.label}
+            <span className={status.open ? 'live-dot h-2 w-2 rounded-full bg-rust' : 'h-2 w-2 rounded-full bg-foreground/30'} aria-hidden />{status.label}
           </p>
           <div className="mt-8 space-y-6">
-            <div className="flex gap-4"><MapPin className="mt-1 h-5 w-5 shrink-0 text-leaf" /><div><p className="font-display font-bold uppercase leading-snug">{BRAND.address}</p><p className="mt-1 text-sm text-muted">{BRAND.addressNote}. Остановка «Универмаг» в 230 м, рядом парковка.</p></div></div>
-            <div className="flex gap-4"><Phone className="mt-1 h-5 w-5 shrink-0 text-leaf" /><div><a href={BRAND.phoneHref} className="tabular-nums text-lg font-semibold">{BRAND.phone}</a><p className="mt-1 text-sm text-muted">{BRAND.hours}</p></div></div>
+            <div className="flex gap-4"><MapPin className="mt-1 h-5 w-5 shrink-0 text-rust" /><div><p className="font-display font-bold uppercase leading-snug">{BRAND.address}</p><p className="mt-1 text-sm text-muted">{BRAND.addressNote}. Остановка «Универмаг» в 230 м, рядом парковка.</p></div></div>
+            <div className="flex gap-4"><Phone className="mt-1 h-5 w-5 shrink-0 text-rust" /><div><a href={BRAND.phoneHref} className="tabular-nums text-lg font-semibold">{BRAND.phone}</a><p className="mt-1 text-sm text-muted">{BRAND.hours}</p></div></div>
           </div>
           <div className="mt-auto flex flex-wrap gap-3 pt-10">
             <button onClick={() => booking.open()} className="sheen h-12 rounded-full bg-foreground px-7 text-sm font-semibold text-background">Записаться</button>
             <a href={BRAND.routeUrl} target="_blank" rel="noopener noreferrer" className="flex h-12 items-center gap-2 rounded-full border border-foreground/20 px-6 text-sm font-semibold transition-colors hover:border-foreground"><Navigation className="h-4 w-4" /> Маршрут</a>
           </div>
         </Reveal>
-        <Reveal delay={0.1} className="relative min-h-[440px] overflow-hidden rounded-[28px] bg-mint">
+        <Reveal delay={0.1} className="relative min-h-[440px] overflow-hidden rounded-[28px] bg-apricot">
           <iframe title="Студия Анастасии Бабиевой на карте" src="https://yandex.ru/map-widget/v1/?ll=37.418734%2C55.886555&z=17&pt=37.418734%2C55.886555%2Cpm2grm" loading="lazy" className="absolute inset-0 h-full w-full border-0" />
         </Reveal>
       </div>
@@ -397,8 +397,8 @@ export function Footer() {
             <p className="mt-4 text-sm text-background/60">Студия красоты. {BRAND.address}</p>
           </div>
           <nav aria-label="Разделы в подвале" className="grid grid-cols-2 gap-x-10 gap-y-2 text-sm text-background/70">
-            {NAV.map(n => <a key={n.href} href={n.href} className="hover:text-lime">{n.label}</a>)}
-            <a href={BRAND.phoneHref} className="tabular-nums hover:text-lime">{BRAND.phone}</a>
+            {NAV.map(n => <a key={n.href} href={n.href} className="hover:text-amber">{n.label}</a>)}
+            <a href={BRAND.phoneHref} className="tabular-nums hover:text-amber">{BRAND.phone}</a>
           </nav>
         </div>
         <p className="mt-10 tabular-nums text-xs text-background/40">© 2026 Студия Анастасии Бабиевой</p>

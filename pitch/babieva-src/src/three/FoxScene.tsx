@@ -2,11 +2,11 @@ import { Suspense, useEffect, useMemo, useRef, useState, type RefObject } from '
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Environment, Lightformer, Text } from '@react-three/drei'
 import * as THREE from 'three'
-import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js'
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js'
 import wordmarkFont from '@fontsource/unbounded/files/unbounded-cyrillic-800-normal.woff?url'
 
 /* ------------------------------------------------------------------ */
-/* Backdrop: uneven wavy gradient, pale mint drifting into juicy green */
+/* Backdrop: uneven wavy gradient, warm cream drifting into amber      */
 /* ------------------------------------------------------------------ */
 
 const backdropVert = /* glsl */ `
@@ -59,10 +59,10 @@ const backdropFrag = /* glsl */ `
     float n = snoise(p + 0.9 * q + vec2(t * 0.6, -t * 0.4));
     float wave = 0.5 + 0.5 * sin((p.y + q.x * 0.55) * 3.4 + n * 1.6 + t * 3.0);
 
-    vec3 milk  = vec3(0.945, 0.972, 0.930);
-    vec3 mint  = vec3(0.860, 0.930, 0.820);
-    vec3 fresh = vec3(0.700, 0.855, 0.610);
-    vec3 juicy = vec3(0.520, 0.760, 0.450);
+    vec3 milk  = vec3(0.985, 0.960, 0.920);
+    vec3 mint  = vec3(0.960, 0.880, 0.780);
+    vec3 fresh = vec3(0.950, 0.745, 0.500);
+    vec3 juicy = vec3(0.880, 0.540, 0.260);
 
     float g1 = smoothstep(-0.45, 0.75, n);
     vec3 col = mix(milk, mint, smoothstep(0.15, 0.95, wave));
@@ -96,134 +96,58 @@ function Backdrop() {
 }
 
 /* ------------------------------------------------------------------ */
-/* The pear                                                            */
+/* The fox: a cartoon head of amber glass, like the studio's logo       */
 /* ------------------------------------------------------------------ */
 
-/* ------------------------------------------------------------------ */
-/* The pear: lathe profile, then small asymmetries so it reads as fruit */
-/* ------------------------------------------------------------------ */
+const FOX_HEIGHT = 2.75 // chin at -0.95, ear tips at about 1.8
+const FOX_CENTRE = 0.42
 
-const PEAR_HEIGHT = 2.68
+const AMBER = new THREE.Color('#ffb454')
+const CREAM = new THREE.Color('#fff4e4')
+const DARK = new THREE.Color('#5a2a12')
 
-function usePearGeometry() {
+/** Colours every vertex of a part with `paint(localPosition)`, then moves the part into place. */
+function part(g: THREE.BufferGeometry, m: THREE.Matrix4, paint: (p: THREE.Vector3) => THREE.Color) {
+  const pos = g.attributes.position
+  const col = new Float32Array(pos.count * 3)
+  const v = new THREE.Vector3()
+  for (let i = 0; i < pos.count; i++) col.set(paint(v.fromBufferAttribute(pos, i)).toArray(), i * 3)
+  g.setAttribute('color', new THREE.BufferAttribute(col, 3))
+  return g.applyMatrix4(m)
+}
+
+const mat = (x: number, y: number, z: number, rx = 0, ry = 0, rz = 0, sx = 1, sy = 1, sz = 1) =>
+  new THREE.Matrix4().compose(new THREE.Vector3(x, y, z), new THREE.Quaternion().setFromEuler(new THREE.Euler(rx, ry, rz)), new THREE.Vector3(sx, sy, sz))
+
+function useFoxGeometry() {
   return useMemo(() => {
-    // radius / height profile, bottom to top; the first and last points make the calyx and stem dimples
-    const pts = [
-      [0, 0.03], [0.16, 0.0], [0.42, 0.04], [0.72, 0.18], [0.93, 0.42], [1.02, 0.72], [1.0, 1.02],
-      [0.89, 1.3], [0.73, 1.56], [0.61, 1.8], [0.54, 2.03], [0.49, 2.26], [0.42, 2.46], [0.28, 2.61], [0.11, 2.68], [0, 2.655],
-    ].map(([x, y]) => new THREE.Vector2(x, y))
-    const profile = new THREE.SplineCurve(pts).getPoints(180)
-    profile[0].x = 0
-    profile[profile.length - 1].x = 0
-    let g: THREE.BufferGeometry = new THREE.LatheGeometry(profile, 180)
-    g.deleteAttribute('uv')
-    g.deleteAttribute('normal')
-    g = mergeVertices(g, 1e-5) // welds the lathe seam so normals stay smooth all the way round
-
-    const pos = g.attributes.position
-    const colors = new Float32Array(pos.count * 3)
-    const base = new THREE.Color('#f4f8dc'), top = new THREE.Color('#e3f2c4'), blush = new THREE.Color('#f7e2d6'), c = new THREE.Color()
-    for (let i = 0; i < pos.count; i++) {
-      let x = pos.getX(i), z = pos.getZ(i)
-      const y = pos.getY(i), yn = y / PEAR_HEIGHT
-      const th = Math.atan2(z, x)
-      // slightly oval section and two very soft ripples, like a real pear skin
-      const k = 1 + 0.03 * Math.cos(2 * th) + 0.01 * Math.sin(3 * th + yn * 4) + 0.006 * Math.sin(5 * th - yn * 7)
-      x *= k; z *= k
-      // the belly sits a touch off-centre and the neck leans the other way
-      const lean = Math.pow(THREE.MathUtils.smoothstep(yn, 0.45, 1), 2)
-      x += 0.035 * Math.sin(yn * Math.PI) - 0.12 * lean
-      z += 0.04 * lean
-      pos.setXYZ(i, x, y - PEAR_HEIGHT / 2, z)
-      // tint: pale yellow-green below, greener shoulders, a faint blush on one cheek
-      c.copy(base).lerp(top, THREE.MathUtils.smoothstep(yn, 0.3, 0.9))
-      c.lerp(blush, Math.max(0, Math.cos(th - 0.6)) * (1 - Math.abs(yn - 0.35) * 2.2) * 0.45)
-      colors.set([c.r, c.g, c.b], i * 3)
+    const c = new THREE.Color()
+    const parts: THREE.BufferGeometry[] = []
+    // head: soft, a little wider than tall; cream lower cheeks
+    parts.push(part(new THREE.SphereGeometry(1, 72, 48), mat(0, 0.05, 0, 0, 0, 0, 1.05, 0.88, 0.82),
+      p => c.copy(AMBER).lerp(CREAM, THREE.MathUtils.smoothstep(-p.y, 0.15, 0.55) * THREE.MathUtils.smoothstep(p.z, -0.2, 0.4))))
+    // muzzle: amber on top, cream underneath
+    parts.push(part(new THREE.SphereGeometry(1, 48, 32), mat(0, -0.3, 0.62, 0.25, 0, 0, 0.42, 0.34, 0.72),
+      p => c.copy(AMBER).lerp(CREAM, THREE.MathUtils.smoothstep(-p.y, -0.35, 0.25))))
+    // cheek fluff pointing out and down
+    for (const s of [-1, 1]) {
+      parts.push(part(new THREE.ConeGeometry(0.46, 1.0, 32, 4), mat(s * 0.92, -0.38, 0.18, 0, s * 0.25, s * -(Math.PI / 2 + 0.55), 1, 1, 0.6),
+        p => c.copy(CREAM).lerp(AMBER, THREE.MathUtils.smoothstep(-p.y, 0.1, 0.45) * 0.5)))
+      // ears with dark tips
+      parts.push(part(new THREE.ConeGeometry(0.5, 0.95, 40, 8), mat(s * 0.62, 0.98, -0.1, -0.15, 0, s * -0.42, 1, 1, 0.45),
+        p => c.copy(AMBER).lerp(DARK, THREE.MathUtils.smoothstep(p.y, 0.1, 0.45))))
     }
-    g.setAttribute('color', new THREE.BufferAttribute(colors, 3))
-    g.computeVertexNormals()
+    const g = mergeGeometries(parts)!
+    g.translate(0, -FOX_CENTRE, 0)
     return g
   }, [])
 }
 
-const STEM_TOP = new THREE.Vector3(-0.12, PEAR_HEIGHT / 2 - 0.03, 0.04)
-
-function useStemGeometry() {
-  return useMemo(() => {
-    const p = STEM_TOP
-    const curve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(p.x, p.y - 0.06, p.z),
-      new THREE.Vector3(p.x + 0.01, p.y + 0.14, p.z),
-      new THREE.Vector3(p.x + 0.07, p.y + 0.32, p.z + 0.02),
-      new THREE.Vector3(p.x + 0.17, p.y + 0.44, p.z + 0.05),
-    ])
-    const g = new THREE.TubeGeometry(curve, 48, 0.045, 16, false)
-    // taper towards the tip
-    const pos = g.attributes.position
-    const seg = 49
-    for (let i = 0; i < pos.count; i++) {
-      const t = Math.floor(i / 17) / (seg - 1)
-      const centre = curve.getPoint(t)
-      const v = new THREE.Vector3(pos.getX(i), pos.getY(i), pos.getZ(i)).sub(centre).multiplyScalar(1 - t * 0.45).add(centre)
-      pos.setXYZ(i, v.x, v.y, v.z)
-    }
-    g.computeVertexNormals()
-    return g
-  }, [])
-}
-
-function useLeafGeometry() {
-  return useMemo(() => {
-    const s = new THREE.Shape()
-    s.moveTo(0, 0)
-    s.bezierCurveTo(0.2, 0.15, 0.48, 0.2, 0.82, 0.02)
-    s.bezierCurveTo(0.46, -0.19, 0.2, -0.13, 0, 0)
-    const g = new THREE.ExtrudeGeometry(s, { depth: 0.01, bevelEnabled: true, bevelThickness: 0.012, bevelSize: 0.012, bevelSegments: 4, curveSegments: 40 })
-    const pos = g.attributes.position
-    for (let i = 0; i < pos.count; i++) {
-      const x = pos.getX(i), y = pos.getY(i)
-      // curl along the length and fold along the midrib
-      pos.setZ(i, pos.getZ(i) + Math.sin(x * 3.2) * 0.07 - Math.abs(y) * 0.25)
-    }
-    g.computeVertexNormals()
-    return g
-  }, [])
-}
-
-type Anchor = RefObject<HTMLElement | null>
-type Target = { x: number; y: number; s: number }
-
-/** Maps the anchor element's box onto world units at z = 0, kept in a ref for useFrame. */
-function useAnchorTarget(anchor: Anchor, host: Anchor) {
-  const { viewport, camera, size } = useThree()
-  const target = useRef<Target>({ x: 0, y: 0, s: 1 })
-  useEffect(() => {
-    const measure = () => {
-      const a = anchor.current?.getBoundingClientRect()
-      const h = host.current?.getBoundingClientRect()
-      if (!a || !h) return
-      const vp = viewport.getCurrentViewport(camera, [0, 0, 0])
-      const cx = (a.left + a.width / 2 - h.left) / h.width
-      const cy = (a.top + a.height / 2 - h.top) / h.height
-      const fit = Math.min((a.height / h.height) * vp.height, (a.width / h.width) * vp.width * 1.4)
-      target.current = { x: (cx - 0.5) * vp.width, y: -(cy - 0.5) * vp.height, s: (fit * 0.9) / (PEAR_HEIGHT + 0.75) }
-    }
-    measure()
-    const ro = new ResizeObserver(measure)
-    if (anchor.current) ro.observe(anchor.current)
-    if (host.current) ro.observe(host.current)
-    return () => ro.disconnect()
-  }, [anchor, host, viewport, camera, size])
-  return target
-}
-
-function Pear({ target, calm }: { target: RefObject<Target>; calm: boolean }) {
+function Fox({ target, calm }: { target: RefObject<Target>; calm: boolean }) {
   const outer = useRef<THREE.Group>(null!)
   const spin = useRef<THREE.Group>(null!)
-  const leaf = useRef<THREE.Mesh>(null!)
-  const body = usePearGeometry()
-  const stemGeo = useStemGeometry()
-  const leafGeo = useLeafGeometry()
+  const ears = useRef<THREE.Group>(null!)
+  const body = useFoxGeometry()
   const pointer = useRef({ x: 0, y: 0 })
   const born = useRef<number | null>(null)
 
@@ -243,47 +167,84 @@ function Pear({ target, calm }: { target: RefObject<Target>; calm: boolean }) {
     // levitation: slow bob and drift
     outer.current.position.set(x + Math.sin(t * 0.37) * 0.04 * amp, y + Math.sin(t * 0.9) * 0.1 * amp - (1 - intro) * 0.8, 0)
     outer.current.scale.setScalar(s * (0.8 + 0.2 * intro))
-    // twist one way, then the other; the tilt runs out of phase
-    spin.current.rotation.y = Math.sin(t * 0.42) * 1.35 * amp + Math.sin(t * 0.17) * 0.5 * amp
-    outer.current.rotation.z = Math.sin(t * 0.6 + 1.2) * 0.09 * amp + pointer.current.x * -0.12
-    outer.current.rotation.x = Math.cos(t * 0.5) * 0.06 * amp + pointer.current.y * 0.1
-    leaf.current.rotation.z = 0.5 + Math.sin(t * 1.6) * 0.08 * amp
+    // looks one way, then the other, and follows the cursor a little
+    spin.current.rotation.y = Math.sin(t * 0.42) * 0.38 * amp + Math.sin(t * 0.17) * 0.14 * amp + pointer.current.x * 0.4
+    outer.current.rotation.z = Math.sin(t * 0.6 + 1.2) * 0.09 * amp
+    outer.current.rotation.x = Math.cos(t * 0.5) * 0.06 * amp + pointer.current.y * 0.25
+    // a quick ear twitch every few seconds
+    const tw = Math.max(0, Math.sin(t * 1.3) - 0.94) * 4
+    ears.current.scale.set(1, 1 - tw * 0.04, 1)
   })
 
+  const eye = { color: '#1c120b', roughness: 0.08, clearcoat: 1, clearcoatRoughness: 0.02 }
   return (
     <group ref={outer}>
       <group ref={spin}>
-        <mesh geometry={body}>
-          <meshPhysicalMaterial
-            vertexColors
-            transmission={1}
-            thickness={0.35}
-            roughness={0.015}
-            ior={1.3}
-            dispersion={4}
-            clearcoat={1}
-            clearcoatRoughness={0.02}
-            iridescence={0.2}
-            iridescenceIOR={1.3}
-            iridescenceThicknessRange={[150, 420]}
-            specularIntensity={1}
-            attenuationColor="#e4f2c6"
-            attenuationDistance={6}
-            envMapIntensity={0.9}
-          />
-        </mesh>
-        <mesh geometry={stemGeo}>
-          <meshPhysicalMaterial color="#7a5836" roughness={0.55} clearcoat={0.4} />
-        </mesh>
-        <mesh ref={leaf} geometry={leafGeo} position={[STEM_TOP.x + 0.1, STEM_TOP.y + 0.27, STEM_TOP.z + 0.03]} rotation={[0.35, -0.45, 0.5]}>
-          <meshPhysicalMaterial color="#5fb14a" roughness={0.1} transmission={0.8} thickness={0.2} ior={1.35} clearcoat={1} side={THREE.DoubleSide} />
+        <group ref={ears}>
+          <mesh geometry={body}>
+            <meshPhysicalMaterial
+              vertexColors
+              transmission={1}
+              thickness={0.5}
+              roughness={0.03}
+              ior={1.3}
+              dispersion={3}
+              clearcoat={1}
+              clearcoatRoughness={0.03}
+              iridescence={0.15}
+              iridescenceIOR={1.3}
+              iridescenceThicknessRange={[150, 420]}
+              specularIntensity={1}
+              attenuationColor="#ffe2b8"
+              attenuationDistance={6}
+              envMapIntensity={0.9}
+            />
+          </mesh>
+        </group>
+        {/* big cartoon eyes with a catchlight, and a glossy nose */}
+        {[-1, 1].map(s => (
+          <group key={s} position={[s * 0.38, 0.12 - FOX_CENTRE, 0.74]} rotation={[0, s * 0.4, 0]}>
+            <mesh scale={[1, 1.3, 0.55]}><sphereGeometry args={[0.16, 32, 32]} /><meshPhysicalMaterial {...eye} /></mesh>
+            <mesh position={[0.05, 0.08, 0.08]}><sphereGeometry args={[0.045, 16, 16]} /><meshBasicMaterial color="#ffffff" /></mesh>
+          </group>
+        ))}
+        <mesh position={[0, -0.12 - FOX_CENTRE, 1.33]} scale={[1.3, 0.85, 0.9]}>
+          <sphereGeometry args={[0.13, 32, 32]} />
+          <meshPhysicalMaterial {...eye} />
         </mesh>
       </group>
     </group>
   )
 }
 
-/** Two thin orbits and a lime satellite around the pear. Opaque, so the glass refracts them too. */
+type Anchor = RefObject<HTMLElement | null>
+type Target = { x: number; y: number; s: number }
+
+/** Maps the anchor element's box onto world units at z = 0, kept in a ref for useFrame. */
+function useAnchorTarget(anchor: Anchor, host: Anchor) {
+  const { viewport, camera, size } = useThree()
+  const target = useRef<Target>({ x: 0, y: 0, s: 1 })
+  useEffect(() => {
+    const measure = () => {
+      const a = anchor.current?.getBoundingClientRect()
+      const h = host.current?.getBoundingClientRect()
+      if (!a || !h) return
+      const vp = viewport.getCurrentViewport(camera, [0, 0, 0])
+      const cx = (a.left + a.width / 2 - h.left) / h.width
+      const cy = (a.top + a.height / 2 - h.top) / h.height
+      const fit = Math.min((a.height / h.height) * vp.height, (a.width / h.width) * vp.width * 1.4)
+      target.current = { x: (cx - 0.5) * vp.width, y: -(cy - 0.5) * vp.height, s: (fit * 0.9) / (FOX_HEIGHT + 0.15) }
+    }
+    measure()
+    const ro = new ResizeObserver(measure)
+    if (anchor.current) ro.observe(anchor.current)
+    if (host.current) ro.observe(host.current)
+    return () => ro.disconnect()
+  }, [anchor, host, viewport, camera, size])
+  return target
+}
+
+/** Two thin orbits and an amber satellite around the fox. Opaque, so the glass refracts them too. */
 function Orbits({ target, calm }: { target: RefObject<Target>; calm: boolean }) {
   const group = useRef<THREE.Group>(null!)
   const a = useRef<THREE.Mesh>(null!)
@@ -308,24 +269,24 @@ function Orbits({ target, calm }: { target: RefObject<Target>; calm: boolean }) 
       <group rotation={[1.25, 0.18, 0]}>
         <mesh ref={a}>
           <torusGeometry args={[1.95, 0.006, 8, 220]} />
-          <meshBasicMaterial color="#0f2417" />
+          <meshBasicMaterial color="#13281e" />
           <mesh ref={sat}>
             <sphereGeometry args={[0.055, 24, 24]} />
-            <meshBasicMaterial color="#c8f25a" />
+            <meshBasicMaterial color="#f5b041" />
           </mesh>
         </mesh>
       </group>
       <group rotation={[1.1, -0.5, 0.35]}>
         <mesh ref={b}>
           <torusGeometry args={[2.3, 0.004, 8, 240]} />
-          <meshBasicMaterial color="#2f7a37" />
+          <meshBasicMaterial color="#b04f18" />
         </mesh>
       </group>
     </group>
   )
 }
 
-/** Giant wordmark behind the pear, rendered in WebGL so the glass bends it. */
+/** Giant wordmark behind the fox, rendered in WebGL so the glass bends it. */
 function Wordmark({ target }: { target: RefObject<Target> }) {
   const { viewport, camera, size } = useThree()
   const ref = useRef<THREE.Mesh>(null!)
@@ -337,14 +298,14 @@ function Wordmark({ target }: { target: RefObject<Target> }) {
     const t = clock.elapsedTime
     if (born.current === null) born.current = t
     const intro = 1 - Math.pow(1 - Math.min((t - born.current) / 1.4, 1), 3)
-    // follow the pear's height; perspective scales the anchor from z=0 to z=Z
+    // follow the fox's height; perspective scales the anchor from z=0 to z=Z
     const k = (camera.position.z - Z) / camera.position.z
     ref.current.position.set(0, target.current.y * k, Z)
     const m = ref.current.material as THREE.Material
     m.opacity = intro
   })
   return (
-    <Text ref={ref} font={wordmarkFont} fontSize={fontSize} letterSpacing={-0.02} anchorX="center" anchorY="middle" color="#0f2417" material-transparent={false}>
+    <Text ref={ref} font={wordmarkFont} fontSize={fontSize} letterSpacing={-0.02} anchorX="center" anchorY="middle" color="#13281e" material-transparent={false}>
       БАБИЕВА
     </Text>
   )
@@ -357,12 +318,12 @@ function Lights() {
       <directionalLight position={[3, 5, 4]} intensity={1.4} />
       <Environment resolution={256} frames={1}>
         {/* dark room with a few crisp strips: reflections stay as highlights instead of fogging the glass */}
-        <color attach="background" args={['#1d3325']} />
+        <color attach="background" args={['#2a1c12']} />
         <Lightformer form="rect" intensity={4} position={[-2.5, 2, 3]} rotation-y={0.5} scale={[0.35, 5, 1]} color="#ffffff" />
-        <Lightformer form="rect" intensity={3} position={[2.8, 1, 3]} rotation-y={-0.6} scale={[0.25, 4, 1]} color="#f4ffe6" />
+        <Lightformer form="rect" intensity={3} position={[2.8, 1, 3]} rotation-y={-0.6} scale={[0.25, 4, 1]} color="#fff3e2" />
         <Lightformer form="rect" intensity={2} position={[0, 5, 1]} rotation-x={Math.PI / 2} scale={[4, 0.4, 1]} color="#ffffff" />
-        <Lightformer form="circle" intensity={1.5} position={[0, -4, 2]} scale={2} color="#b5e08f" />
-        <Lightformer form="rect" intensity={1.2} position={[3, -1, -3]} scale={[2, 2, 1]} color="#ffc4d6" />
+        <Lightformer form="circle" intensity={1.5} position={[0, -4, 2]} scale={2} color="#f5b041" />
+        <Lightformer form="rect" intensity={1.2} position={[3, -1, -3]} scale={[2, 2, 1]} color="#ffd2a6" />
       </Environment>
     </>
   )
@@ -376,13 +337,13 @@ function Scene({ anchor, host, calm }: { anchor: Anchor; host: Anchor; calm: boo
       <Lights />
       <Suspense fallback={null}><Wordmark target={target} /></Suspense>
       <Orbits target={target} calm={calm} />
-      <Pear target={target} calm={calm} />
+      <Fox target={target} calm={calm} />
     </>
   )
 }
 
-/** Full-bleed hero canvas: wavy gradient, wordmark, orbits and the glass pear aligned to `anchor`. */
-export function PearScene({ anchor, host }: { anchor: Anchor; host: Anchor }) {
+/** Full-bleed hero canvas: wavy gradient, wordmark, orbits and the glass fox aligned to `anchor`. */
+export function FoxScene({ anchor, host }: { anchor: Anchor; host: Anchor }) {
   const [visible, setVisible] = useState(true)
   const lowPower = useMemo(() => matchMedia('(max-width: 767px)').matches || (navigator.hardwareConcurrency ?? 8) <= 4, [])
   const calm = useMemo(() => matchMedia('(prefers-reduced-motion: reduce)').matches, [])

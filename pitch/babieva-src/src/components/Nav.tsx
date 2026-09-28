@@ -50,7 +50,7 @@ export function Nav() {
           initial={{ y: -30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className={cn('mx-auto flex h-14 max-w-7xl items-center justify-between gap-6 rounded-full pl-6 pr-2 transition-shadow md:h-16', solid ? 'border border-white/80 bg-[#f3f8f0]/95 shadow-[0_20px_50px_-30px_rgba(15,36,23,.55)] backdrop-blur-xl' : 'glass')}
+          className={cn('mx-auto flex h-14 max-w-7xl items-center justify-between gap-6 rounded-full pl-6 pr-2 transition-shadow md:h-16', solid ? 'border border-white/80 bg-[#fbf4ea]/95 shadow-[0_20px_50px_-30px_rgba(19,40,30,.55)] backdrop-blur-xl' : 'glass')}
         >
           <Logo />
           <nav aria-label="Разделы" className="hidden items-center gap-1 lg:flex">
@@ -67,7 +67,7 @@ export function Nav() {
               <Phone className="h-4 w-4" /> {BRAND.phone}
             </a>
             <button onClick={() => booking.open()} className="sheen hidden h-10 items-center rounded-full bg-foreground px-5 text-sm font-semibold text-background sm:flex md:h-12 md:px-6">
-              Записаться{b.cart.length > 0 && <span className="ml-2 grid h-5 min-w-5 place-items-center rounded-full bg-lime px-1 font-mono text-xs text-foreground">{b.cart.length}</span>}
+              Записаться{b.cart.length > 0 && <span className="ml-2 grid h-5 min-w-5 place-items-center rounded-full bg-amber px-1 font-mono text-xs text-foreground">{b.cart.length}</span>}
             </button>
             <button onClick={() => setOpen(true)} className="grid h-10 w-10 place-items-center rounded-full lg:hidden" aria-label="Открыть меню" aria-expanded={open}>
               <Menu className="h-5 w-5" />
@@ -117,7 +117,7 @@ export function MobileBar() {
     <AnimatePresence>
       {show && (
         <motion.div initial={{ y: 90 }} animate={{ y: 0 }} exit={{ y: 90 }} transition={{ type: 'spring', stiffness: 260, damping: 28 }}
-          className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-2 gap-2 rounded-full border border-white/80 bg-[#f3f8f0]/95 p-1.5 shadow-[0_20px_50px_-30px_rgba(15,36,23,.55)] backdrop-blur-xl sm:hidden">
+          className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-2 gap-2 rounded-full border border-white/80 bg-[#fbf4ea]/95 p-1.5 shadow-[0_20px_50px_-30px_rgba(19,40,30,.55)] backdrop-blur-xl sm:hidden">
           <a href={BRAND.phoneHref} className="flex h-12 items-center justify-center gap-2 rounded-full text-sm font-semibold"><Phone className="h-4 w-4" /> Позвонить</a>
           <button onClick={() => booking.open()} className="h-12 rounded-full bg-foreground text-sm font-semibold text-background">Записаться</button>
         </motion.div>

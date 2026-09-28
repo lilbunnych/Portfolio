@@ -5,7 +5,7 @@ import { BRAND } from '@/data'
 import { booking } from '@/store'
 
 // three.js is the heaviest chunk: load it after the page shell has painted
-const PearScene = lazy(() => import('@/three/PearScene').then(m => ({ default: m.PearScene })))
+const FoxScene = lazy(() => import('@/three/FoxScene').then(m => ({ default: m.FoxScene })))
 
 const EASE = [0.16, 1, 0.3, 1] as const
 
@@ -30,12 +30,12 @@ export function Hero() {
   return (
     <section ref={host} className="relative isolate flex min-h-[100svh] w-full flex-col overflow-hidden">
       {/* CSS stand-in while WebGL boots, or if it is unavailable */}
-      <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(60%_50%_at_70%_60%,#b8dba2_0%,transparent_70%),radial-gradient(50%_60%_at_20%_20%,#f1f7ec_0%,transparent_70%),linear-gradient(160deg,#eaf3e6,#d3e9c6)]" />
+      <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(60%_50%_at_70%_60%,#f3c58a_0%,transparent_70%),radial-gradient(50%_60%_at_20%_20%,#fdf6ec_0%,transparent_70%),linear-gradient(160deg,#f8efe3,#f1d6b4)]" />
       <div className="absolute inset-0 -z-10">
-        <Suspense fallback={null}><PearScene anchor={anchor} host={host} /></Suspense>
+        <Suspense fallback={null}><FoxScene anchor={anchor} host={host} /></Suspense>
       </div>
 
-      {/* the pear is drawn in WebGL over this empty box */}
+      {/* the fox is drawn in WebGL over this empty box */}
       <div className="relative flex flex-1 items-center justify-center pb-4 pt-24 md:pt-28">
         <div ref={anchor} aria-hidden className="h-[40svh] w-[64vw] max-w-[520px] md:h-[54svh] md:w-[36vw]" />
       </div>
@@ -52,7 +52,7 @@ export function Hero() {
           <p className="mt-3 flex items-center gap-2 text-sm font-medium sm:hidden">
             <Star className="h-4 w-4 fill-foreground" /> {BRAND.rating}
             <span className="text-muted">·</span>
-            <span className={status.open ? 'live-dot h-2 w-2 rounded-full bg-leaf' : 'h-2 w-2 rounded-full bg-foreground/30'} aria-hidden />
+            <span className={status.open ? 'live-dot h-2 w-2 rounded-full bg-rust' : 'h-2 w-2 rounded-full bg-foreground/30'} aria-hidden />
             {status.label}
           </p>
           <div className="mt-5 flex flex-wrap items-center gap-3">
@@ -68,14 +68,14 @@ export function Hero() {
           <div>
             <div className="flex items-center gap-2">
               <span className="font-display text-4xl font-bold">{BRAND.rating}</span>
-              <Star className="h-5 w-5 fill-lime text-lime" />
+              <Star className="h-5 w-5 fill-amber text-amber" />
             </div>
             <p className="mt-1 tabular-nums text-xs text-background/60">{BRAND.ratings} оценок</p>
           </div>
           <div className="h-12 w-px bg-background/15" />
           <div className="text-sm">
             <p className="flex items-center gap-2 font-semibold">
-              <span className={status.open ? 'live-dot h-2 w-2 rounded-full bg-lime' : 'h-2 w-2 rounded-full bg-background/40'} aria-hidden />
+              <span className={status.open ? 'live-dot h-2 w-2 rounded-full bg-amber' : 'h-2 w-2 rounded-full bg-background/40'} aria-hidden />
               {status.label}
             </p>
             <p className="mt-1 flex items-center gap-2 text-background/60"><Clock className="h-3.5 w-3.5" /> {BRAND.hours}</p>

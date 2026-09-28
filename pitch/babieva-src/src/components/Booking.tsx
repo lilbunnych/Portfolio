@@ -144,7 +144,7 @@ export function BookingDialog() {
                           <button onClick={() => booking.toggle(item)} aria-pressed={on} className="flex w-full items-center gap-3 border-b border-foreground/10 py-3.5 text-left">
                             <span className="min-w-0 flex-1 text-[.95rem] font-medium leading-snug">{s.name}</span>
                             <span className="shrink-0 text-sm font-semibold tabular-nums text-foreground/80">{rub(s.price)}</span>
-                            <span className={cn('grid h-7 w-7 shrink-0 place-items-center rounded-full border', on ? 'border-foreground bg-foreground text-lime' : 'border-foreground/20')}>
+                            <span className={cn('grid h-7 w-7 shrink-0 place-items-center rounded-full border', on ? 'border-foreground bg-foreground text-amber' : 'border-foreground/20')}>
                               {on ? <Check className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />}
                             </span>
                           </button>
@@ -159,8 +159,8 @@ export function BookingDialog() {
                 <div className="space-y-3">
                   {[{ id: 'any', name: 'Любой мастер', role: 'Администратор подберёт свободного', note: '' }, ...masters].map(m => (
                     <button key={m.id} onClick={() => booking.set({ master: m.id })} aria-pressed={b.master === m.id}
-                      className={cn('flex w-full items-center gap-4 rounded-3xl border p-5 text-left transition-colors', b.master === m.id ? 'border-foreground bg-lime/40' : 'border-foreground/10 bg-card hover:border-foreground/30')}>
-                      <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-lime text-lg font-extrabold">{m.name[0]}</span>
+                      className={cn('flex w-full items-center gap-4 rounded-3xl border p-5 text-left transition-colors', b.master === m.id ? 'border-foreground bg-amber/40' : 'border-foreground/10 bg-card hover:border-foreground/30')}>
+                      <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-amber text-lg font-extrabold">{m.name[0]}</span>
                       <span><b className="block">{m.name}</b><span className="text-sm text-foreground/65">{m.role}</span></span>
                     </button>
                   ))}
@@ -189,7 +189,7 @@ export function BookingDialog() {
                         return (
                           <button key={t} disabled={off} onClick={() => booking.set({ time: t })} aria-pressed={b.time === t}
                             className={cn('rounded-full border py-2.5 tabular-nums text-sm font-semibold tabular-nums transition-colors disabled:cursor-not-allowed disabled:border-transparent disabled:text-foreground/30 disabled:line-through',
-                              b.time === t ? 'border-foreground bg-foreground text-lime' : 'border-foreground/15 bg-card hover:border-foreground/40')}>
+                              b.time === t ? 'border-foreground bg-foreground text-amber' : 'border-foreground/15 bg-card hover:border-foreground/40')}>
                             {t}
                           </button>
                         )
@@ -206,17 +206,17 @@ export function BookingDialog() {
                   <div className="flex flex-col gap-2">
                     <label htmlFor="bk-name" className="text-sm font-semibold">Имя</label>
                     <input id="bk-name" value={name} onChange={e => setName(e.target.value)} autoComplete="given-name" aria-invalid={!!errors.name} aria-describedby="bk-name-err"
-                      className="rounded-2xl border border-foreground/20 bg-card px-4 py-3.5 outline-none focus:border-leaf aria-[invalid=true]:border-red-700" />
+                      className="rounded-2xl border border-foreground/20 bg-card px-4 py-3.5 outline-none focus:border-rust aria-[invalid=true]:border-red-700" />
                     {errors.name && <p id="bk-name-err" className="text-sm text-red-800">{errors.name}</p>}
                   </div>
                   <div className="flex flex-col gap-2">
                     <label htmlFor="bk-phone" className="text-sm font-semibold">Телефон</label>
                     <input id="bk-phone" value={phone} onChange={e => setPhone(formatPhone(e.target.value))} inputMode="tel" autoComplete="tel" placeholder="+7 (___) ___-__-__" aria-invalid={!!errors.phone} aria-describedby="bk-phone-err"
-                      className="rounded-2xl border border-foreground/20 bg-card px-4 py-3.5 tabular-nums outline-none placeholder:text-foreground/45 focus:border-leaf aria-[invalid=true]:border-red-700" />
+                      className="rounded-2xl border border-foreground/20 bg-card px-4 py-3.5 tabular-nums outline-none placeholder:text-foreground/45 focus:border-rust aria-[invalid=true]:border-red-700" />
                     {errors.phone ? <p id="bk-phone-err" className="text-sm text-red-800">{errors.phone}</p> : <p className="text-sm text-foreground/60">Администратор позвонит, чтобы подтвердить запись.</p>}
                   </div>
                   <label className="flex items-start gap-3 text-sm text-foreground/75">
-                    <input type="checkbox" checked={agree} onChange={e => setAgree(e.target.checked)} className="mt-0.5 h-4 w-4 accent-[var(--color-leaf)]" />
+                    <input type="checkbox" checked={agree} onChange={e => setAgree(e.target.checked)} className="mt-0.5 h-4 w-4 accent-[var(--color-rust)]" />
                     Даю согласие на обработку персональных данных для записи
                   </label>
                   {errors.agree && <p className="text-sm text-red-800">{errors.agree}</p>}
@@ -226,7 +226,7 @@ export function BookingDialog() {
 
               {b.step === 4 && (
                 <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="pt-4">
-                  <div className="grid h-16 w-16 place-items-center rounded-full bg-lime text-foreground"><Check className="h-8 w-8" /></div>
+                  <div className="grid h-16 w-16 place-items-center rounded-full bg-amber text-foreground"><Check className="h-8 w-8" /></div>
                   <h3 className="mt-6 font-display text-2xl font-bold uppercase leading-tight">Вы записаны, {name.trim()}.</h3>
                   <p className="mt-3 text-foreground/70">{dayLabel}, {b.time}. {master ? master.name : 'Мастера подберёт администратор'}. Мы перезвоним на {phone}.</p>
                   <ul className="mt-6 space-y-1 text-sm text-foreground/75">{b.cart.map(c => <li key={c.cat + c.name}>{c.name}</li>)}</ul>
@@ -234,8 +234,8 @@ export function BookingDialog() {
                     <a href={ics} download="grusha.ics" className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-3 text-sm font-semibold text-background"><CalendarPlus className="h-4 w-4" /> В календарь</a>
                     <a href={BRAND.phoneHref} className="inline-flex items-center gap-2 rounded-full border border-foreground/20 px-5 py-3 text-sm font-semibold"><Phone className="h-4 w-4" /> Позвонить</a>
                   </div>
-                  <p className="mt-10 rounded-2xl bg-mint p-4 text-sm text-foreground/70">Это демо-версия сайта: заявка никуда не отправляется. В рабочей версии запись уходит администратору или в систему онлайн-записи салона.</p>
-                  <button onClick={() => { booking.reset(); setName(''); setPhone('') }} className="mt-6 text-sm font-semibold text-leaf underline-offset-4 hover:underline">Новая запись</button>
+                  <p className="mt-10 rounded-2xl bg-apricot p-4 text-sm text-foreground/70">Это демо-версия сайта: заявка никуда не отправляется. В рабочей версии запись уходит администратору или в систему онлайн-записи салона.</p>
+                  <button onClick={() => { booking.reset(); setName(''); setPhone('') }} className="mt-6 text-sm font-semibold text-rust underline-offset-4 hover:underline">Новая запись</button>
                 </motion.div>
               )}
             </div>

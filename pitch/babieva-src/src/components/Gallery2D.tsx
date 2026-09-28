@@ -21,7 +21,7 @@ function Card({ shot, index, container, skew, onOpen }: { shot: Shot; index: num
       ref={ref}
       onClick={() => onOpen(index)}
       style={{ skewX: skew, scale }}
-      className="group relative aspect-[3/4] w-[72vw] shrink-0 snap-start overflow-hidden rounded-[28px] bg-mint text-left sm:w-[42vw] md:w-[30vw] lg:w-[22vw]"
+      className="group relative aspect-[3/4] w-[72vw] shrink-0 snap-start overflow-hidden rounded-[28px] bg-apricot text-left sm:w-[42vw] md:w-[30vw] lg:w-[22vw]"
       aria-label={`${shot.title}, ${shot.tag}. Открыть крупно`}
     >
       <motion.img

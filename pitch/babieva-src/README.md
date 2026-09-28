@@ -2,7 +2,7 @@
 
 Quick pitch prototype for the beauty studio of Anastasia Babieva in Khimki (Yubileyny prospekt, 7A).
 Services, prices, photos, team names and reviews come from the studio's Yandex Maps card (organisation 220631725185).
-The design is a one-to-one copy of the «Груша» prototype (`../grusha-src`): same mint palette, glass panels, 3D glass pear hero, filters, gallery and booking; only the content and the wordmark changed.
+Layout, components and effects come from the «Груша» prototype (`../grusha-src`): glass panels, filters, gallery and booking. The hero object is a cartoon fox head of translucent amber glass (the studio's logo is a fox), and the palette follows the fox: warm cream, amber, rust and the logo's forest green.
 
 ## Run
 
