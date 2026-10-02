@@ -17,3 +17,7 @@ Monorepo of independent demo projects (websites and apps) for a developer portfo
 
 - Ask the user about visual style before building UI; do not assume a default aesthetic.
 - For UI work, use the taste-skill and ui-ux-pro-max skills.
+
+## Pitch demos for real businesses (`pitch/`)
+
+`pitch/<name>/` holds only the **published builds** of pitch demos (GitHub Pages serves them at `/Portfolio/pitch/<name>/`). Their sources live in separate private projects next to this repo: `~/Studio/<name>` (grusha, borukhson, babieva, tina, m13, real, natali, kosmos, yakhont). Each project builds into `../portfolio/pitch/<name>`; commit and push this repo to publish. Do not edit the builds here by hand.
