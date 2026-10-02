@@ -12,3 +12,7 @@ ruvector.db
 *.db
 .swarm/
 .hive-mind/
+
+# local working notes, not for the public repo
+_snippets/handoff.md
+_snippets/design-grusha.md
