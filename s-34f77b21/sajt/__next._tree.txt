@@ -1,0 +1,4 @@
+:HL["/Portfolio/s-34f77b21/_next/static/chunks/3ib04gmcdfazq.css","style"]
+:HL["/Portfolio/s-34f77b21/fonts/roboto-flex-cyrillic.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/Portfolio/s-34f77b21/fonts/inter-tight-cyrillic.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+0:{"tree":{"name":"","param":null,"prefetchHints":4112,"slots":{"children":{"name":"sajt","param":null,"prefetchHints":4160,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}}}},"staleTime":300,"buildId":"azwLBWNrxA8ypbU_Kz3Kp"}
