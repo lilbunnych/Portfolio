@@ -1,0 +1,942 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Что готовим</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#EEF1EA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121815" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Что готовим">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Manrope:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+<header><div class="wrap">
+  <div><h1>Что готовим</h1><button class="citybtn" data-pickcity id="hcity" aria-label="Сменить город">Москва</button><span class="sub" id="hsub" hidden></span></div>
+  <button class="pill" data-tab="cart" aria-label="Открыть список покупок"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span id="htotal">0 ₽</span></button>
+</div></header>
+
+<main><div class="wrap" id="view"></div></main>
+
+<nav class="tabs" aria-label="Разделы"><div class="in">
+  <button data-tab="dishes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 13h18a9 9 0 0 1-18 0Z"/><path d="M8 9c0-2 2-2 2-4M13 9c0-2 2-2 2-4"/></svg>Блюда</button>
+  <button data-tab="cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2.4 11h11L21 8H7"/><circle cx="9.5" cy="19.5" r="1.5"/><circle cx="17" cy="19.5" r="1.5"/></svg>Список<span class="badge" id="badge" hidden>0</span></button>
+  <button data-tab="prices"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12V4h8l10 10-8 8L3 12Z"/><circle cx="7.5" cy="8.5" r="1.5"/></svg>Цены</button>
+</div></nav>
+
+<script src="recipes.js"></script>
+<script src="recipes-more.js"></script>
+<script src="recipes-more2.js"></script>
+<script src="cook.js"></script>
+<script>
+const STORES=[
+  {id:'p5',name:'Пятёрочка',inn:'Пятёрочке',c:'--s1',f:1.00},
+  {id:'mg',name:'Магнит',inn:'Магните',c:'--s2',f:0.97},
+  {id:'ch',name:'Чижик',inn:'Чижике',c:'--s6',f:0.87},
+  {id:'vv',name:'ВкусВилл',inn:'ВкусВилле',c:'--s4',f:1.20},
+  {id:'pr',name:'Перекрёсток',inn:'Перекрёстке',c:'--s3',f:1.12},
+  {id:'ln',name:'Лента',inn:'Ленте',c:'--s5',f:0.95}];
+
+// [название, единица, размер упаковки, подпись упаковки, базовая цена (≈Пятёрочка), есть дома]
+const PR={
+ beef:['Говядина (лопатка)','г',500,'500 г',449],
+ pork:['Свинина (шея)','г',500,'500 г',329],
+ lamb:['Баранина','г',500,'500 г',599],
+ fillet:['Куриное филе','г',900,'900 г',379],
+ thighs:['Куриные бёдра','г',1000,'1 кг',299],
+ mince:['Фарш свино-говяжий','г',400,'400 г',249],
+ beefmince:['Фарш говяжий','г',400,'400 г',299],
+ liver:['Печень куриная','г',500,'500 г',149],
+ knuckle:['Свиная рулька','г',1000,'1 кг',349],
+ ribs:['Рёбрышки свиные копчёные','г',500,'500 г',349],
+ salo:['Сало солёное','г',300,'300 г',199],
+ bacon:['Бекон','г',150,'150 г',189],
+ pepperoni:['Колбаса пепперони','г',150,'150 г',199],
+ ham:['Ветчина','г',300,'300 г',239],
+ sausage:['Колбаса варёная','г',400,'400 г',289],
+ sausages:['Сосиски','г',450,'450 г',279],
+ salmon:['Лосось (филе)','г',300,'300 г',899],
+ whitefish:['Треска (филе)','г',500,'500 г',399],
+ shrimp:['Креветки очищенные','г',500,'500 г',699],
+ herring:['Сельдь (филе)','г',300,'300 г',299],
+ tuna:['Тунец консервированный','г',185,'185 г',179],
+ crab:['Крабовые палочки','г',200,'200 г',149],
+ potato:['Картофель','г',1000,'1 кг',59],
+ onion:['Лук репчатый','г',1000,'1 кг',45],
+ carrot:['Морковь','г',1000,'1 кг',49],
+ beet:['Свёкла','г',1000,'1 кг',45],
+ cabbage:['Капуста белокочанная','г',1000,'1 кг',39],
+ tomato:['Помидоры','г',1000,'1 кг',249],
+ cherry:['Помидоры черри','г',250,'250 г',159],
+ cucumber:['Огурцы','г',1000,'1 кг',199],
+ pepper:['Перец болгарский','г',1000,'1 кг',329],
+ zucchini:['Кабачки','г',1000,'1 кг',149],
+ eggplant:['Баклажаны','г',1000,'1 кг',199],
+ mushrooms:['Шампиньоны','г',400,'400 г',159],
+ broccoli:['Брокколи замороженная','г',400,'400 г',199],
+ greenbeans:['Фасоль стручковая замор.','г',400,'400 г',129],
+ spinach:['Шпинат','г',150,'150 г',159],
+ sorrel:['Щавель','г',100,'100 г',99],
+ lettuce:['Салат романо','шт',1,'1 шт',129],
+ celery:['Сельдерей стеблевой','г',300,'300 г',129],
+ leek:['Лук-порей','шт',1,'1 шт',149],
+ garlic:['Чеснок','г',100,'100 г',59],
+ ginger:['Имбирь','г',100,'100 г',59],
+ chili:['Перец чили','г',50,'50 г',69],
+ dill:['Укроп','г',50,'50 г',59],
+ parsley:['Петрушка','г',50,'50 г',59],
+ cilantro:['Кинза','г',50,'50 г',69],
+ greenonion:['Лук зелёный','г',50,'50 г',59],
+ basil:['Базилик','г',30,'30 г',99],
+ lemon:['Лимон','шт',1,'1 шт',39],
+ lime:['Лайм','шт',1,'1 шт',49],
+ orange:['Апельсины','г',1000,'1 кг',149],
+ apples:['Яблоки','г',1000,'1 кг',129],
+ avocado:['Авокадо','шт',1,'1 шт',129],
+ cherryfr:['Вишня замороженная','г',300,'300 г',199],
+ prunes:['Чернослив','г',200,'200 г',179],
+ rice:['Рис для плова','г',900,'900 г',119],
+ roundrice:['Рис круглозёрный','г',900,'900 г',109],
+ arborio:['Рис арборио','г',500,'500 г',199],
+ jasmine:['Рис жасмин','г',900,'900 г',229],
+ sushirice:['Рис для суши','г',500,'500 г',199],
+ buckwheat:['Гречка','г',900,'900 г',99],
+ millet:['Пшено','г',900,'900 г',79],
+ barley:['Крупа ячневая','г',700,'700 г',59],
+ cornmeal:['Крупа кукурузная','г',700,'700 г',79],
+ spaghetti:['Спагетти','г',450,'450 г',89],
+ penne:['Макароны пенне','г',450,'450 г',89],
+ lasagna:['Листы для лазаньи','г',500,'500 г',249],
+ eggnoodles:['Лапша яичная','г',300,'300 г',129],
+ udon:['Лапша удон','г',300,'300 г',159],
+ ricenoodles:['Лапша рисовая','г',200,'200 г',129],
+ ricepaper:['Рисовая бумага','г',100,'100 г',149],
+ flour:['Мука пшеничная','г',2000,'2 кг',109],
+ yeast:['Дрожжи сухие','г',11,'11 г',39],
+ breadcrumbs:['Панировочные сухари','г',200,'200 г',59],
+ bread:['Батон','г',300,'300 г',49],
+ ryebread:['Хлеб бородинский','г',400,'400 г',69],
+ baguette:['Багет','шт',1,'1 шт',89],
+ toast:['Хлеб для тостов','г',500,'500 г',99],
+ puff:['Тесто слоёное','г',500,'500 г',179],
+ savoiardi:['Печенье савоярди','г',200,'200 г',249],
+ tpaste:['Томатная паста','г',270,'270 г',99],
+ ctomato:['Томаты в собственном соку','г',400,'400 г',129],
+ beans:['Фасоль консервированная','г',400,'400 г',109],
+ peas:['Горошек консервированный','г',400,'400 г',89],
+ pickles:['Огурцы маринованные','г',680,'680 г',149],
+ sauerkraut:['Капуста квашеная','г',500,'500 г',149],
+ olives:['Оливки','г',300,'300 г',159],
+ pesto:['Соус песто','г',190,'190 г',299],
+ soy:['Соевый соус','мл',250,'250 мл',149],
+ ricevin:['Уксус рисовый','мл',150,'150 мл',149],
+ fishsauce:['Рыбный соус','мл',200,'200 мл',249],
+ sweetchili:['Соус сладкий чили','мл',200,'200 мл',159],
+ coconut:['Кокосовое молоко','мл',400,'400 мл',199],
+ tomyum:['Паста том ям','г',70,'70 г',199],
+ miso:['Паста мисо','г',300,'300 г',349],
+ tofu:['Тофу','г',300,'300 г',199],
+ nori:['Нори','шт',10,'10 листов',249],
+ sesame:['Кунжут','г',50,'50 г',59],
+ peanuts:['Арахис','г',200,'200 г',99],
+ curry:['Карри (приправа)','г',30,'30 г',79],
+ zira:['Зира','г',20,'20 г',69],
+ honey:['Мёд','г',250,'250 г',249],
+ starch:['Крахмал','г',200,'200 г',59],
+ cocoa:['Какао-порошок','г',100,'100 г',149],
+ chocolate:['Шоколад горький','г',90,'90 г',109],
+ coffee:['Кофе молотый','г',250,'250 г',399],
+ mustard:['Горчица','г',140,'140 г',79],
+ mayo:['Майонез','г',400,'400 г',109],
+ wine:['Вино красное сухое','мл',750,'750 мл',599],
+ winew:['Вино белое сухое','мл',750,'750 мл',549],
+ eggs:['Яйца С1','шт',10,'10 шт',109],
+ milk:['Молоко 3,2%','мл',1000,'1 л',89],
+ kefir:['Кефир 2,5%','мл',1000,'1 л',99],
+ cream:['Сливки 20%','мл',200,'200 мл',119],
+ sourcream:['Сметана 20%','г',300,'300 г',119],
+ tvorog:['Творог 9%','г',400,'400 г',219],
+ butter:['Масло сливочное 82%','г',180,'180 г',189],
+ cheese:['Сыр твёрдый','г',200,'200 г',249],
+ parmesan:['Сыр пармезан','г',180,'180 г',449],
+ mozzarella:['Моцарелла','г',250,'250 г',229],
+ mascarpone:['Маскарпоне','г',250,'250 г',299],
+ feta:['Сыр фета','г',200,'200 г',219],
+ oil:['Масло подсолнечное','мл',1000,'1 л',139,1],
+ olive:['Масло оливковое','мл',500,'500 мл',649],
+ salt:['Соль','г',1000,'1 кг',25,1],
+ bpepper:['Перец чёрный молотый','г',50,'50 г',59,1],
+ sugar:['Сахар','г',1000,'1 кг',89,1],
+ bayleaf:['Лавровый лист','г',10,'10 г',39,1],
+
+ capers:['Каперсы','г',100,'100 г',199],
+ gelatin:['Желатин','г',20,'20 г',49],
+ perlovka:['Крупа перловая','г',900,'900 г',69],
+ splitpeas:['Горох колотый','г',800,'800 г',79],
+ corn:['Кукуруза консервированная','г',340,'340 г',99],
+ soda:['Сода пищевая','г',500,'500 г',59,1],
+ pumpkin:['Тыква','г',1000,'1 кг',69],
+ oats:['Хлопья овсяные','г',500,'500 г',79],
+ buckflour:['Мука гречневая','г',500,'500 г',99],
+ cauliflower:['Капуста цветная','г',1000,'1 кг',199],
+ mussels:['Мидии в раковинах замор.','г',1000,'1 кг',599],
+ steak:['Стейк говяжий','г',400,'400 г',799],
+ duck:['Утиные ножки','г',1000,'1 кг',699],
+ cashew:['Орехи кешью','г',150,'150 г',259],
+ soba:['Лапша соба','г',300,'300 г',179],
+ kimchi:['Кимчи','г',300,'300 г',249],
+ gochujang:['Паста кочхуджан','г',200,'200 г',299],
+ sesameoil:['Масло кунжутное','мл',250,'250 мл',299],
+ banana:['Бананы','г',1000,'1 кг',139],
+
+ ricotta:['Сыр рикотта','г',250,'250 г',249],
+ jam:['Варенье','г',350,'350 г',189],
+ almonds:['Миндаль','г',150,'150 г',229],
+ icecream:['Мороженое пломбир','г',500,'500 г',299],
+ radish:['Редис','г',300,'300 г',99],
+ semolina:['Крупа манная','г',700,'700 г',69],
+ cranberry:['Клюква замороженная','г',300,'300 г',229],
+ berries:['Ягодная смесь замороженная','г',300,'300 г',219],
+ poppy:['Мак пищевой','г',200,'200 г',149],
+ chicken:['Курица целая','г',1800,'~1,8 кг',449],
+ currypaste:['Паста зелёного карри','г',100,'100 г',249],
+ creamcheese:['Сливочный сыр','г',200,'200 г',229],
+ tteok:['Рисовые клёцки токпокки','г',500,'500 г',349],
+ glassnoodle:['Лапша фунчоза','г',300,'300 г',169],
+ oyster:['Устричный соус','мл',200,'200 мл',229]
+};
+
+// ингредиенты на 4 порции: [id, название, кухня, тип, время, {продукт: количество}]
+const DL=[
+ // Итальянская
+ ['carbonara','Паста карбонара','Итальянская','Горячее','25 мин',{spaghetti:400,bacon:200,eggs:4,parmesan:100,bpepper:3,salt:10}],
+ ['bolognese','Паста болоньезе','Итальянская','Горячее','1 ч',{spaghetti:400,beefmince:500,ctomato:800,onion:100,carrot:100,celery:80,garlic:10,parmesan:50,olive:30,salt:10}],
+ ['lasagna','Лазанья','Итальянская','Горячее','1,5 ч',{lasagna:300,beefmince:600,ctomato:800,onion:150,carrot:100,milk:700,butter:60,flour:60,parmesan:100,mozzarella:250,salt:10}],
+ ['risotto','Ризотто с грибами','Итальянская','Горячее','40 мин',{arborio:350,mushrooms:400,onion:100,butter:50,parmesan:80,winew:150,garlic:10,salt:5}],
+ ['margherita','Пицца Маргарита','Итальянская','Выпечка','1,5 ч',{flour:400,yeast:7,olive:40,ctomato:400,mozzarella:250,basil:30,salt:8,sugar:5}],
+ ['pepperoni','Пицца пепперони','Итальянская','Выпечка','1,5 ч',{flour:400,yeast:7,olive:40,ctomato:400,mozzarella:250,pepperoni:150,salt:8}],
+ ['minestrone','Минестроне','Итальянская','Суп','50 мин',{potato:300,carrot:150,zucchini:300,celery:100,onion:100,beans:400,ctomato:400,penne:100,garlic:10,olive:30,parmesan:40,salt:10}],
+ ['caprese','Салат капрезе','Итальянская','Салат','10 мин',{tomato:500,mozzarella:250,basil:30,olive:40,salt:3}],
+ ['bruschetta','Брускетта с томатами','Итальянская','Закуска','15 мин',{baguette:1,cherry:500,garlic:10,basil:30,olive:40,salt:3}],
+ ['alfredo','Паста альфредо с курицей','Итальянская','Горячее','30 мин',{penne:400,fillet:500,cream:400,parmesan:100,butter:40,garlic:10,salt:8}],
+ ['shrimppasta','Спагетти с креветками','Итальянская','Горячее','25 мин',{spaghetti:400,shrimp:500,cherry:250,garlic:15,chili:10,olive:50,parsley:20,winew:100,salt:8}],
+ ['pesto','Паста с песто и черри','Итальянская','Горячее','20 мин',{penne:400,pesto:190,parmesan:50,cherry:250,salt:8}],
+ ['focaccia','Фокачча','Итальянская','Выпечка','2 ч',{flour:500,yeast:7,olive:80,salt:10,garlic:10,cherry:200}],
+ ['gnocchi','Картофельные ньокки','Итальянская','Горячее','1 ч',{potato:1000,flour:250,eggs:1,butter:60,parmesan:80,salt:8}],
+ ['parmigiana','Курица пармиджана','Итальянская','Горячее','50 мин',{fillet:800,breadcrumbs:150,eggs:2,flour:50,ctomato:400,mozzarella:250,parmesan:50,olive:60,salt:8}],
+ ['tiramisu','Тирамису','Итальянская','Десерт','30 мин + ночь',{mascarpone:500,eggs:4,sugar:100,savoiardi:200,coffee:20,cocoa:20}],
+ // Русская
+ ['shchi','Щи из свежей капусты','Русская','Суп','1,5 ч',{beef:500,cabbage:600,potato:400,carrot:150,onion:150,tpaste:50,dill:20,sourcream:200,bayleaf:2,salt:10}],
+ ['solyanka','Солянка мясная','Русская','Суп','1,5 ч',{beef:400,sausage:200,ham:200,sausages:200,pickles:300,olives:150,onion:150,tpaste:70,lemon:1,sourcream:150}],
+ ['ukha','Уха','Русская','Суп','50 мин',{salmon:300,whitefish:500,potato:400,onion:150,carrot:100,dill:20,bayleaf:2,bpepper:2,salt:10}],
+ ['pelmeni','Пельмени домашние','Русская','Горячее','2 ч',{flour:500,eggs:1,mince:800,onion:150,sourcream:200,salt:10}],
+ ['olivie','Оливье','Русская','Салат','1 ч',{potato:400,carrot:200,eggs:4,sausage:300,pickles:250,peas:400,mayo:250,onion:80,dill:15}],
+ ['shuba','Сельдь под шубой','Русская','Салат','1,5 ч',{herring:300,potato:400,carrot:300,beet:400,eggs:3,mayo:250,onion:80}],
+ ['vinegret','Винегрет','Русская','Салат','1 ч',{beet:500,potato:400,carrot:200,pickles:200,sauerkraut:300,peas:400,oil:50,onion:80}],
+ ['okroshka','Окрошка на кефире','Русская','Суп','40 мин',{kefir:1500,potato:400,cucumber:300,eggs:4,sausage:300,dill:20,greenonion:50,sourcream:150,salt:8}],
+ ['bliny','Блины','Русская','Завтрак','40 мин',{milk:1000,eggs:3,flour:300,sugar:40,oil:40,butter:50,salt:5}],
+ ['syrniki','Сырники','Русская','Завтрак','30 мин',{tvorog:500,eggs:2,flour:80,sugar:50,sourcream:150,oil:40}],
+ ['kotlety','Котлеты с пюре','Русская','Горячее','1 ч',{mince:800,bread:100,eggs:1,onion:150,garlic:10,potato:1000,milk:150,butter:40,oil:50,salt:10}],
+ ['kupech','Гречка по-купечески','Русская','Горячее','50 мин',{buckwheat:300,pork:500,onion:150,carrot:150,tpaste:40,oil:40,salt:10}],
+ ['buckwheat','Гречка с курицей','Русская','Горячее','40 мин',{buckwheat:300,fillet:600,onion:150,carrot:150,sourcream:150,oil:30,salt:10}],
+ ['stroganoff','Бефстроганов','Русская','Горячее','40 мин',{beef:600,onion:200,sourcream:300,flour:20,butter:30,tpaste:20,salt:8}],
+ ['golubtsy','Голубцы','Русская','Горячее','2 ч',{cabbage:1500,mince:600,roundrice:150,onion:150,carrot:150,tpaste:70,sourcream:200,salt:10}],
+ ['tefteli','Тефтели в томатном соусе','Русская','Горячее','1 ч',{mince:700,roundrice:100,onion:150,carrot:100,tpaste:70,sourcream:150,flour:30,salt:8}],
+ ['pirozhki','Пирожки с капустой','Русская','Выпечка','2,5 ч',{flour:600,milk:300,yeast:11,eggs:2,butter:60,cabbage:800,onion:150,oil:100,sugar:30,salt:10}],
+ ['oven','Курица с картошкой в духовке','Русская','Горячее','1 ч 10 мин',{thighs:1000,potato:1000,garlic:20,sourcream:150,dill:20,salt:10,bpepper:3,oil:30}],
+ // Белорусская
+ ['draniki','Драники','Белорусская','Горячее','40 мин',{potato:1500,onion:100,eggs:2,flour:60,sourcream:200,oil:100,salt:8}],
+ ['kolduny','Колдуны','Белорусская','Горячее','1 ч',{potato:1500,mince:500,onion:150,eggs:1,flour:50,sourcream:200,oil:80,salt:10}],
+ ['machanka','Мачанка с блинами','Белорусская','Горячее','1 ч',{pork:500,ribs:300,onion:150,flour:340,sourcream:200,milk:500,eggs:2,oil:40,salt:8}],
+ ['babka','Бабка картофельная','Белорусская','Горячее','1,5 ч',{potato:1500,salo:200,onion:200,eggs:2,sourcream:200,salt:10}],
+ ['kholodnik','Холодник','Белорусская','Суп','1 ч',{beet:500,kefir:1000,cucumber:300,eggs:4,dill:20,greenonion:50,potato:600,sourcream:150,salt:8}],
+ ['vereshchaka','Верещака','Белорусская','Горячее','1 ч',{ribs:600,onion:200,flour:40,ryebread:200,bayleaf:2,bpepper:2,salt:5}],
+ ['klecki','Суп с клецками','Белорусская','Суп','1 ч',{thighs:600,potato:400,carrot:100,onion:100,flour:150,eggs:2,dill:20,salt:10}],
+ ['zrazy','Зразы картофельные с грибами','Белорусская','Горячее','1 ч',{potato:1200,mushrooms:400,onion:150,eggs:1,flour:80,oil:80,sourcream:200,salt:10}],
+ ['kapusta','Тушёная капуста со свининой','Белорусская','Горячее','1 ч',{cabbage:1500,pork:500,onion:150,carrot:150,tpaste:70,oil:40,salt:10}],
+ ['gorshochki','Мясо в горшочках','Белорусская','Горячее','1,5 ч',{pork:600,potato:1000,mushrooms:300,onion:150,sourcream:300,cheese:100,salt:10}],
+ ['gribnoy','Грибной суп','Белорусская','Суп','40 мин',{mushrooms:500,potato:400,onion:100,carrot:100,sourcream:150,dill:20,butter:30,salt:8}],
+ ['zatirka','Затирка на молоке','Белорусская','Завтрак','20 мин',{milk:1500,flour:200,eggs:1,butter:30,sugar:20,salt:3}],
+ ['yachnevaya','Ячневая каша со шкварками','Белорусская','Горячее','40 мин',{barley:300,salo:150,onion:150,salt:5}],
+ ['zapekanka','Картофельная запеканка с фаршем','Белорусская','Горячее','1 ч',{potato:1200,mince:500,onion:150,eggs:2,cheese:100,sourcream:150,butter:40,salt:10}],
+ ['blintsy','Блинцы с творогом','Белорусская','Завтрак','50 мин',{flour:250,milk:600,eggs:3,tvorog:400,sugar:60,butter:50,sourcream:150}],
+ // Украинская
+ ['borsch','Борщ','Украинская','Суп','2 ч',{beef:500,beet:400,cabbage:400,potato:400,carrot:150,onion:150,tpaste:70,garlic:15,dill:20,sourcream:200,salt:10,oil:30}],
+ ['zelborsch','Зелёный борщ со щавелем','Украинская','Суп','1 ч',{thighs:500,potato:400,sorrel:200,eggs:4,onion:100,carrot:100,dill:20,sourcream:150,salt:8}],
+ ['varkart','Вареники с картошкой','Украинская','Горячее','1,5 ч',{flour:500,eggs:1,potato:800,onion:200,butter:50,sourcream:200,salt:10}],
+ ['varvish','Вареники с вишней','Украинская','Десерт','1,5 ч',{flour:500,eggs:1,cherryfr:600,sugar:80,sourcream:200}],
+ ['galushki','Галушки со шкварками','Украинская','Горячее','40 мин',{flour:400,eggs:2,milk:200,salo:150,onion:150,sourcream:150,salt:5}],
+ ['kiev','Котлета по-киевски','Украинская','Горячее','1 ч',{fillet:900,butter:120,dill:20,eggs:3,flour:60,breadcrumbs:150,oil:300,salt:8}],
+ ['pampushki','Пампушки с чесноком','Украинская','Выпечка','2 ч',{flour:500,milk:250,yeast:11,sugar:20,oil:60,garlic:30,dill:20,salt:8}],
+ ['kapustnyak','Капустняк','Украинская','Суп','1,5 ч',{ribs:500,sauerkraut:500,potato:400,millet:100,onion:150,carrot:100,tpaste:30,salt:5}],
+ ['kulesh','Кулеш','Украинская','Суп','50 мин',{millet:300,salo:200,potato:400,onion:150,dill:20,salt:8}],
+ ['kruchenyky','Крученики с черносливом','Украинская','Горячее','1 ч',{pork:800,prunes:150,onion:150,mushrooms:200,sourcream:200,oil:40,salt:8}],
+ ['pechtort','Печёночный торт','Украинская','Закуска','1,5 ч',{liver:700,eggs:2,flour:100,milk:150,onion:200,carrot:200,mayo:200,oil:60,salt:8}],
+ ['banosh','Банош с брынзой и грибами','Украинская','Горячее','40 мин',{cornmeal:250,sourcream:600,salo:150,feta:150,mushrooms:200,salt:5}],
+ ['zharkoe','Жаркое по-домашнему','Украинская','Горячее','1,5 ч',{pork:600,potato:1000,onion:150,carrot:150,garlic:10,tpaste:40,oil:40,bayleaf:2,salt:10}],
+ ['holodets','Холодец','Украинская','Закуска','6 ч + ночь',{knuckle:1500,beef:500,carrot:150,onion:150,garlic:30,bayleaf:3,salt:15}],
+ ['salo','Сало с чесноком (засолка)','Украинская','Закуска','15 мин + 3 дня',{salo:1000,garlic:50,salt:100,bpepper:5,bayleaf:3}],
+ // Французская
+ ['onionsoup','Луковый суп','Французская','Суп','1,5 ч',{onion:1500,butter:80,flour:30,winew:200,baguette:1,cheese:200,salt:8}],
+ ['ratatouille','Рататуй','Французская','Горячее','1 ч',{eggplant:500,zucchini:500,pepper:300,tomato:600,onion:150,garlic:15,olive:60,salt:8}],
+ ['julienne','Жульен с курицей и грибами','Французская','Горячее','40 мин',{fillet:500,mushrooms:500,onion:150,cream:300,flour:30,butter:40,cheese:150,salt:8}],
+ ['quiche','Киш лорен','Французская','Выпечка','1,5 ч',{flour:250,butter:125,eggs:4,cream:400,bacon:200,cheese:150,salt:5}],
+ ['croque','Крок-месье','Французская','Завтрак','25 мин',{toast:250,ham:200,cheese:200,butter:40,milk:300,flour:30}],
+ ['bouillabaisse','Буйабес','Французская','Суп','1 ч',{whitefish:500,salmon:300,shrimp:300,tomato:400,onion:150,leek:1,garlic:15,olive:60,baguette:1,salt:10}],
+ ['bourguignon','Говядина по-бургундски','Французская','Горячее','3 ч',{beef:1000,wine:500,bacon:150,mushrooms:300,onion:200,carrot:200,garlic:15,tpaste:30,flour:30,butter:40,salt:10}],
+ ['coqauvin','Петух в вине (кок-о-вен)','Французская','Горячее','2 ч',{thighs:1200,wine:500,bacon:150,mushrooms:250,onion:150,carrot:150,garlic:15,butter:30,salt:10}],
+ ['dauphinois','Картофель дофинуа','Французская','Горячее','1,5 ч',{potato:1200,cream:400,milk:200,garlic:10,butter:30,cheese:100,salt:8}],
+ ['tartiflette','Тартифлет','Французская','Горячее','1 ч',{potato:1200,bacon:200,onion:150,cream:200,cheese:300,winew:100,salt:5}],
+ ['nicoise','Салат нисуаз','Французская','Салат','30 мин',{tuna:370,eggs:4,potato:400,greenbeans:200,tomato:300,olives:100,lettuce:1,olive:50,mustard:10,salt:5}],
+ ['omlet','Омлет с сыром и зеленью','Французская','Завтрак','15 мин',{eggs:8,butter:40,cheese:80,greenonion:30,milk:100,salt:3}],
+ ['crepes','Блинчики креп-сюзетт','Французская','Десерт','40 мин',{flour:250,milk:500,eggs:3,butter:80,sugar:60,orange:600}],
+ ['cremebrulee','Крем-брюле','Французская','Десерт','1 ч + 4 ч',{cream:600,eggs:6,sugar:120}],
+ ['mousse','Шоколадный мусс','Французская','Десерт','30 мин + 3 ч',{chocolate:200,eggs:4,sugar:40,cream:200}],
+ ['tatin','Тарт татен','Французская','Десерт','1 ч',{puff:500,apples:1000,sugar:150,butter:80}],
+ // Азиатская
+ ['teriyaki','Курица терияки с рисом','Азиатская','Горячее','40 мин',{thighs:800,soy:100,honey:40,ginger:15,garlic:10,sesame:10,jasmine:300,starch:10}],
+ ['tomyum','Том ям с креветками','Азиатская','Суп','30 мин',{shrimp:400,coconut:400,mushrooms:200,cherry:200,lime:2,chili:10,ginger:20,tomyum:70,cilantro:20}],
+ ['ramen','Рамен с курицей','Азиатская','Суп','1,5 ч',{thighs:600,eggnoodles:300,eggs:4,soy:80,ginger:20,garlic:15,greenonion:50,mushrooms:200,nori:2}],
+ ['padthai','Пад тай с креветками','Азиатская','Горячее','30 мин',{ricenoodles:200,shrimp:300,eggs:2,peanuts:50,lime:1,soy:40,sweetchili:40,greenonion:30,garlic:10,oil:40}],
+ ['friedrice','Жареный рис с курицей и яйцом','Азиатская','Горячее','25 мин',{jasmine:300,fillet:400,eggs:3,carrot:100,peas:200,greenonion:30,soy:60,oil:40}],
+ ['curry','Курица карри с кокосовым молоком','Азиатская','Горячее','40 мин',{fillet:700,coconut:400,curry:15,onion:150,garlic:10,ginger:15,jasmine:300,tomato:200,salt:5}],
+ ['california','Роллы Калифорния','Азиатская','Закуска','1 ч',{sushirice:400,nori:4,ricevin:60,crab:200,avocado:2,cucumber:150,sesame:20,sugar:20,salt:5}],
+ ['miso','Мисо-суп с тофу','Азиатская','Суп','20 мин',{miso:80,tofu:300,nori:1,greenonion:30,mushrooms:100}],
+ ['sweetsour','Курица в кисло-сладком соусе','Азиатская','Горячее','40 мин',{fillet:700,pepper:200,onion:100,starch:50,tpaste:30,ricevin:50,sugar:50,soy:40,eggs:1,oil:150,jasmine:300}],
+ ['udon','Удон с говядиной','Азиатская','Горячее','30 мин',{udon:300,beef:400,pepper:150,carrot:100,onion:100,soy:80,garlic:10,sesame:10,oil:40}],
+ ['gyoza','Гёдза (жареные пельмешки)','Азиатская','Закуска','1,5 ч',{flour:300,mince:400,cabbage:300,ginger:10,garlic:10,greenonion:30,soy:60,oil:40}],
+ ['bibimbap','Бибимбап','Азиатская','Горячее','50 мин',{sushirice:300,beefmince:300,eggs:4,carrot:150,spinach:150,cucumber:150,mushrooms:150,soy:50,sesame:10,chili:10}],
+ ['pho','Фо бо','Азиатская','Суп','2 ч',{beef:500,ricenoodles:400,onion:150,ginger:30,lime:2,cilantro:30,greenonion:30,chili:10,fishsauce:60}],
+ ['kungpao','Курица гунбао','Азиатская','Горячее','30 мин',{fillet:600,peanuts:80,pepper:150,chili:10,garlic:10,ginger:10,soy:60,ricevin:30,sugar:20,starch:20,jasmine:300,greenonion:30}],
+ ['wok','Лапша вок с курицей и овощами','Азиатская','Горячее','30 мин',{eggnoodles:300,fillet:500,pepper:150,carrot:150,broccoli:300,zucchini:200,soy:60,sweetchili:60,garlic:10,oil:40}],
+ ['springrolls','Спринг-роллы с креветками','Азиатская','Закуска','40 мин',{ricepaper:100,ricenoodles:100,shrimp:300,cucumber:150,carrot:100,lettuce:1,cilantro:20,sweetchili:80}],
+ ['plov','Плов','Азиатская','Горячее','1,5 ч',{lamb:600,rice:500,carrot:500,onion:300,garlic:50,zira:10,oil:100,salt:15}],
+
+ // Итальянская: ещё 20
+ ['amatriciana','Паста аматричана','Итальянская','Горячее','30 мин',{spaghetti:400,bacon:150,ctomato:400,onion:80,parmesan:60,chili:5,olive:20,salt:10}],
+ ['cacioepepe','Паста качо э пепе','Итальянская','Горячее','20 мин',{spaghetti:400,parmesan:150,bpepper:5,salt:10}],
+ ['arrabbiata','Пенне арраббьята','Итальянская','Горячее','25 мин',{penne:400,ctomato:800,garlic:15,chili:10,olive:40,parsley:15,salt:10}],
+ ['aglioolio','Спагетти с чесноком и чили','Итальянская','Горячее','15 мин',{spaghetti:400,garlic:30,chili:10,olive:80,parsley:20,salt:10}],
+ ['puttanesca','Паста путтанеска','Итальянская','Горячее','30 мин',{spaghetti:400,ctomato:800,olives:150,capers:50,garlic:15,chili:5,olive:40,parsley:15}],
+ ['pastafagioli','Паста э фаджоли','Итальянская','Суп','50 мин',{beans:800,penne:150,onion:100,carrot:100,celery:80,ctomato:400,garlic:10,olive:40,parmesan:40,salt:10}],
+ ['stracciatella','Суп страчателла','Итальянская','Суп','40 мин',{thighs:500,eggs:3,parmesan:60,spinach:150,onion:100,carrot:100,salt:10}],
+ ['cacciatore','Курица каччаторе','Итальянская','Горячее','1 ч',{thighs:1000,ctomato:800,pepper:200,onion:150,mushrooms:200,garlic:15,winew:150,olive:40,salt:10}],
+ ['frittata','Фриттата с овощами','Итальянская','Завтрак','25 мин',{eggs:8,zucchini:200,pepper:150,cherry:150,parmesan:50,olive:20,salt:5}],
+ ['calzone','Кальцоне с ветчиной','Итальянская','Выпечка','1,5 ч',{flour:400,yeast:7,olive:40,ham:200,mozzarella:250,ctomato:200,salt:8}],
+ ['arancini','Аранчини','Итальянская','Закуска','1,5 ч',{arborio:300,parmesan:60,mozzarella:150,eggs:2,flour:50,breadcrumbs:150,butter:30,oil:500,salt:8}],
+ ['panzanella','Салат панцанелла','Итальянская','Салат','20 мин',{baguette:1,tomato:600,cucumber:200,onion:60,basil:30,olive:60,ricevin:20,salt:5}],
+ ['melanzane','Баклажаны пармиджана','Итальянская','Горячее','1,5 ч',{eggplant:1000,ctomato:800,mozzarella:250,parmesan:80,basil:30,garlic:10,olive:80,salt:10}],
+ ['piccata','Курица пикката','Итальянская','Горячее','30 мин',{fillet:700,flour:40,butter:60,lemon:2,capers:30,winew:100,parsley:15,salt:8}],
+ ['primavera','Паста примавера','Итальянская','Горячее','30 мин',{penne:400,zucchini:200,broccoli:200,pepper:150,cherry:150,peas:200,cream:200,parmesan:50,garlic:10,olive:30,salt:10}],
+ ['pannacotta','Панна-котта','Итальянская','Десерт','20 мин + 4 ч',{cream:600,milk:100,sugar:80,gelatin:10,cherryfr:200}],
+ ['norma','Паста алла норма','Итальянская','Горячее','40 мин',{spaghetti:400,eggplant:500,ctomato:800,garlic:10,basil:30,olive:80,feta:100,salt:10}],
+ ['weddingsoup','Суп с фрикадельками и шпинатом','Итальянская','Суп','50 мин',{beefmince:400,eggs:1,breadcrumbs:40,parmesan:50,spinach:150,penne:100,carrot:100,onion:100,salt:10}],
+ ['polpette','Фрикадельки в томатном соусе','Итальянская','Горячее','1 ч',{mince:700,bread:80,milk:100,eggs:1,parmesan:50,ctomato:800,garlic:10,basil:20,olive:40,salt:10}],
+ ['funghi','Пицца с ветчиной и грибами','Итальянская','Выпечка','1,5 ч',{flour:400,yeast:7,olive:40,ctomato:400,mozzarella:250,ham:150,mushrooms:200,salt:8}],
+ // Русская: ещё 20
+ ['rassolnik','Рассольник','Русская','Суп','1,5 ч',{beef:500,perlovka:100,pickles:300,potato:400,carrot:100,onion:100,tpaste:30,sourcream:150,dill:20,salt:8}],
+ ['gorokh','Гороховый суп с копчёностями','Русская','Суп','2 ч',{splitpeas:300,ribs:500,potato:300,carrot:100,onion:100,dill:20,salt:8}],
+ ['lapsha','Куриная лапша','Русская','Суп','1 ч',{thighs:600,eggnoodles:150,potato:300,carrot:100,onion:100,dill:20,bayleaf:2,salt:10}],
+ ['pozharskie','Пожарские котлеты','Русская','Горячее','50 мин',{fillet:800,bread:100,milk:100,butter:80,breadcrumbs:100,oil:60,salt:8}],
+ ['gribkart','Жареная картошка с грибами','Русская','Горячее','40 мин',{potato:1000,mushrooms:400,onion:150,oil:60,dill:20,sourcream:150,salt:8}],
+ ['flotski','Макароны по-флотски','Русская','Горячее','30 мин',{penne:400,mince:500,onion:150,butter:30,oil:20,salt:10}],
+ ['lenivye','Ленивые голубцы','Русская','Горячее','1 ч',{mince:600,cabbage:500,roundrice:150,onion:150,carrot:100,tpaste:60,sourcream:200,eggs:1,salt:10}],
+ ['pechen','Печень по-строгановски','Русская','Горячее','30 мин',{liver:600,onion:200,sourcream:250,flour:30,butter:30,salt:8}],
+ ['marinad','Рыба под маринадом','Русская','Закуска','1 ч',{whitefish:800,carrot:300,onion:200,tpaste:60,flour:50,oil:100,sugar:20,bayleaf:2,salt:8}],
+ ['mimosa','Салат «Мимоза»','Русская','Салат','1 ч',{tuna:370,potato:400,carrot:200,eggs:5,onion:80,mayo:250,salt:5}],
+ ['krabovy','Крабовый салат','Русская','Салат','30 мин',{crab:400,roundrice:100,eggs:4,corn:340,cucumber:200,mayo:200,salt:5}],
+ ['oladyi','Оладьи на кефире','Русская','Завтрак','30 мин',{kefir:500,eggs:1,flour:300,sugar:40,soda:5,oil:60,sourcream:150,salt:3}],
+ ['pshenka','Пшённая каша с тыквой','Русская','Завтрак','50 мин',{millet:250,pumpkin:500,milk:800,butter:40,sugar:30,salt:3}],
+ ['tvorzap','Творожная запеканка','Русская','Завтрак','1 ч',{tvorog:800,eggs:3,sugar:100,flour:60,sourcream:150,butter:20}],
+ ['blinmyaso','Блинчики с мясом','Русская','Горячее','1,5 ч',{milk:700,eggs:3,flour:250,mince:500,onion:150,oil:60,butter:40,salt:8}],
+ ['zrazymyas','Зразы мясные с яйцом','Русская','Горячее','1 ч',{mince:700,bread:80,eggs:4,onion:150,greenonion:30,breadcrumbs:80,oil:60,salt:8}],
+ ['kurasmetan','Курица в сметане','Русская','Горячее','50 мин',{thighs:1000,sourcream:300,onion:150,garlic:15,dill:20,flour:20,oil:30,salt:10}],
+ ['rybkotlety','Рыбные котлеты','Русская','Горячее','50 мин',{whitefish:800,onion:150,bread:100,milk:100,eggs:1,breadcrumbs:80,oil:60,dill:15,salt:8}],
+ ['medovik','Медовик','Русская','Десерт','2 ч + ночь',{flour:500,honey:100,sugar:250,butter:100,eggs:3,soda:5,sourcream:800}],
+ ['sharlotka','Шарлотка с яблоками','Русская','Десерт','1 ч',{apples:800,eggs:4,sugar:200,flour:200,butter:15}],
+ // Белорусская: ещё 20
+ ['krupenya','Крупеня','Белорусская','Суп','1 ч',{perlovka:150,pork:400,potato:400,carrot:100,onion:100,sourcream:150,dill:20,salt:8}],
+ ['zhur','Жур (овсяный суп)','Белорусская','Суп','1 ч + ночь',{oats:250,salo:100,potato:400,onion:100,ryebread:100,dill:20,salt:8}],
+ ['bigos','Бигос','Белорусская','Горячее','1,5 ч',{sauerkraut:600,cabbage:500,pork:400,sausage:200,mushrooms:200,onion:150,tpaste:50,prunes:80,oil:40,bayleaf:2,salt:8}],
+ ['svekolnik','Свекольник горячий','Белорусская','Суп','1 ч',{beet:500,potato:400,carrot:100,onion:100,eggs:4,sourcream:150,dill:20,salt:8}],
+ ['tsybriki','Цыбрики','Белорусская','Горячее','40 мин',{potato:1200,onion:100,eggs:1,flour:60,salo:100,sourcream:200,oil:60,salt:8}],
+ ['sochni','Сочни с творогом','Белорусская','Выпечка','1 ч',{flour:350,butter:100,sugar:100,eggs:2,tvorog:400,sourcream:100,soda:3}],
+ ['nalistniki','Налистники с капустой и грибами','Белорусская','Горячее','1,5 ч',{flour:250,milk:600,eggs:3,cabbage:500,mushrooms:300,onion:150,oil:60,sourcream:150,salt:8}],
+ ['bulbasalo','Печёная бульба со шкварками','Белорусская','Горячее','1 ч',{potato:1500,salo:200,onion:150,sourcream:200,dill:20,salt:8}],
+ ['gribysmetana','Грибы, тушённые в сметане','Белорусская','Горячее','30 мин',{mushrooms:800,onion:150,sourcream:300,butter:40,dill:20,salt:8}],
+ ['lazanki','Лазанки с капустой','Белорусская','Горячее','1 ч',{flour:300,eggs:2,cabbage:600,onion:150,salo:100,mushrooms:200,salt:8}],
+ ['svininayabl','Свинина, запечённая с яблоками','Белорусская','Горячее','1,5 ч',{pork:1000,apples:600,onion:150,honey:30,mustard:20,salt:10}],
+ ['gruzdyanka','Груздянка','Белорусская','Суп','45 мин',{mushrooms:500,potato:400,onion:150,butter:30,sourcream:150,dill:20,salt:8}],
+ ['perlovka','Перловка с грибами','Белорусская','Горячее','1 ч',{perlovka:300,mushrooms:400,onion:150,carrot:100,oil:50,salt:8}],
+ ['yaeshnya','Яешня с салом и колбасой','Белорусская','Завтрак','20 мин',{eggs:8,salo:100,sausage:150,onion:100,greenonion:20,salt:3}],
+ ['bulbpirog','Бульбяный пирог с мясом','Белорусская','Горячее','1,5 ч',{potato:1200,mince:500,onion:150,eggs:2,butter:40,sourcream:150,cheese:100,salt:10}],
+ ['grechbliny','Гречневые блины','Белорусская','Завтрак','1,5 ч',{buckflour:200,flour:100,milk:600,eggs:2,yeast:7,sugar:20,oil:40,butter:40,salt:3}],
+ ['fasolsup','Фасолевый суп','Белорусская','Суп','50 мин',{beans:800,potato:300,carrot:100,onion:100,salo:80,dill:20,salt:8}],
+ ['govchernosl','Тушёная говядина с черносливом','Белорусская','Горячее','2 ч',{beef:800,prunes:150,onion:150,carrot:150,tpaste:30,oil:40,salt:8}],
+ ['kletskimyaso','Клёцки с мясом','Белорусская','Горячее','1,5 ч',{potato:1500,mince:500,onion:150,flour:60,eggs:1,salo:100,sourcream:200,salt:10}],
+ ['kartkotsyr','Картофельные котлеты с сыром','Белорусская','Горячее','50 мин',{potato:1000,cheese:150,eggs:1,flour:80,breadcrumbs:80,oil:60,dill:15,sourcream:150,salt:8}],
+ // Украинская: ещё 20
+ ['varkap','Вареники с капустой','Украинская','Горячее','1,5 ч',{flour:500,eggs:1,sauerkraut:500,onion:200,oil:50,sourcream:200,salt:10}],
+ ['vartvor','Вареники с творогом','Украинская','Горячее','1,5 ч',{flour:500,eggs:2,tvorog:600,sugar:40,butter:50,sourcream:200,salt:5}],
+ ['derunygriby','Деруны с грибной подливой','Украинская','Горячее','50 мин',{potato:1500,onion:200,eggs:2,flour:60,mushrooms:400,sourcream:250,oil:100,salt:10}],
+ ['buzhenina','Буженина','Украинская','Закуска','2,5 ч',{pork:1500,garlic:30,mustard:30,bpepper:5,bayleaf:3,salt:20}],
+ ['pechenya','Печеня с картошкой','Украинская','Горячее','1,5 ч',{pork:700,potato:1000,onion:200,carrot:150,garlic:15,sourcream:150,oil:40,bayleaf:2,salt:10}],
+ ['bograch','Бограч','Украинская','Суп','2 ч',{beef:700,potato:500,pepper:300,onion:200,carrot:150,tomato:300,garlic:15,salo:80,chili:5,salt:10}],
+ ['kartoplyaniki','Картопляники с мясом','Украинская','Горячее','1 ч',{potato:1200,mince:400,onion:150,eggs:1,flour:80,breadcrumbs:60,oil:80,sourcream:150,salt:10}],
+ ['pertsy','Фаршированные перцы','Украинская','Горячее','1,5 ч',{pepper:1200,mince:600,roundrice:150,onion:150,carrot:150,tpaste:70,sourcream:150,salt:10}],
+ ['kabikra','Кабачковая икра','Украинская','Закуска','1,5 ч',{zucchini:1500,carrot:300,onion:200,tpaste:80,garlic:15,oil:80,sugar:15,salt:10}],
+ ['pirvishnya','Пирожки с вишней','Украинская','Выпечка','2,5 ч',{flour:600,milk:300,yeast:11,eggs:2,butter:60,sugar:150,cherryfr:600,starch:30,oil:100}],
+ ['knyshi','Кныши с картошкой','Украинская','Выпечка','2 ч',{flour:500,milk:250,yeast:11,eggs:2,butter:80,potato:700,onion:150,salo:80,sugar:20,salt:10}],
+ ['rybaodessa','Рыба по-одесски','Украинская','Горячее','1 ч',{whitefish:800,potato:800,tomato:400,onion:150,sourcream:200,cheese:100,dill:20,salt:8}],
+ ['forshmak','Форшмак','Украинская','Закуска','30 мин',{herring:300,apples:200,eggs:2,onion:80,butter:80,bread:60}],
+ ['sinenkie','Синенькие по-одесски','Украинская','Салат','1 ч',{eggplant:800,pepper:300,tomato:400,onion:100,garlic:15,parsley:20,oil:60,salt:8}],
+ ['gutsul','Мясо по-гуцульски','Украинская','Горячее','1,5 ч',{pork:700,potato:800,mushrooms:300,onion:150,sourcream:250,cheese:150,salt:10}],
+ ['ushki','Ушки с грибами','Украинская','Горячее','1,5 ч',{flour:400,eggs:1,mushrooms:500,onion:150,butter:40,sourcream:150,salt:8}],
+ ['lenvar','Ленивые вареники','Украинская','Завтрак','30 мин',{tvorog:600,eggs:2,flour:150,sugar:40,butter:40,sourcream:200,salt:2}],
+ ['kapsalat','Салат из квашеной капусты с яблоком','Украинская','Салат','15 мин',{sauerkraut:600,apples:300,onion:80,oil:40,sugar:10}],
+ ['frikadelki','Суп с фрикадельками','Украинская','Суп','50 мин',{mince:400,potato:400,carrot:100,onion:150,roundrice:50,dill:20,bayleaf:2,salt:10}],
+ ['plyatsok','Яблочный пляцок','Украинская','Десерт','1,5 ч',{flour:350,butter:200,sugar:200,eggs:3,apples:800,sourcream:150,soda:3}],
+ // Французская: ещё 20
+ ['provencal','Курица по-провансальски','Французская','Горячее','1 ч',{thighs:1200,tomato:500,olives:100,onion:150,garlic:15,winew:150,olive:40,salt:10}],
+ ['vichyssoise','Суп вишисуаз','Французская','Суп','50 мин',{leek:2,potato:600,onion:100,butter:40,cream:200,greenonion:20,salt:8}],
+ ['potiron','Суп-пюре из тыквы','Французская','Суп','50 мин',{pumpkin:1200,onion:150,carrot:100,cream:200,butter:30,garlic:10,salt:8}],
+ ['choufleur','Гратен из цветной капусты','Французская','Горячее','50 мин',{cauliflower:1000,milk:500,butter:50,flour:50,cheese:150,salt:8}],
+ ['benedict','Яйца Бенедикт','Французская','Завтрак','30 мин',{eggs:10,toast:250,ham:200,butter:150,lemon:1,salt:3}],
+ ['quicheshp','Киш со шпинатом и фетой','Французская','Выпечка','1,5 ч',{flour:250,butter:125,eggs:4,cream:300,spinach:300,feta:200,salt:5}],
+ ['moules','Мидии в белом вине','Французская','Горячее','30 мин',{mussels:1500,winew:300,onion:100,garlic:15,butter:50,cream:150,parsley:20,baguette:1}],
+ ['blanquette','Бланкет из курицы','Французская','Горячее','1 ч',{thighs:1000,mushrooms:300,carrot:200,onion:150,cream:250,butter:40,flour:40,lemon:1,rice:300,salt:10}],
+ ['cassoulet','Кассуле','Французская','Горячее','2,5 ч',{beans:1200,sausages:450,pork:500,bacon:150,ctomato:400,onion:150,carrot:150,garlic:20,breadcrumbs:60,salt:10}],
+ ['moutarde','Курица в горчичном соусе','Французская','Горячее','40 мин',{thighs:1000,mustard:60,cream:300,onion:150,winew:150,butter:30,salt:8}],
+ ['steakfrites','Стейк с картофелем фри','Французская','Горячее','40 мин',{steak:800,potato:1000,butter:60,garlic:10,oil:800,salt:10,bpepper:3}],
+ ['robuchon','Картофельное пюре по-французски','Французская','Горячее','40 мин',{potato:1000,butter:250,milk:250,salt:8}],
+ ['lyonnaise','Лионский салат','Французская','Салат','30 мин',{lettuce:2,bacon:200,eggs:4,baguette:1,mustard:15,olive:50,ricevin:20,salt:3}],
+ ['profiteroles','Профитроли с кремом','Французская','Десерт','1,5 ч',{flour:150,butter:120,eggs:4,milk:250,cream:400,sugar:80,chocolate:90,salt:2}],
+ ['clafoutis','Клафути с вишней','Французская','Десерт','1 ч',{cherryfr:500,eggs:3,milk:300,flour:80,sugar:100,butter:20}],
+ ['madeleines','Мадлен','Французская','Десерт','1 ч',{flour:120,butter:120,eggs:3,sugar:120,lemon:1,honey:20}],
+ ['painperdu','Французские тосты','Французская','Завтрак','20 мин',{bread:300,eggs:3,milk:250,sugar:40,butter:50,honey:40}],
+ ['tartine','Тартин с лососем','Французская','Закуска','15 мин',{baguette:1,salmon:200,mascarpone:150,dill:15,lemon:1,cucumber:150}],
+ ['canard','Утка с апельсинами','Французская','Горячее','2 ч',{duck:1200,orange:1000,honey:50,winew:150,butter:30,salt:10}],
+ ['cordonbleu','Курица кордон блю','Французская','Горячее','50 мин',{fillet:800,ham:150,cheese:150,eggs:2,flour:50,breadcrumbs:150,oil:150,salt:8}],
+ // Азиатская: ещё 20
+ ['tomkha','Том кха гай','Азиатская','Суп','35 мин',{fillet:500,coconut:800,mushrooms:200,lime:2,ginger:30,chili:10,fishsauce:40,cilantro:20}],
+ ['cashew','Курица с кешью','Азиатская','Горячее','30 мин',{fillet:600,cashew:100,pepper:200,onion:100,soy:60,honey:20,garlic:10,starch:15,oil:40,jasmine:300}],
+ ['beefbroc','Говядина с брокколи','Азиатская','Горячее','30 мин',{beef:600,broccoli:400,soy:80,honey:20,garlic:15,ginger:15,starch:20,oil:40,jasmine:300}],
+ ['soba','Лапша соба с курицей','Азиатская','Горячее','30 мин',{soba:300,fillet:400,cucumber:150,soy:80,sesame:15,greenonion:30,honey:15,sesameoil:20}],
+ ['yakitori','Якитори','Азиатская','Закуска','40 мин',{thighs:800,greenonion:50,soy:100,honey:40,ginger:10,sesame:10}],
+ ['tonkatsu','Тонкацу с капустой','Азиатская','Горячее','40 мин',{pork:800,eggs:2,flour:60,breadcrumbs:150,cabbage:300,oil:500,jasmine:300,salt:8}],
+ ['oyakodon','Оякодон','Азиатская','Горячее','30 мин',{sushirice:300,thighs:500,eggs:6,onion:200,soy:80,sugar:20,greenonion:30}],
+ ['kimchichige','Кимчи-тиге','Азиатская','Суп','40 мин',{kimchi:400,pork:300,tofu:300,onion:100,greenonion:30,gochujang:30,garlic:10,sesameoil:15}],
+ ['bulgogi','Пулькоги','Азиатская','Горячее','30 мин + 1 ч',{beef:700,soy:100,apples:150,honey:30,garlic:15,sesameoil:20,sesame:10,onion:150,greenonion:30,jasmine:300}],
+ ['nasigoreng','Наси горенг','Азиатская','Горячее','30 мин',{jasmine:300,fillet:300,shrimp:200,eggs:4,onion:100,garlic:10,chili:10,soy:60,sweetchili:30,cucumber:150,oil:40}],
+ ['mapo','Мапо тофу','Азиатская','Горячее','30 мин',{tofu:600,beefmince:200,garlic:10,ginger:10,chili:10,soy:40,starch:15,greenonion:30,oil:30,jasmine:300}],
+ ['yuxiang','Баклажаны в соусе юйсян','Азиатская','Горячее','40 мин',{eggplant:800,garlic:15,ginger:10,chili:10,soy:60,ricevin:30,sugar:30,starch:20,greenonion:30,oil:100,jasmine:300}],
+ ['huiguorou','Свинина хуэйгожоу','Азиатская','Горячее','1 ч',{pork:600,cabbage:300,pepper:150,garlic:15,chili:10,soy:50,sugar:15,oil:40,jasmine:300}],
+ ['wonton','Суп с вонтонами','Азиатская','Суп','1,5 ч',{flour:250,eggs:1,mince:300,shrimp:150,ginger:10,greenonion:40,soy:60,spinach:150,sesameoil:15}],
+ ['onigiri','Онигири с лососем','Азиатская','Закуска','40 мин',{sushirice:400,salmon:200,nori:4,sesame:10,salt:5}],
+ ['larb','Ларб с курицей','Азиатская','Салат','30 мин',{fillet:600,lime:3,fishsauce:40,onion:80,cilantro:30,greenonion:30,chili:10,jasmine:50,lettuce:1}],
+ ['bananas','Жареные бананы в кляре','Азиатская','Десерт','20 мин',{banana:900,flour:100,starch:30,coconut:100,sugar:30,honey:40,sesame:10,oil:400}],
+ ['banhmi','Бань ми с курицей','Азиатская','Закуска','40 мин',{baguette:2,fillet:400,carrot:150,cucumber:150,cilantro:20,ricevin:60,sugar:20,mayo:60,chili:5,soy:40}],
+ ['satay','Куриный сатай с арахисовым соусом','Азиатская','Горячее','40 мин',{fillet:800,peanuts:150,coconut:200,soy:60,curry:10,honey:30,lime:1,garlic:10,jasmine:300}],
+ ['lagman','Лагман','Азиатская','Горячее','1,5 ч',{lamb:600,eggnoodles:400,pepper:200,tomato:300,carrot:150,onion:150,garlic:20,tpaste:40,oil:60,zira:5,salt:10}],
+
+ // Итальянская: ещё 15
+ ['ossobuco','Оссобуко','Итальянская','Горячее','2,5 ч',{beef:1200,ctomato:400,onion:150,carrot:150,celery:100,winew:200,flour:40,butter:40,lemon:1,parsley:20,salt:10}],
+ ['saltimbocca','Сальтимбокка из курицы','Итальянская','Горячее','30 мин',{fillet:700,ham:150,flour:30,butter:50,winew:100,salt:5}],
+ ['risottozucca','Ризотто с тыквой','Итальянская','Горячее','45 мин',{arborio:350,pumpkin:500,onion:100,butter:50,parmesan:80,winew:100,salt:8}],
+ ['ravioli','Равиоли с рикоттой и шпинатом','Итальянская','Горячее','1,5 ч',{flour:400,eggs:4,ricotta:250,spinach:300,parmesan:60,butter:60,salt:8}],
+ ['alforno','Паста аль форно','Итальянская','Горячее','1 ч',{penne:400,beefmince:400,ctomato:800,mozzarella:250,parmesan:60,onion:100,garlic:10,olive:30,salt:10}],
+ ['quattro','Пицца четыре сыра','Итальянская','Выпечка','1,5 ч',{flour:400,yeast:7,olive:40,mozzarella:250,parmesan:60,cheese:100,feta:100,salt:8}],
+ ['caponata','Капоната','Итальянская','Закуска','1 ч',{eggplant:800,celery:150,onion:150,ctomato:400,olives:100,capers:30,ricevin:40,sugar:20,olive:80,salt:8}],
+ ['pastazucchine','Паста с кабачками','Итальянская','Горячее','25 мин',{spaghetti:400,zucchini:600,garlic:10,parmesan:60,basil:20,olive:60,salt:10}],
+ ['pastasalmone','Паста с лососем в сливочном соусе','Итальянская','Горячее','25 мин',{penne:400,salmon:300,cream:300,lemon:1,dill:15,parmesan:40,salt:8}],
+ ['risottomare','Ризотто с морепродуктами','Итальянская','Горячее','45 мин',{arborio:350,shrimp:300,mussels:500,onion:100,garlic:10,winew:150,ctomato:200,olive:40,parsley:20,salt:8}],
+ ['pappapomodoro','Томатный суп паппа аль помодоро','Итальянская','Суп','40 мин',{ctomato:1200,bread:300,garlic:15,basil:30,olive:60,onion:100,salt:8}],
+ ['ribollita','Риболлита','Итальянская','Суп','1,5 ч',{beans:800,cabbage:400,carrot:150,celery:100,onion:150,potato:300,ctomato:400,bread:200,olive:60,salt:10}],
+ ['crostata','Кростата с вареньем','Итальянская','Десерт','1 ч',{flour:300,butter:150,sugar:100,eggs:2,jam:350}],
+ ['cantucci','Кантуччи с миндалём','Итальянская','Десерт','1 ч',{flour:250,sugar:150,eggs:2,almonds:150,butter:30}],
+ ['affogato','Аффогато','Итальянская','Десерт','5 мин',{icecream:500,coffee:30,chocolate:30}],
+ // Русская: ещё 15
+ ['kulebyaka','Кулебяка с капустой и яйцом','Русская','Выпечка','1,5 ч',{puff:1000,cabbage:800,eggs:5,onion:150,butter:50,dill:20,salt:8}],
+ ['pirogryba','Рыбный пирог','Русская','Выпечка','1,5 ч',{puff:1000,whitefish:600,potato:400,onion:150,butter:40,eggs:1,dill:15,salt:8}],
+ ['shchikvas','Щи из квашеной капусты','Русская','Суп','2 ч',{beef:600,sauerkraut:500,potato:300,carrot:100,onion:150,tpaste:40,sourcream:150,bayleaf:2,salt:8}],
+ ['solyankaryb','Солянка рыбная','Русская','Суп','1 ч',{whitefish:400,salmon:200,pickles:250,olives:150,capers:30,onion:150,tpaste:60,lemon:1,dill:20,salt:5}],
+ ['derevenski','Картофель по-деревенски','Русская','Горячее','50 мин',{potato:1200,garlic:15,dill:20,oil:60,sourcream:150,salt:10}],
+ ['kotletkury','Куриные котлеты','Русская','Горячее','40 мин',{fillet:800,onion:100,eggs:1,bread:80,milk:80,oil:60,dill:15,salt:8}],
+ ['gulyash','Гуляш с подливкой и гречкой','Русская','Горячее','1,5 ч',{beef:800,onion:200,carrot:150,tpaste:60,flour:30,sourcream:150,oil:40,bayleaf:2,buckwheat:300,salt:10}],
+ ['selodkakart','Селёдка с картошкой и луком','Русская','Горячее','30 мин',{herring:300,potato:1000,onion:150,dill:20,butter:40,oil:30,salt:8}],
+ ['vesenniy','Весенний салат с редисом','Русская','Салат','15 мин',{radish:300,cucumber:300,eggs:4,greenonion:50,dill:20,sourcream:200,salt:5}],
+ ['mannik','Манник на кефире','Русская','Десерт','1,5 ч',{semolina:250,kefir:500,sugar:200,eggs:3,flour:100,soda:5,butter:20}],
+ ['mannaya','Манная каша','Русская','Завтрак','15 мин',{semolina:100,milk:1000,sugar:30,butter:40,salt:3}],
+ ['oladkab','Оладьи из кабачков','Русская','Горячее','40 мин',{zucchini:800,eggs:2,flour:120,dill:20,garlic:10,oil:80,sourcream:200,salt:8}],
+ ['pirogkapust','Заливной пирог с капустой','Русская','Выпечка','1,5 ч',{cabbage:800,kefir:500,eggs:3,flour:250,mayo:100,soda:5,butter:40,dill:15,salt:8}],
+ ['grechsup','Гречневый суп','Русская','Суп','1 ч',{thighs:500,buckwheat:120,potato:300,carrot:100,onion:100,dill:20,bayleaf:2,salt:8}],
+ ['myasofranc','Мясо по-французски','Русская','Горячее','1 ч',{pork:800,potato:800,onion:200,cheese:200,mayo:150,tomato:300,salt:10}],
+ // Белорусская: ещё 15
+ ['pechisto','Пячысты (тушёная свинина)','Белорусская','Горячее','2 ч',{pork:1200,onion:200,carrot:150,garlic:15,bayleaf:3,bpepper:3,salt:12}],
+ ['smazhnya','Смажня с мясом','Белорусская','Выпечка','1 ч',{flour:300,eggs:3,milk:300,mince:400,onion:150,salo:80,salt:8}],
+ ['zrazygov','Зразы из говядины с грибами','Белорусская','Горячее','1,5 ч',{beef:800,mushrooms:300,onion:150,bread:80,sourcream:200,flour:30,oil:50,salt:8}],
+ ['kapgryby','Капуста, тушённая с грибами','Белорусская','Горячее','1 ч',{cabbage:1200,mushrooms:400,onion:150,carrot:150,tpaste:50,oil:50,salt:10}],
+ ['pirkart','Пирожки с картошкой','Белорусская','Выпечка','2 ч',{flour:600,milk:300,yeast:11,eggs:1,butter:50,potato:800,onion:150,oil:150,sugar:20,salt:10}],
+ ['ovsyanka','Овсяная каша с ягодами','Белорусская','Завтрак','15 мин',{oats:200,milk:800,berries:300,honey:40,butter:20,salt:2}],
+ ['bulbagryby','Картофель, тушённый с грибами','Белорусская','Горячее','1 ч',{potato:1200,mushrooms:400,onion:150,carrot:100,sourcream:200,oil:40,dill:20,salt:10}],
+ ['fasolmyaso','Тушёная фасоль с мясом','Белорусская','Горячее','1,5 ч',{beans:800,pork:500,onion:150,carrot:150,tpaste:50,garlic:10,oil:40,salt:8}],
+ ['galki','Галки в бульоне','Белорусская','Суп','1 ч',{potato:1000,thighs:500,onion:150,carrot:100,flour:40,eggs:1,dill:20,salt:10}],
+ ['rebrakap','Рёбрышки с капустой','Белорусская','Горячее','1,5 ч',{ribs:800,sauerkraut:500,cabbage:400,onion:150,carrot:100,tpaste:30,bayleaf:2,salt:5}],
+ ['kisel','Клюквенный кисель','Белорусская','Десерт','30 мин',{cranberry:300,sugar:150,starch:60}],
+ ['yablokipech','Печёные яблоки с творогом','Белорусская','Десерт','40 мин',{apples:1000,tvorog:300,honey:60,sugar:30,butter:20}],
+ ['pirogyagody','Пирог с ягодами','Белорусская','Десерт','1,5 ч',{flour:300,butter:150,sugar:200,eggs:3,berries:500,sourcream:200,starch:30,soda:3}],
+ ['blinypripek','Блины с припёком','Белорусская','Завтрак','1 ч',{milk:800,eggs:3,flour:300,sugar:30,salo:150,onion:150,oil:30,salt:5}],
+ ['grechmoloko','Гречневая каша с молоком','Белорусская','Завтрак','30 мин',{buckwheat:250,milk:800,butter:40,sugar:30,salt:3}],
+ // Украинская: ещё 15
+ ['grechaniki','Гречаники','Украинская','Горячее','1 ч',{buckwheat:200,mince:500,onion:150,eggs:1,breadcrumbs:80,tpaste:50,sourcream:200,oil:60,salt:10}],
+ ['mnishki','Мнишки (творожные пончики)','Украинская','Десерт','40 мин',{tvorog:500,eggs:2,flour:250,sugar:80,soda:5,oil:600,sourcream:150}],
+ ['makovnik','Маковник','Украинская','Выпечка','2 ч',{flour:500,milk:250,yeast:11,eggs:2,butter:80,sugar:150,poppy:200,honey:50}],
+ ['golubpshono','Голубцы с пшеном и грибами','Украинская','Горячее','2 ч',{cabbage:1500,millet:200,mushrooms:400,onion:150,carrot:150,sourcream:250,tpaste:50,salt:10}],
+ ['borschpost','Постный борщ с грибами и фасолью','Украинская','Суп','1,5 ч',{beet:400,cabbage:400,potato:400,beans:400,mushrooms:300,carrot:150,onion:150,tpaste:70,garlic:15,oil:40,dill:20,salt:10}],
+ ['kapsosiski','Тушёная капуста с сосисками','Украинская','Горячее','1 ч',{cabbage:1200,sausages:450,onion:150,carrot:150,tpaste:60,oil:40,bayleaf:2,salt:8}],
+ ['myasnhlib','Мясной хлеб','Украинская','Горячее','1,5 ч',{mince:1000,eggs:2,onion:150,garlic:10,bread:100,milk:100,cheese:100,salt:10}],
+ ['rybasmetana','Рыба, запечённая в сметане','Украинская','Горячее','50 мин',{whitefish:1000,sourcream:300,onion:150,cheese:100,dill:20,flour:30,salt:8}],
+ ['khvorost','Хворост','Украинская','Десерт','1 ч',{flour:300,eggs:3,sourcream:100,sugar:60,oil:600,salt:2}],
+ ['syrnyk','Творожный пирог «Сырник»','Украинская','Десерт','1,5 ч',{flour:300,butter:150,sugar:200,eggs:4,tvorog:800,sourcream:200,soda:3}],
+ ['yaytsafarsh','Яйца, фаршированные печенью','Украинская','Закуска','40 мин',{eggs:10,liver:300,onion:100,carrot:100,butter:40,dill:15,mayo:60,salt:5}],
+ ['pecholadi','Печёночные оладьи','Украинская','Горячее','40 мин',{liver:600,onion:150,eggs:2,flour:100,sourcream:200,oil:80,salt:8}],
+ ['kurapples','Курица, запечённая с яблоками','Украинская','Горячее','1,5 ч',{chicken:1800,apples:600,honey:30,garlic:15,mustard:20,salt:12}],
+ ['yushkaryb','Рыбная юшка','Украинская','Суп','50 мин',{whitefish:600,potato:400,carrot:100,onion:150,millet:60,dill:20,bayleaf:2,salt:10}],
+ ['baklrulety','Рулетики из баклажанов','Украинская','Закуска','1 ч',{eggplant:800,cheese:200,garlic:15,mayo:100,tomato:300,dill:15,oil:80,salt:5}],
+ // Французская: ещё 15
+ ['hachis','Хаши парментье','Французская','Горячее','1,5 ч',{beefmince:700,potato:1200,onion:150,carrot:100,tpaste:30,milk:200,butter:60,cheese:100,salt:10}],
+ ['galette','Галет с ветчиной, сыром и яйцом','Французская','Завтрак','40 мин',{buckflour:250,eggs:5,milk:300,ham:200,cheese:150,butter:40,salt:5}],
+ ['quichesaumon','Киш с лососем и брокколи','Французская','Выпечка','1,5 ч',{flour:250,butter:125,eggs:4,cream:300,salmon:250,broccoli:300,cheese:100,salt:5}],
+ ['souffle','Сырное суфле','Французская','Горячее','1 ч',{eggs:5,milk:300,butter:50,flour:40,cheese:150,parmesan:40,salt:4}],
+ ['papillote','Лосось в пергаменте с овощами','Французская','Горячее','40 мин',{salmon:800,zucchini:300,carrot:150,leek:1,lemon:1,butter:40,dill:15,salt:6}],
+ ['tian','Тиан из овощей','Французская','Горячее','1 ч',{zucchini:500,eggplant:500,tomato:500,onion:150,garlic:10,olive:60,salt:8}],
+ ['betterave','Салат с печёной свёклой и фетой','Французская','Салат','1 ч',{beet:800,feta:200,lettuce:1,olive:50,honey:20,mustard:10,salt:3}],
+ ['boeufcarottes','Говядина с морковью','Французская','Горячее','3 ч',{beef:1000,carrot:800,onion:200,winew:300,bacon:100,tpaste:30,flour:30,butter:40,salt:10}],
+ ['navarin','Наварен из баранины','Французская','Горячее','2 ч',{lamb:1000,potato:600,carrot:300,peas:200,onion:150,tpaste:30,flour:30,garlic:15,oil:40,salt:10}],
+ ['pouletroti','Курица, запечённая целиком','Французская','Горячее','1,5 ч',{chicken:1800,butter:80,lemon:1,garlic:20,potato:800,salt:15,bpepper:4}],
+ ['tartecitron','Лимонный тарт','Французская','Десерт','2 ч',{flour:250,butter:200,sugar:250,eggs:5,lemon:4}],
+ ['ileflottante','Плавающие острова','Французская','Десерт','1 ч',{eggs:6,milk:800,sugar:180}],
+ ['farbreton','Фар бретон с черносливом','Французская','Десерт','1,5 ч',{prunes:200,eggs:4,milk:700,flour:150,sugar:120,butter:40}],
+ ['gougeres','Гужеры','Французская','Закуска','1 ч',{flour:150,butter:100,eggs:4,cheese:150,milk:125,salt:3}],
+ ['potaufeu','Потофё','Французская','Суп','3,5 ч',{beef:1200,carrot:400,leek:2,potato:600,cabbage:500,onion:150,celery:100,bayleaf:3,salt:15}],
+ // Азиатская: ещё 15
+ ['kraphao','Пад кра пао','Азиатская','Горячее','25 мин',{fillet:600,basil:60,garlic:15,chili:10,soy:40,fishsauce:30,sugar:10,eggs:4,oil:60,jasmine:300}],
+ ['greencurry','Зелёное карри с курицей','Азиатская','Горячее','40 мин',{fillet:600,coconut:800,currypaste:60,eggplant:300,basil:30,fishsauce:30,sugar:10,jasmine:300}],
+ ['niuroumian','Суп с лапшой и говядиной','Азиатская','Суп','2,5 ч',{beef:800,eggnoodles:400,ginger:30,garlic:20,soy:100,tpaste:30,chili:10,spinach:200,greenonion:40,sugar:15}],
+ ['yakisoba','Якисоба','Азиатская','Горячее','30 мин',{eggnoodles:400,pork:300,cabbage:300,carrot:150,onion:100,soy:60,tpaste:20,honey:15,oil:40}],
+ ['okonomiyaki','Окономияки','Азиатская','Горячее','40 мин',{flour:250,eggs:4,cabbage:500,bacon:150,greenonion:40,mayo:60,soy:40,tpaste:20,honey:10,oil:40}],
+ ['tempura','Креветки темпура','Азиатская','Закуска','30 мин',{shrimp:600,flour:150,starch:50,eggs:1,oil:800,soy:60,salt:3}],
+ ['gyudon','Гюдон','Азиатская','Горячее','30 мин',{beef:500,onion:250,soy:80,sugar:25,ginger:10,sushirice:300,greenonion:30}],
+ ['katsucurry','Кацу-карри','Азиатская','Горячее','1 ч',{pork:800,eggs:2,flour:80,breadcrumbs:150,curry:20,potato:400,carrot:200,onion:200,butter:40,oil:400,jasmine:300,salt:8}],
+ ['philadelphia','Роллы «Филадельфия»','Азиатская','Закуска','1 ч',{sushirice:400,nori:4,ricevin:60,salmon:400,creamcheese:200,cucumber:150,sugar:20,salt:5}],
+ ['tteokbokki','Токпокки','Азиатская','Горячее','30 мин',{tteok:500,gochujang:60,sugar:30,soy:30,eggs:4,greenonion:40,sausages:200}],
+ ['japchae','Чапче','Азиатская','Горячее','40 мин',{glassnoodle:300,beef:300,spinach:200,carrot:150,onion:150,mushrooms:200,soy:80,sugar:20,sesameoil:30,sesame:10,garlic:10}],
+ ['morkovcha','Морковь по-корейски','Азиатская','Салат','20 мин + ночь',{carrot:1000,garlic:20,ricevin:60,sugar:30,chili:5,oil:100,salt:8}],
+ ['chowmein','Чоу мейн с курицей','Азиатская','Горячее','30 мин',{eggnoodles:400,fillet:400,cabbage:300,carrot:150,pepper:150,greenonion:30,soy:80,oyster:40,oil:40,garlic:10}],
+ ['baozi','Баоцзы со свининой','Азиатская','Выпечка','2 ч',{flour:500,yeast:7,milk:250,sugar:30,mince:500,ginger:15,greenonion:50,soy:50,sesameoil:20}],
+ ['manty','Манты','Азиатская','Горячее','2 ч',{flour:600,eggs:1,lamb:800,onion:600,zira:5,butter:60,sourcream:200,salt:12}]
+];
+
+// Примерные цены по магазинам: базовая цена × уровень цен сети × небольшой разброс по товару
+function hash(s){let h=2166136261;for(const c of s){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return (h>>>0)/4294967295}
+const P={};
+for(const[id,a]of Object.entries(PR)){
+  P[id]={n:a[0],u:a[1],pack:a[2],pl:a[3],pantry:!!a[5],p:STORES.map(s=>{
+    const v=a[4]*s.f*(0.94+hash(id+s.id)*0.12);return Math.max(19,Math.round(v/10)*10-1)})};
+}
+const D=DL.map(([id,n,cuisine,type,t,i])=>({id,n,cuisine,type,t,i}));
+
+// Города. Цены в каждом городе свои; магазин, которого в городе нет, можно скрыть.
+const CITIES=[
+  {id:'moscow',name:'Москва',inn:'Москве'},
+  {id:'khimki',name:'Химки',inn:'Химках'},
+  {id:'tver',name:'Тверь',inn:'Твери'},
+  {id:'konakovo',name:'Конаково',inn:'Конакове'}];
+
+// Проверенные цены из prices.json: REAL.cities[город][магазин][продукт] = {price, size, date, src}.
+// size — размер упаковки, к которой относится цена (в единицах продукта); пересчитываем на нашу упаковку.
+let REAL={cities:{}};
+
+const KEY='chto-gotovim-v3';
+let S={city:null,dish:null,vp:{},got:{},sel:{},done:{},pantryBuy:{},prices:{},hidden:{},tab:'dishes',cat:'Все',f:'',mode:'split',store:'p5',q:'',dq:''};
+try{
+  const s=JSON.parse(localStorage.getItem(KEY)||'null');
+  if(s)S=Object.assign(S,s);
+  else{
+    // перенос из v2: ручные правки цен были общими — относим их к Москве
+    const o=JSON.parse(localStorage.getItem('chto-gotovim-v2')||'null');
+    if(o){Object.assign(S,o);S.prices=Object.keys(o.prices||{}).length?{moscow:o.prices}:{};S.hidden={};S.city=null;S.started=1}
+    else{const o1=JSON.parse(localStorage.getItem('chto-gotovim-v1')||'null');if(o1){S.sel=o1.sel||{};S.started=1}}
+  }
+}catch(e){}
+for(const k in S.sel)if(!D.some(d=>d.id===k))delete S.sel[k];
+if(!['Все',...D.map(d=>d.cuisine)].includes(S.cat))S.cat='Все';
+if(S.city&&!CITIES.some(c=>c.id===S.city))S.city=null;
+// открытое блюдо берём из адреса (#borsch), чтобы работали ссылка и кнопка «Назад»
+S.dish=D.some(d=>d.id===location.hash.slice(1))?location.hash.slice(1):null;if(S.dish)S.tab='dishes';
+S.vp=S.vp||{};S.got=S.got||{};
+// пример на первом запуске
+if(!Object.keys(S.sel).length&&!S.started){S.sel={borsch:4,syrniki:4};S.started=1}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const city=()=>CITIES.find(c=>c.id===S.city)||CITIES[0];
+
+// Магазины, которые есть в выбранном городе (индексы в STORES)
+const act=()=>{const h=S.hidden[S.city]||{};const a=STORES.map((s,i)=>i).filter(i=>!h[STORES[i].id]);return a.length?a:[0]};
+// Откуда цена: 'own' — поправил сам, 'real' — проверенная из prices.json, 'est' — примерная
+function priceInfo(pid,si){
+  const k=STORES[si].id;
+  const o=((S.prices[S.city]||{})[pid]||{})[k];
+  if(o!=null)return{v:o,kind:'own'};
+  const r=(((REAL.cities[S.city]||{})[k])||{})[pid];
+  if(r&&r.price>0){const size=r.size||P[pid].pack;return{v:Math.round(r.price/size*P[pid].pack),kind:'real',date:r.date,src:r.src,raw:r}}
+  return{v:P[pid].p[si],kind:'est'};
+}
+const price=(pid,si)=>priceInfo(pid,si).v;
+const minAct=(f)=>{const a=act();let bi=a[0];for(const i of a)if(f(i)<f(bi))bi=i;return bi};
+const rub=n=>Math.round(n).toLocaleString('ru-RU')+' ₽';
+const amt=(v,u)=>u==='г'&&v>=1000?(+(v/1000).toFixed(2)).toString().replace('.',',')+' кг':u==='мл'&&v>=1000?(+(v/1000).toFixed(2)).toString().replace('.',',')+' л':Math.round(v)+' '+u;
+const packs=(need,pack)=>Math.max(1,Math.ceil(need/pack-0.1));
+const portions=n=>n+' '+(n%10===1&&n%100!==11?'порция':(n%10>=2&&n%10<=4&&(n%100<10||n%100>=20))?'порции':'порций');
+
+function needs(){
+  const m={};
+  for(const d of D){const k=S.sel[d.id];if(!k)continue;
+    for(const[pid,v]of Object.entries(d.i)){(m[pid]=m[pid]||{need:0,from:[]});m[pid].need+=v*k/4;m[pid].from.push(d.n)}}
+  return Object.entries(m).map(([pid,o])=>{const pr=P[pid];const n=packs(o.need,pr.pack);
+    const costs=STORES.map((s,i)=>price(pid,i)*n);const best=minAct(i=>costs[i]);
+    return {pid,pr,need:o.need,from:o.from,n,costs,best,min:costs[best],pantry:!!pr.pantry&&!S.pantryBuy[pid]}});
+}
+function dishCost(d,k){let s=0;for(const[pid,v]of Object.entries(d.i)){if(P[pid].pantry)continue;const n=v*k/4/P[pid].pack;s+=price(pid,minAct(i=>price(pid,i)))*n}return s}
+
+function summary(list){
+  const buy=list.filter(x=>!x.pantry);
+  const per=STORES.map((s,i)=>buy.reduce((a,x)=>a+x.costs[i],0));
+  const split=buy.reduce((a,x)=>a+x.min,0);
+  // сколько цен в корзине проверены (по магазину, где берём товар)
+  const real=buy.filter(x=>priceInfo(x.pid,x.best).kind!=='est').length;
+  return{buy,per,split,bestOne:minAct(i=>per[i]),real};
+}
+
+const V=document.getElementById('view');
+function render(){
+  document.getElementById('hcity').textContent=S.city?city().name:'Выбрать город';
+  if(!S.city||S.tab==='city'){
+    document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-current','false'));
+    V.innerHTML=vCity();document.getElementById('htotal').closest('.pill').hidden=true;save();return;
+  }
+  document.getElementById('htotal').closest('.pill').hidden=false;
+  if(!act().includes(STORES.findIndex(s=>s.id===S.store)))S.store=STORES[act()[0]].id;
+  const list=needs(),sm=summary(list);
+  const cnt=Object.keys(S.sel).length;
+  document.getElementById('htotal').textContent=rub(S.mode==='split'?sm.split:sm.per[STORES.findIndex(s=>s.id===S.store)]);
+  document.getElementById('hsub').textContent=cnt?`${cnt} ${cnt===1?'блюдо':cnt<5?'блюда':'блюд'} · ${sm.buy.length} продуктов к покупке`:'Выбери блюда — список покупок соберётся сам';
+  const b=document.getElementById('badge');b.hidden=!sm.buy.length;b.textContent=sm.buy.filter(x=>!S.done[x.pid]).length;
+  document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-current',x.dataset.tab===S.tab?'page':'false'));
+  V.innerHTML=S.tab==='dishes'?(S.dish?vDish(S.dish):vDishes()):S.tab==='cart'?vCart(list,sm):vPrices();
+  POP=null;
+  save();
+}
+
+// Минуты из строки времени: «25 мин», «1 ч 10 мин», «1,5 ч», «30 мин + ночь» (берём первую часть)
+function mins(t){const s=t.split('+')[0];const h=s.match(/([\d,]+)\s*ч/);const m=s.match(/(\d+)\s*мин/);return (h?parseFloat(h[1].replace(',','.'))*60:0)+(m?+m[1]:0)}
+// Кухни с фото-«аватаркой»: блюдо, по которому кухню узнают сразу
+const CUISINE_PIC={'Итальянская':'margherita','Русская':'bliny','Белорусская':'draniki','Украинская':'borsch','Французская':'ratatouille','Азиатская':'ramen'};
+let POP=null; // блюдо, которое только что добавили: его кнопка «+» коротко подпрыгнет
+
+function card(d){
+  const on=!!S.sel[d.id];
+  return `<article class="dish">
+    <button class="dish-open" data-open="${d.id}" aria-label="${d.n}, открыть рецепт">
+      <span class="dish-photo"><img src="img/${d.id}.jpg" alt="" loading="lazy" width="640" height="640" onerror="this.style.visibility='hidden'"><span class="time">${d.t}</span></span>
+      <span class="dname">${d.n}</span>
+      <span class="dmeta">${d.cuisine.replace(/ая$/,'ая кухня')}</span>
+    </button>
+    <button class="quick ${on?'on':''} ${POP===d.id?'pop':''}" data-toggle="${d.id}" aria-pressed="${on}" aria-label="${on?'Убрать из списка покупок':'Добавить продукты в список покупок'}">${on?S.sel[d.id]+' п.':'+'}</button>
+  </article>`;
+}
+
+function hello(){const h=new Date().getHours();return h<11?'Что на завтрак?':h<16?'Что на обед?':'Что на ужин?'}
+
+// Быстрые фильтры. «Без мяса» — без мяса, птицы и рыбы; яйца и молочное можно.
+const MEATY=new Set(['beef','pork','lamb','fillet','thighs','mince','beefmince','liver','knuckle','ribs','salo','bacon','pepperoni','ham','sausage','sausages','steak','duck','chicken','salmon','whitefish','shrimp','herring','tuna','crab','mussels','fishsauce','oyster']);
+const FILTERS={fast:['До 30 минут',d=>mins(d.t)<=30],veg:['Без мяса',d=>!Object.keys(d.i).some(p=>MEATY.has(p))],soup:['Супы',d=>d.type==='Суп'],sweet:['Сладкое',d=>d.type==='Десерт'||(d.type==='Выпечка'&&'sugar' in d.i)]};
+// Блюдо дня одно на всех в этот день; «Удиви меня» выбирает случайное из того, что сейчас на экране
+const dayDish=()=>{let h=0;for(const c of new Date().toDateString())h=(h*31+c.charCodeAt(0))>>>0;return D[h%D.length]};
+let PICK=null;
+function todayCard(d){
+  return `<section class="today" aria-label="${PICK?'Случайное блюдо':'Блюдо дня'}">
+    <button class="today-open" data-open="${d.id}">
+      <img src="img/${d.id}.jpg" alt="" width="640" height="640" onerror="this.style.visibility='hidden'">
+      <span class="today-tag">${PICK?'Выпало сегодня':'Блюдо дня'}</span>
+      <span class="today-text"><b>${d.n}</b><span>${d.t} · ${d.cuisine.replace(/ая$/,'ая кухня')} · продукты от ${rub(dishCost(d,4))}</span></span>
+    </button>
+    <button class="shuffle" data-shuffle><span class="die" aria-hidden="true"><i></i><i></i><i></i></span>Удиви меня</button>
+  </section>`;
+}
+function dishList(){
+  const dq=S.dq.trim().toLowerCase();const f=FILTERS[S.f];
+  return D.filter(d=>(S.cat==='Все'||d.cuisine===S.cat)&&(!f||f[1](d))&&(!dq||d.n.toLowerCase().includes(dq)||d.type.toLowerCase().includes(dq)||d.cuisine.toLowerCase().includes(dq)));
+}
+// Кубик: несколько фото быстро сменяют друг друга и замедляются, как барабан
+function shuffle(){
+  const pool=dishList().length?dishList():D;const box=document.querySelector('.today');if(!box||box.classList.contains('spin'))return;
+  const seq=Array.from({length:9},()=>pool[Math.floor(Math.random()*pool.length)]);
+  if(pool.length>1)while(seq[8].id===(PICK||dayDish().id))seq[8]=pool[Math.floor(Math.random()*pool.length)];
+  seq.forEach(d=>{new Image().src=`img/${d.id}.jpg`});
+  box.classList.add('spin');
+  const img=box.querySelector('img'),name=box.querySelector('.today-text b'),meta=box.querySelector('.today-text span'),tag=box.querySelector('.today-tag');
+  let i=0;const step=()=>{const d=seq[i];img.src=`img/${d.id}.jpg`;name.textContent=d.n;meta.textContent=d.t+' · '+d.cuisine.replace(/ая$/,'ая кухня');tag.textContent='Выбираю…';
+    if(++i<seq.length)setTimeout(step,70+i*i*6);else setTimeout(()=>{PICK=d.id;render()},380)};
+  step();
+}
+
+function vDishes(){
+  const cats=['Все',...new Set(D.map(d=>d.cuisine))];
+  const dq=S.dq.trim().toLowerCase();
+  const ds=dishList();
+  const browsing=S.cat==='Все'&&!dq&&!S.f;
+  const shelf=(title,list)=>list.length?`<section class="shelf"><div class="shelf-head"><h2>${title}</h2></div><div class="rail">${list.map(card).join('')}</div></section>`:'';
+  const quick=D.filter(d=>mins(d.t)<=30&&(d.type==='Горячее'||d.type==='Суп'));
+  const soups=D.filter(d=>d.type==='Суп');
+  const tea=D.filter(d=>['Десерт','Завтрак'].includes(d.type));
+  return `<p class="hello">${hello()}</p>
+  <input class="search" id="dq" type="search" placeholder="Борщ, паста, суп…" aria-label="Найти блюдо" value="${S.dq.replace(/"/g,'&quot;')}">
+  ${dq?'':todayCard(D.find(d=>d.id===PICK)||dayDish())}
+  <div class="cuisines">${cats.map(c=>`<button class="cuisine" data-cat="${c}" aria-pressed="${S.cat===c}">${c==='Все'?'<span class="all">✦</span>Все':`<img src="img/${CUISINE_PIC[c]}.jpg" alt="" loading="lazy">${c}`}</button>`).join('')}</div>
+  <div class="filters" role="group" aria-label="Быстрые фильтры">${Object.entries(FILTERS).map(([k,[t]])=>`<button class="filter" data-filter="${k}" aria-pressed="${S.f===k}">${t}</button>`).join('')}</div>
+  ${browsing?shelf('Ужин за полчаса',quick)+shelf('Супы',soups)+shelf('На завтрак и к чаю',tea):''}
+  ${ds.length?`<section class="shelf"><div class="shelf-head"><h2>${browsing?'Все блюда':dq?`Нашлось: ${ds.length}`:[S.cat==='Все'?'':S.cat+' кухня',S.f?FILTERS[S.f][0].toLowerCase():''].filter(Boolean).join(', ').replace(/^./,c=>c.toUpperCase())}</h2><span class="muted">${ds.length}</span></div><div class="grid">${ds.map(card).join('')}</div></section>`
+    :`<div class="empty"><h2>Такого блюда нет</h2><p>Попробуйте другое слово, снимите фильтр или выберите «Все».</p></div>`}
+  <p class="note">Нажмите «+» на фото, и продукты для блюда попадут в список покупок, на 4 порции. Соль, сахар, перец, лавровый лист и подсолнечное масло считаются как «есть дома».</p>
+  ${installNote()}`;
+}
+
+// Страница блюда: фото во всю ширину, рецепт «наплывает» на него снизу.
+let CREDITS={};
+function vDish(id){
+  const d=D.find(x=>x.id===id);if(!d)return vDishes();
+  const inCart=!!S.sel[id];
+  const k=inCart?S.sel[id]:(S.vp[id]||4);
+  const steps=(window.RECIPES||{})[id]||[];
+  const smart=window.smartSteps?smartSteps(d,k,steps):steps.map(html=>({html,used:[]}));
+  const got=S.got[id]||{};
+  const ings=Object.entries(d.i).map(([pid,v])=>{const pr=P[pid];const need=v*k/4;
+    const show=pr.u==='шт'&&!['eggs','lemon','lime','avocado'].includes(pid)?Math.max(1,Math.round(need*10)/10)+' '+(pid==='nori'?'листа':'шт'):amt(need,pr.u);
+    return `<label class="ing"><input type="checkbox" data-got="${id}:${pid}" ${got[pid]?'checked':''}><span>${pr.n}${pr.pantry?'<span class="home">обычно есть дома</span>':''}</span><b>${show}</b></label>`}).join('');
+  const c=CREDITS[id];
+  return `<div class="dish-page">
+    <div class="hero"><img src="img/${d.id}.jpg" alt="${d.n}" width="640" height="480" onerror="this.style.visibility='hidden'"><button class="page-back" data-back aria-label="Назад к блюдам">‹</button></div>
+    <div class="sheet">
+      <h2 class="recipe-title">${d.n}</h2>
+      <div class="facts"><span>${d.t}</span><span>${d.cuisine.replace(/ая$/,'ая кухня')}</span><span>${d.type}</span><span>продукты от ${rub(dishCost(d,k))}</span></div>
+      <section class="panel"><div class="panel-head"><h2>Продукты</h2>
+        <div class="stepper"><button data-pdec="${id}" aria-label="Меньше порций">−</button><span>${portions(k)}</span><button data-pinc="${id}" aria-label="Больше порций">+</button></div></div>${ings}</section>
+      <div class="steps-head"><h2>Как готовить</h2><span class="muted">${steps.length} ${steps.length<5?'шага':'шагов'}</span></div>
+      ${steps.length?`<button class="cook-start" data-cook="${id}"><span class="play" aria-hidden="true"></span><span>Готовить по шагам<small>Крупно, по одному шагу, с таймерами. Экран не погаснет</small></span></button>`:''}
+      <ol class="steps">${smart.map((s,i)=>`<li data-step="${id}:${i}" class="${(STEPDONE[id]||{})[i]?'done':''}"><span>${s.html}</span></li>`).join('')}</ol>
+      ${steps.length?`<p class="steps-hint">Граммы в шагах посчитаны на ${portions(k)}. Нажмите на шаг, когда сделаете его, а на ⏱ — чтобы засечь время.</p>`:''}
+      <div class="sticky-buy">
+        <span class="meta">${portions(k)}</span>
+        <button class="add ${inCart?'on':''}" data-buy="${id}">${inCart?'В списке покупок ✓':'Добавить в список покупок'}</button>
+      </div>
+      ${c?`<p class="credit">Фото: <a href="${c.page}" target="_blank" rel="noopener">${c.author}</a>, ${c.license}, Викисклад. На фото блюдо этого вида, а не приготовленное по рецепту выше.</p>`:''}
+    </div>
+  </div>`;
+}
+
+// Отмеченные шаги живут, пока открыта вкладка: на следующий раз рецепт снова чистый
+const STEPDONE={};
+
+// Режим «Готовлю»: экран 0 — собрать продукты, дальше по шагу на экран, в конце — «Приятного аппетита»
+let COOK=null;
+const cookEl=document.createElement('div');cookEl.className='cook';cookEl.hidden=true;
+cookEl.setAttribute('role','dialog');cookEl.setAttribute('aria-modal','true');cookEl.setAttribute('aria-label','Готовлю по шагам');
+document.body.append(cookEl);
+function cookK(id){return S.sel[id]||S.vp[id]||4}
+function vCook(){
+  const d=D.find(x=>x.id===COOK.id),k=cookK(d.id),st=smartSteps(d,k,RECIPES[d.id]||[]),n=st.length,i=COOK.i;
+  const top=`<div class="cook-top"><button class="cook-x" data-cookclose aria-label="Закрыть">✕</button><span class="cook-name">${d.n}<small>${portions(k)}</small></span><span class="cook-count">${i===0?'Продукты':i>n?'Готово':`${i} / ${n}`}</span></div>
+    <div class="cook-progress"><i style="width:${(Math.min(i,n)/n*100).toFixed(1)}%"></i></div>`;
+  let body;
+  if(i===0){const got=S.got[d.id]||{};
+    body=`<div class="cook-num">Сначала соберите всё на столе</div><div class="cook-ings">${Object.entries(d.i).map(([pid])=>`<label class="ing"><input type="checkbox" data-got="${d.id}:${pid}" ${got[pid]?'checked':''}><span>${P[pid].n}</span><b>${amountOf(pid,k)}</b></label>`).join('')}</div>`}
+  else if(i>n)body=`<div class="cook-final"><img src="img/${d.id}.jpg" alt=""><div class="cook-num">Все ${n} ${n<5?'шага':'шагов'} позади</div><p class="cook-text">Приятного аппетита!</p></div>`;
+  else body=`<div class="cook-num">Шаг ${i}</div><p class="cook-text">${st[i-1].html}</p>${i<n?`<p class="cook-next"><span>Дальше:</span> ${RECIPES[d.id][i].replace(/^(.{90}).+$/,'$1…')}</p>`:''}`;
+  return top+`<div class="cook-body" aria-live="polite"${i>0&&i<=n?` data-n="${i}"`:''}>${body}</div>
+    <div class="cook-nav">${i>0&&i<=n?`<button class="ghost" data-cookgo="-1">‹ Назад</button>`:'<span></span>'}<button class="add" data-cookgo="${i>n?'close':1}">${i===0?'Начать готовить':i===n?'Готово!':i>n?'Закрыть':'Дальше ›'}</button></div>`;
+}
+function renderCook(){cookEl.innerHTML=vCook();cookEl.querySelector('.cook-body').scrollTop=0}
+function openCook(id){COOK={id,i:0};cookEl.hidden=false;document.body.classList.add('cooking');renderCook();keepAwake(true);cookEl.querySelector('[data-cookgo]').focus()}
+function closeCook(){COOK=null;cookEl.hidden=true;document.body.classList.remove('cooking');keepAwake(false);render()}
+function cookGo(st){const n=(RECIPES[COOK.id]||[]).length;COOK.i=Math.max(0,Math.min(n+1,COOK.i+st));renderCook()}
+document.addEventListener('keydown',e=>{if(!COOK)return;if(e.key==='Escape')closeCook();else if(e.key==='ArrowRight')cookGo(1);else if(e.key==='ArrowLeft')cookGo(-1)});
+// Свайп влево и вправо листает шаги, руки могут быть в муке
+let TX=null;
+cookEl.addEventListener('touchstart',e=>{TX=e.touches[0].clientX},{passive:true});
+cookEl.addEventListener('touchend',e=>{if(TX===null)return;const dx=e.changedTouches[0].clientX-TX;TX=null;if(Math.abs(dx)>70&&COOK.i>0)cookGo(dx<0?1:-1)},{passive:true});
+// Когда экран снова виден, Wake Lock надо попросить ещё раз
+document.addEventListener('visibilitychange',()=>{if(COOK&&document.visibilityState==='visible')keepAwake(true)});
+
+// Всплывашка «Добавлено · Отменить»
+let TOAST=null;
+function toast(msg,undo){
+  document.querySelector('.toast')?.remove();clearTimeout(TOAST);
+  const t=document.createElement('div');t.className='toast';t.setAttribute('role','status');
+  t.innerHTML=`<span>${msg}</span>${undo?'<button>Отменить</button>':''}`;
+  if(undo)t.querySelector('button').onclick=()=>{t.remove();undo()};
+  document.body.append(t);TOAST=setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),300)},3600);
+}
+function toggleDish(id,k){
+  const name=D.find(d=>d.id===id).n;
+  if(S.sel[id]){const was=S.sel[id];delete S.sel[id];toast(`«${name}» убрано из списка`,()=>{S.sel[id]=was;render()})}
+  else{S.sel[id]=k;POP=id;toast(`«${name}» в списке покупок`,()=>{delete S.sel[id];render()})}
+}
+
+// Фото на странице блюда чуть уезжает при прокрутке, как будто лежит под рецептом
+addEventListener('scroll',()=>{const h=document.querySelector('.hero img');if(h&&!matchMedia('(prefers-reduced-motion: reduce)').matches)h.style.translate=`0 ${Math.min(scrollY,600)*0.35}px`},{passive:true});
+
+function openDish(id){S.dish=id;history.pushState({dish:id},'','#'+id);window.scrollTo(0,0);render()}
+addEventListener('popstate',()=>{const id=location.hash.slice(1);S.dish=D.some(d=>d.id===id)?id:null;render()});
+
+function rowHTML(x,si){
+  const done=S.done[x.pid];
+  return `<label class="row ${done?'done':''}">
+    <input type="checkbox" data-done="${x.pid}" ${done?'checked':''} aria-label="Куплено: ${x.pr.n}">
+    <div class="nm">${x.pr.n}<span class="q">${x.n} × ${x.pr.pl}, нужно ${amt(x.need,x.pr.u)}. Для: ${x.from.join(', ')}</span></div>
+    <div><div class="sum">${rub(x.costs[si])}</div>${priceInfo(x.pid,si).kind==='est'?'<div class="alt">≈ примерно</div>':''}${S.mode==='one'&&x.best!==si?`<div class="alt">дешевле в ${STORES[x.best].inn}</div>`:''}</div>
+  </label>`;
+}
+
+function vCart(list,sm){
+  if(!list.length)return `<div class="empty"><h2>Список покупок пуст</h2><p>Выберите блюда, и сюда попадут все продукты для них с ценами по магазинам.</p><button class="add" data-goto="dishes">Выбрать блюда</button></div>`;
+  const A=act();const max=Math.max(...A.map(i=>sm.per[i]));
+  const bars=A.map(i=>[STORES[i],i]).map(([s,i])=>`<div class="bar ${i===sm.bestOne?'best':''}"><span><span class="dot" style="background:var(${s.c})"></span>${s.name}</span><div class="track"><div class="fill" style="width:${(sm.per[i]/max*100).toFixed(1)}%;background:var(${s.c})"></div></div><b>${rub(sm.per[i])}</b></div>`).join('');
+  // One card per shop: what is left to buy on top, bought items folded underneath
+  const sheet=(s,i,items,sum)=>{const todo=items.filter(x=>!S.done[x.pid]),got=items.filter(x=>S.done[x.pid]);
+    return `<section class="shop"><div class="shop-head"><span class="logo" style="background:var(${s.c})">${s.name[0]}</span><strong>${s.name}<small>${todo.length?`купить ${todo.length} из ${items.length}`:'всё куплено'}</small></strong><span class="price">${rub(sum)}</span></div>
+      ${todo.map(x=>rowHTML(x,i)).join('')}
+      ${got.length?`<details class="done-list"${todo.length?'':' open'}><summary>Куплено: ${got.length}</summary>${got.map(x=>rowHTML(x,i)).join('')}</details>`:''}</section>`};
+  let body='';
+  if(S.mode==='split'){
+    body=STORES.map((s,i)=>{const items=sm.buy.filter(x=>x.best===i);return items.length?sheet(s,i,items,items.reduce((a,x)=>a+x.min,0)):''}).join('');
+  }else{
+    const si=STORES.findIndex(s=>s.id===S.store);
+    body=`<div class="chips">${A.map(i=>STORES[i]).map(s=>`<button class="chip" data-store="${s.id}" aria-pressed="${S.store===s.id}"><span class="dot" style="background:var(${s.c})"></span>${s.name}</button>`).join('')}</div>`+sheet(STORES[si],si,sm.buy,sm.per[si]);
+  }
+  const pantry=list.filter(x=>x.pr.pantry);
+  const diff=sm.per[sm.bestOne]-sm.split;
+  const left=sm.buy.filter(x=>!S.done[x.pid]).length;
+  return `<div class="stack">
+    <h2 class="hello" style="margin-bottom:0">Список покупок</h2>
+    <section class="progress"><div class="progress-top"><span class="muted">${left?`Куплено ${sm.buy.length-left} из ${sm.buy.length}`:'Всё куплено, можно готовить'}</span><b>${rub(S.mode==='split'?sm.split:sm.per[STORES.findIndex(s=>s.id===S.store)])}</b></div>
+      <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="${sm.buy.length}" aria-valuenow="${sm.buy.length-left}"><i style="width:${((sm.buy.length-left)/sm.buy.length*100).toFixed(0)}%"></i></div></section>
+    <div class="seg"><button data-mode="split" aria-pressed="${S.mode==='split'}">Где дешевле</button><button data-mode="one" aria-pressed="${S.mode==='one'}">В одном магазине</button></div>
+    <section class="card stack"><h2 style="margin:0;font-size:16px">Если брать всё в одном месте</h2><div class="bars">${bars}</div>
+      ${diff>0?`<div class="saving">Если разделить покупки по магазинам, выйдет ${rub(sm.split)}. Это на ${rub(diff)} дешевле, чем всё в ${STORES[sm.bestOne].inn}.</div>`:''}
+    </section>
+    ${body}
+    ${pantry.length?`<section class="card"><h2 style="font-size:16px;margin-bottom:6px">Скорее всего есть дома</h2>${pantry.map(x=>`<label class="pantry-toggle"><input type="checkbox" data-pantry="${x.pid}" ${S.pantryBuy[x.pid]?'checked':''}><span>${x.pr.n}<span class="meta" style="display:block">нужно ${amt(x.need,x.pr.u)}</span></span><span class="meta">${S.pantryBuy[x.pid]?'в списке':'добавить'}</span></label>`).join('')}</section>`:''}
+    <div class="total"><span>Итого</span><span>${rub(S.mode==='split'?sm.split:sm.per[STORES.findIndex(s=>s.id===S.store)])}</span></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="ghost" data-uncheck>Снять отметки «куплено»</button><button class="ghost danger" data-clear>Очистить список</button></div>
+    <p class="note">Цены для города ${city().name}: проверено ${sm.real} из ${sm.buy.length}, остальные примерные. Свои цены можно поправить на вкладке «Цены».</p>
+  </div>`;
+}
+
+function vPrices(){
+  const q=S.q.trim().toLowerCase();
+  const ids=Object.keys(P).filter(id=>!q||P[id].n.toLowerCase().includes(q));
+  const A=act(),h=S.hidden[S.city]||{};
+  const real=Object.keys(P).reduce((n,id)=>n+A.filter(i=>priceInfo(id,i).kind==='real').length,0);
+  const dates=[];for(const st of Object.values(REAL.cities[S.city]||{}))for(const r of Object.values(st))if(r.date)dates.push(r.date);
+  const last=dates.sort().pop();
+  return `<h2>Цены в городе ${city().name}</h2>
+  <div class="label" style="margin-bottom:6px">Какие магазины есть в городе</div>
+  <div class="storetoggles">${STORES.map(s=>`<button class="chip" data-togglestore="${s.id}" aria-pressed="${!h[s.id]}"><span class="dot" style="background:var(${s.c})"></span>${s.name}</button>`).join('')}</div>
+  <p class="legend"><span><i style="border-color:var(--good)"></i>проверенная</span><span><i style="border-color:var(--s3)"></i>поправил сам</span><span><i style="border-color:var(--line)"></i><em>примерная</em></span></p>
+  <p class="note" style="margin-bottom:12px">Проверено цен: ${real}${last?`, последнее обновление ${new Date(last).toLocaleDateString('ru-RU')}`:''}. Нажми на магазин выше, если его нет в твоём городе: он не будет участвовать в подсчёте.</p>
+  <input class="search" id="q" type="search" placeholder="Найти продукт" value="${S.q.replace(/"/g,'&quot;')}">
+  <div class="ptable-wrap"><table><thead><tr><th>Продукт</th>${A.map(i=>STORES[i]).map(s=>`<th><span class="dot" style="background:var(${s.c})"></span>${s.name}</th>`).join('')}</tr></thead><tbody>
+  ${ids.map(id=>{const info=A.map(i=>priceInfo(id,i));const mn=Math.min(...info.map(x=>x.v));
+    return `<tr><td>${P[id].n}<div class="q muted" style="font-weight:400;font-size:12px">за ${P[id].pl}</div></td>${info.map((x,j)=>{const i=A[j];
+      const tip=x.kind==='real'?`проверено ${new Date(x.date).toLocaleDateString('ru-RU')}${x.src?', '+x.src:''}`:x.kind==='own'?'твоя цена':'примерная цена';
+      return `<td><input id="p-${id}-${i}" inputmode="decimal" data-price="${id}" data-si="${i}" value="${x.v}" class="${x.v===mn?'min ':''}${x.kind}" title="${tip}" aria-label="${P[id].n}, ${STORES[i].name}, ${tip}"></td>`}).join('')}</tr>`}).join('')}
+  </tbody></table></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="ghost danger" data-resetprices>Убрать мои правки цен в этом городе</button></div>
+  <p class="note" style="margin-top:12px">Зелёной заливкой отмечена самая низкая цена. Твои правки сохраняются на этом телефоне и только для выбранного города.</p>`;
+}
+
+function vCity(){
+  return `<h2>${S.city?'Сменить город':'Где ты покупаешь продукты?'}</h2>
+  <p class="muted" style="margin-top:-6px">Цены в магазинах разных городов отличаются. Город можно поменять в любой момент, нажав на него в шапке.</p>
+  <div class="cities">${CITIES.map(c=>{const n=Object.values(REAL.cities[c.id]||{}).reduce((a,st)=>a+Object.keys(st).length,0);
+    return `<button data-setcity="${c.id}" aria-pressed="${S.city===c.id}">${c.name}<small>${n?`проверено цен: ${n}`:'пока примерные цены'}</small></button>`}).join('')}</div>`;
+}
+
+function installNote(){
+  return `<details class="note" style="margin-top:12px"><summary style="font-weight:700;color:var(--fg)">Как добавить на экран «Домой»</summary>
+  <p><b>iPhone (Safari):</b> кнопка «Поделиться» → «На экран „Домой“».<br><b>Android (Chrome):</b> меню ⋮ → «Добавить на главный экран» или «Установить приложение».</p></details>`;
+}
+
+document.addEventListener('click',e=>{
+  const li=e.target.closest('li[data-step]');
+  if(li&&!e.target.closest('button')){const [id,i]=li.dataset.step.split(':');const m=(STEPDONE[id]=STEPDONE[id]||{});m[i]=!m[i];li.classList.toggle('done',!!m[i]);return}
+  const t=e.target.closest('button');if(!t)return;const d=t.dataset;
+  if(d.timer){startTimer(+d.timer,d.tlabel);return}
+  if(d.cook){openCook(d.cook);return}
+  if(d.cookgo){d.cookgo==='close'?closeCook():cookGo(+d.cookgo);return}
+  if('cookclose' in d){closeCook();return}
+  if('shuffle' in d){shuffle();return}
+  if(d.tab){if(S.dish){S.dish=null;history.replaceState(null,'',location.pathname+location.search)}S.tab=d.tab;window.scrollTo(0,0)}
+  else if(d.open){openDish(d.open);return}
+  else if('back' in d){history.length>1&&location.hash?history.back():(S.dish=null,render());return}
+  else if(d.pinc||d.pdec){const id=d.pinc||d.pdec,st=d.pinc?1:-1;if(S.sel[id])S.sel[id]=Math.max(1,Math.min(20,S.sel[id]+st));else S.vp[id]=Math.max(1,Math.min(20,(S.vp[id]||4)+st))}
+  else if(d.buy){toggleDish(d.buy,S.vp[d.buy]||4)}
+  else if(d.goto){S.tab=d.goto}
+  else if(d.cat){S.cat=d.cat}
+  else if(d.filter){S.f=S.f===d.filter?'':d.filter}
+  else if(d.toggle){toggleDish(d.toggle,4)}
+  else if(d.inc){S.sel[d.inc]=Math.min(20,S.sel[d.inc]+1)}
+  else if(d.dec){S.sel[d.dec]-=1;if(S.sel[d.dec]<1)delete S.sel[d.dec]}
+  else if(d.mode){S.mode=d.mode}
+  else if(d.store){S.store=d.store}
+  else if('uncheck' in d){S.done={}}
+  else if('clear' in d){S.sel={};S.done={};S.pantryBuy={}}
+  else if('resetprices' in d){delete S.prices[S.city]}
+  else if('pickcity' in d){S.tab='city';window.scrollTo(0,0)}
+  else if(d.setcity){S.city=d.setcity;S.tab='dishes';window.scrollTo(0,0)}
+  else if(d.togglestore){const h=(S.hidden[S.city]=S.hidden[S.city]||{});
+    if(h[d.togglestore])delete h[d.togglestore];
+    else if(act().length>1)h[d.togglestore]=1;}
+  else return;
+  render();
+});
+document.addEventListener('change',e=>{
+  const t=e.target,d=t.dataset;
+  if(d.got){const [di,pi]=d.got.split(':');const g=(S.got[di]=S.got[di]||{});if(t.checked)g[pi]=1;else delete g[pi];save()}
+  else if(d.done){if(t.checked)S.done[d.done]=1;else delete S.done[d.done];render()}
+  else if(d.pantry){if(t.checked)S.pantryBuy[d.pantry]=1;else delete S.pantryBuy[d.pantry];render()}
+  else if(d.price){const v=parseFloat(String(t.value).replace(',','.'));
+    if(!isNaN(v)&&v>=0){const c=(S.prices[S.city]=S.prices[S.city]||{});(c[d.price]=c[d.price]||{})[STORES[d.si].id]=v}render()}
+});
+document.addEventListener('input',e=>{
+  const fid=e.target.id;if(fid==='q'||fid==='dq'){S[fid]=e.target.value;const pos=e.target.selectionStart;render();const q=document.getElementById(fid);q.focus();try{q.setSelectionRange(pos,pos)}catch(_){}}
+});
+render();
+// Проверенные цены лежат рядом в prices.json; без сети берутся из кэша, а если файла нет — остаются примерные.
+fetch('photos.json').then(r=>r.ok?r.json():null).then(j=>{if(j){CREDITS=j;if(S.dish)render()}}).catch(()=>{});
+fetch('prices.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.cities){REAL=j;render()}}).catch(()=>{});
+if('serviceWorker' in navigator){try{navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}}
+</script>
+
+</body>
+</html>
