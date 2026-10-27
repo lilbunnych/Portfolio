@@ -30,6 +30,7 @@
 
 <nav class="tabs" aria-label="Разделы"><div class="in">
   <button data-tab="dishes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 13h18a9 9 0 0 1-18 0Z"/><path d="M8 9c0-2 2-2 2-4M13 9c0-2 2-2 2-4"/></svg>Блюда</button>
+  <button data-tab="pp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19C5 10 10 5 20 4c0 10-5 15-14 15"/><path d="M5 19 13 11"/></svg>ПП</button>
   <button data-tab="cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2.4 11h11L21 8H7"/><circle cx="9.5" cy="19.5" r="1.5"/><circle cx="17" cy="19.5" r="1.5"/></svg>Список<span class="badge" id="badge" hidden>0</span></button>
   <button data-tab="prices"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12V4h8l10 10-8 8L3 12Z"/><circle cx="7.5" cy="8.5" r="1.5"/></svg>Цены</button>
 </div></nav>
@@ -38,6 +39,7 @@
 <script src="recipes-more.js"></script>
 <script src="recipes-more2.js"></script>
 <script src="cook.js"></script>
+<script src="nutrition.js"></script>
 <script>
 const STORES=[
   {id:'p5',name:'Пятёрочка',inn:'Пятёрочке',c:'--s1',f:1.00},
@@ -568,7 +570,7 @@ const CITIES=[
 let REAL={cities:{}};
 
 const KEY='chto-gotovim-v3';
-let S={city:null,dish:null,vp:{},got:{},sel:{},done:{},pantryBuy:{},prices:{},hidden:{},tab:'dishes',cat:'Все',f:'',mode:'split',store:'p5',q:'',dq:''};
+let S={city:null,dish:null,vp:{},got:{},sel:{},done:{},pantryBuy:{},prices:{},hidden:{},tab:'dishes',cat:'Все',f:'',ppk:0,ppt:'',mode:'split',store:'p5',q:'',dq:''};
 try{
   const s=JSON.parse(localStorage.getItem(KEY)||'null');
   if(s)S=Object.assign(S,s);
@@ -583,7 +585,7 @@ for(const k in S.sel)if(!D.some(d=>d.id===k))delete S.sel[k];
 if(!['Все',...D.map(d=>d.cuisine)].includes(S.cat))S.cat='Все';
 if(S.city&&!CITIES.some(c=>c.id===S.city))S.city=null;
 // открытое блюдо берём из адреса (#borsch), чтобы работали ссылка и кнопка «Назад»
-S.dish=D.some(d=>d.id===location.hash.slice(1))?location.hash.slice(1):null;if(S.dish)S.tab='dishes';
+S.dish=D.some(d=>d.id===location.hash.slice(1))?location.hash.slice(1):null;if(S.dish&&S.tab!=='pp')S.tab='dishes';
 S.vp=S.vp||{};S.got=S.got||{};
 // пример на первом запуске
 if(!Object.keys(S.sel).length&&!S.started){S.sel={borsch:4,syrniki:4};S.started=1}
@@ -642,7 +644,7 @@ function render(){
   document.getElementById('hsub').textContent=cnt?`${cnt} ${cnt===1?'блюдо':cnt<5?'блюда':'блюд'} · ${sm.buy.length} продуктов к покупке`:'Выбери блюда — список покупок соберётся сам';
   const b=document.getElementById('badge');b.hidden=!sm.buy.length;b.textContent=sm.buy.filter(x=>!S.done[x.pid]).length;
   document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-current',x.dataset.tab===S.tab?'page':'false'));
-  V.innerHTML=S.tab==='dishes'?(S.dish?vDish(S.dish):vDishes()):S.tab==='cart'?vCart(list,sm):vPrices();
+  V.innerHTML=S.tab==='dishes'||S.tab==='pp'?(S.dish?vDish(S.dish):S.tab==='pp'?vPP():vDishes()):S.tab==='cart'?vCart(list,sm):vPrices();
   POP=null;
   save();
 }
@@ -653,13 +655,15 @@ function mins(t){const s=t.split('+')[0];const h=s.match(/([\d,]+)\s*ч/);const 
 const CUISINE_PIC={'Итальянская':'margherita','Русская':'bliny','Белорусская':'draniki','Украинская':'borsch','Французская':'ratatouille','Азиатская':'ramen'};
 let POP=null; // блюдо, которое только что добавили: его кнопка «+» коротко подпрыгнет
 
-function card(d){
+const kcal=d=>nutr(d).kcal+' ккал';
+const bju=n=>`Б ${n.p} · Ж ${n.f} · У ${n.c}`;
+function card(d,pp){
   const on=!!S.sel[d.id];
   return `<article class="dish">
     <button class="dish-open" data-open="${d.id}" aria-label="${d.n}, открыть рецепт">
-      <span class="dish-photo"><img src="img/${d.id}.jpg" alt="" loading="lazy" width="640" height="640" onerror="this.style.visibility='hidden'"><span class="time">${d.t}</span></span>
+      <span class="dish-photo"><img src="img/${d.id}.jpg" alt="" loading="lazy" width="640" height="640" onerror="this.style.visibility='hidden'"><span class="time">${d.t}</span><span class="kcal">${kcal(d)}</span></span>
       <span class="dname">${d.n}</span>
-      <span class="dmeta">${d.cuisine.replace(/ая$/,'ая кухня')}</span>
+      <span class="dmeta">${pp?bju(nutr(d)):d.cuisine.replace(/ая$/,'ая кухня')}</span>
     </button>
     <button class="quick ${on?'on':''} ${POP===d.id?'pop':''}" data-toggle="${d.id}" aria-pressed="${on}" aria-label="${on?'Убрать из списка покупок':'Добавить продукты в список покупок'}">${on?S.sel[d.id]+' п.':'+'}</button>
   </article>`;
@@ -678,7 +682,7 @@ function todayCard(d){
     <button class="today-open" data-open="${d.id}">
       <img src="img/${d.id}.jpg" alt="" width="640" height="640" onerror="this.style.visibility='hidden'">
       <span class="today-tag">${PICK?'Выпало сегодня':'Блюдо дня'}</span>
-      <span class="today-text"><b>${d.n}</b><span>${d.t} · ${d.cuisine.replace(/ая$/,'ая кухня')} · продукты от ${rub(dishCost(d,4))}</span></span>
+      <span class="today-text"><b>${d.n}</b><span>${d.t} · ${kcal(d)} на порцию · продукты от ${rub(dishCost(d,4))}</span></span>
     </button>
     <button class="shuffle" data-shuffle><span class="die" aria-hidden="true"><i></i><i></i><i></i></span>Удиви меня</button>
   </section>`;
@@ -695,7 +699,7 @@ function shuffle(){
   seq.forEach(d=>{new Image().src=`img/${d.id}.jpg`});
   box.classList.add('spin');
   const img=box.querySelector('img'),name=box.querySelector('.today-text b'),meta=box.querySelector('.today-text span'),tag=box.querySelector('.today-tag');
-  let i=0;const step=()=>{const d=seq[i];img.src=`img/${d.id}.jpg`;name.textContent=d.n;meta.textContent=d.t+' · '+d.cuisine.replace(/ая$/,'ая кухня');tag.textContent='Выбираю…';
+  let i=0;const step=()=>{const d=seq[i];img.src=`img/${d.id}.jpg`;name.textContent=d.n;meta.textContent=d.t+' · '+kcal(d)+' на порцию';tag.textContent='Выбираю…';
     if(++i<seq.length)setTimeout(step,70+i*i*6);else setTimeout(()=>{PICK=d.id;render()},380)};
   step();
 }
@@ -721,6 +725,37 @@ function vDishes(){
   ${installNote()}`;
 }
 
+// Калории и БЖУ на порцию; полоска показывает, откуда берутся калории
+function nutrPanel(d){
+  const n=nutr(d),e=n.p*4+n.f*9+n.c*4||1;
+  const part=(k,v,lab)=>`<div class="nut nut-${k}"><b>${v} г</b><span>${lab}</span></div>`;
+  return `<section class="nutr" aria-label="Пищевая ценность на порцию">
+    <div class="nutr-kcal"><b>${n.kcal}</b><span>ккал<br>на порцию</span></div>
+    <div class="nutr-parts">${part('p',n.p,'белки')}${part('f',n.f,'жиры')}${part('c',n.c,'углеводы')}
+      <div class="nutr-bar" aria-hidden="true"><i class="nut-p" style="flex:${n.p*4/e}"></i><i class="nut-f" style="flex:${n.f*9/e}"></i><i class="nut-c" style="flex:${n.c*4/e}"></i></div></div>
+  </section>`;
+}
+
+// Вкладка «ПП»: лёгкие и сытные блюда, отобранные по составу (isPP в nutrition.js)
+const PP_TYPES=[['','Все'],['Завтрак','Завтраки'],['Суп','Супы'],['Салат','Салаты и закуски'],['Горячее','Горячее']];
+const PP_KCAL=[0,300,400,500];
+function vPP(){
+  const all=D.filter(isPP);
+  const ds=all.filter(d=>(!S.ppt||(S.ppt==='Салат'?['Салат','Закуска'].includes(d.type):d.type===S.ppt))&&(!S.ppk||nutr(d).kcal<=S.ppk)).sort((a,b)=>nutr(a).kcal-nutr(b).kcal);
+  const protein=all.filter(d=>nutr(d).p*4>=nutr(d).kcal*0.3).sort((a,b)=>nutr(b).p-nutr(a).p);
+  const light=all.filter(d=>nutr(d).kcal<=350).sort((a,b)=>nutr(a).kcal-nutr(b).kcal);
+  const browsing=!S.ppt&&!S.ppk;
+  const shelf=(title,list)=>list.length?`<section class="shelf"><div class="shelf-head"><h2>${title}</h2></div><div class="rail">${list.map(d=>card(d,1)).join('')}</div></section>`:'';
+  return `<p class="hello">Правильное питание</p>
+  <p class="pp-lead">Блюда, где хватает белка, овощей или цельной крупы, а жира и сахара немного. Без колбас, майонеза и фритюра. Калории и БЖУ указаны на одну порцию.</p>
+  <div class="filters pp-filters" role="group" aria-label="Тип блюда">${PP_TYPES.map(([k,t])=>`<button class="filter" data-ppt="${k}" aria-pressed="${S.ppt===k}">${t}</button>`).join('')}</div>
+  <div class="filters" role="group" aria-label="Калорийность">${PP_KCAL.map(k=>`<button class="filter" data-ppk="${k}" aria-pressed="${S.ppk===k}">${k?'до '+k+' ккал':'Любая калорийность'}</button>`).join('')}</div>
+  ${browsing?shelf('Лёгкое, до 350 ккал',light)+shelf('Больше всего белка',protein):''}
+  ${ds.length?`<section class="shelf"><div class="shelf-head"><h2>${browsing?'Все блюда ПП':PP_TYPES.find(x=>x[0]===S.ppt)[1]+(S.ppk?', до '+S.ppk+' ккал':'')}</h2><span class="muted">${ds.length}</span></div><div class="grid">${ds.map(d=>card(d,1)).join('')}</div></section>`
+    :`<div class="empty"><h2>Таких блюд нет</h2><p>Поднимите планку калорий или выберите другой тип блюда.</p></div>`}
+  <p class="note">Калорийность рассчитана по составу продуктов и примерная: точные цифры зависят от марки продуктов и размера порции. Масло для фритюра учтено как впитавшееся.</p>`;
+}
+
 // Страница блюда: фото во всю ширину, рецепт «наплывает» на него снизу.
 let CREDITS={};
 function vDish(id){
@@ -738,7 +773,8 @@ function vDish(id){
     <div class="hero"><img src="img/${d.id}.jpg" alt="${d.n}" width="640" height="480" onerror="this.style.visibility='hidden'"><button class="page-back" data-back aria-label="Назад к блюдам">‹</button></div>
     <div class="sheet">
       <h2 class="recipe-title">${d.n}</h2>
-      <div class="facts"><span>${d.t}</span><span>${d.cuisine.replace(/ая$/,'ая кухня')}</span><span>${d.type}</span><span>продукты от ${rub(dishCost(d,k))}</span></div>
+      <div class="facts"><span>${d.t}</span><span>${d.cuisine.replace(/ая$/,'ая кухня')}</span><span>${d.type}</span>${isPP(d)?'<span class="pp-tag">ПП</span>':''}<span>продукты от ${rub(dishCost(d,k))}</span></div>
+      ${nutrPanel(d)}
       <section class="panel"><div class="panel-head"><h2>Продукты</h2>
         <div class="stepper"><button data-pdec="${id}" aria-label="Меньше порций">−</button><span>${portions(k)}</span><button data-pinc="${id}" aria-label="Больше порций">+</button></div></div>${ings}</section>
       <div class="steps-head"><h2>Как готовить</h2><span class="muted">${steps.length} ${steps.length<5?'шага':'шагов'}</span></div>
@@ -904,6 +940,8 @@ document.addEventListener('click',e=>{
   else if(d.goto){S.tab=d.goto}
   else if(d.cat){S.cat=d.cat}
   else if(d.filter){S.f=S.f===d.filter?'':d.filter}
+  else if('ppt' in d){S.ppt=d.ppt}
+  else if('ppk' in d){S.ppk=+d.ppk}
   else if(d.toggle){toggleDish(d.toggle,4)}
   else if(d.inc){S.sel[d.inc]=Math.min(20,S.sel[d.inc]+1)}
   else if(d.dec){S.sel[d.dec]-=1;if(S.sel[d.dec]<1)delete S.sel[d.dec]}

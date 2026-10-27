@@ -1,5 +1,5 @@
-const CACHE = 'chto-gotovim-v9';
-const FILES = ['./', './index.html', './styles.css', './manifest.json', './prices.json', './recipes.js', './recipes-more.js', './recipes-more2.js', './cook.js', './photos.json', './icon-192.png', './icon-512.png', './icon-180.png'];
+const CACHE = 'chto-gotovim-v10';
+const FILES = ['./', './index.html', './styles.css', './manifest.json', './prices.json', './recipes.js', './recipes-more.js', './recipes-more2.js', './cook.js', './nutrition.js', './photos.json', './icon-192.png', './icon-512.png', './icon-180.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
 });
