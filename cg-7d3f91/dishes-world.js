@@ -1,0 +1,82 @@
+// Блюда, добавленные 2026-10-28: Вьетнам, Япония, Китай, Таиланд, Корея и обе Америки.
+// Формат как в index.html: PR_MORE — продукты, DL_MORE — блюда (количества на 4 порции).
+window.PR_MORE = {
+ lemongrass:['Лемонграсс','г',100,'100 г',149], mint:['Мята свежая','г',30,'30 г',79], sprouts:['Ростки маша','г',200,'200 г',119],
+ staranise:['Бадьян','г',10,'10 г',69], cinnamon:['Корица палочки','г',10,'10 г',59], hoisin:['Соус хойсин','мл',250,'250 мл',229],
+ sriracha:['Соус шрирача','мл',200,'200 мл',249], mirin:['Мирин','мл',150,'150 мл',259], ricefloor:['Мука рисовая','г',500,'500 г',129],
+ turmeric:['Куркума','г',20,'20 г',49], pineapple:['Ананасы консервированные','г',565,'565 г',189], tortilla:['Тортильи пшеничные','шт',6,'6 шт',149],
+ buns:['Булочки для бургеров','шт',4,'4 шт',119], cheddar:['Сыр чеддер','г',200,'200 г',259], bbq:['Соус барбекю','мл',300,'300 мл',149],
+ ketchup:['Кетчуп','г',350,'350 г',119], wings:['Куриные крылья','г',1000,'1 кг',349], porkribs:['Рёбрышки свиные','г',1000,'1 кг',489],
+ maple:['Кленовый сироп','мл',250,'250 мл',499], bakingpowder:['Разрыхлитель','г',10,'10 г',19], jalapeno:['Халапеньо маринованный','г',200,'200 г',189],
+ paprika:['Паприка копчёная','г',20,'20 г',59], oregano:['Орегано сушёный','г',10,'10 г',49], cookies:['Печенье песочное','г',300,'300 г',119],
+ condensed:['Молоко сгущённое','г',380,'380 г',129], mango:['Манго','шт',1,'1 шт',149], sichuan:['Перец сычуаньский','г',20,'20 г',149],
+ porkbelly:['Свиная грудинка','г',500,'500 г',299],
+};
+
+window.DL_MORE = [
+ // Вьетнамская
+ ['phoga','Фо га с курицей','Вьетнамская','Суп','2 ч',{chicken:1200,ricenoodles:400,onion:200,ginger:40,staranise:5,cinnamon:5,fishsauce:60,sugar:15,greenonion:40,cilantro:30,mint:20,sprouts:200,lime:2,chili:20,salt:15}],
+ ['buncha','Бун ча','Вьетнамская','Горячее','1 ч',{mince:500,pork:300,ricenoodles:400,garlic:20,onion:80,fishsauce:80,sugar:40,lime:2,carrot:100,lettuce:1,mint:20,cilantro:30,chili:15,bpepper:3}],
+ ['bunbohue','Бун бо хюэ','Вьетнамская','Суп','2 ч 30 мин',{beef:600,knuckle:600,lemongrass:60,ricenoodles:400,onion:150,chili:20,fishsauce:60,sugar:15,sprouts:200,lime:2,mint:20,greenonion:40,salt:15,oil:30}],
+ ['bunbonambo','Бун бо нам бо','Вьетнамская','Горячее','40 мин',{steak:500,ricenoodles:400,lettuce:1,cucumber:200,sprouts:150,peanuts:60,mint:20,onion:100,garlic:15,fishsauce:60,lime:2,sugar:30,oil:30}],
+ ['boluclac','Бо лук лак (говядина кубиками)','Вьетнамская','Горячее','30 мин',{steak:600,onion:150,pepper:200,garlic:20,soy:40,oyster:30,sugar:10,lime:1,tomato:200,lettuce:1,jasmine:300,butter:20,oil:30,bpepper:3}],
+ ['comtam','Ком там со свининой','Вьетнамская','Горячее','1 ч',{pork:700,jasmine:400,eggs:4,cucumber:200,tomato:200,garlic:20,fishsauce:70,sugar:40,lime:1,chili:10,greenonion:30,oil:40}],
+ ['gaxaosaot','Курица с лемонграссом и чили','Вьетнамская','Горячее','35 мин',{thighs:800,lemongrass:60,chili:15,garlic:20,onion:120,fishsauce:40,sugar:20,jasmine:300,cilantro:20,oil:40}],
+ ['chagio','Ча зё (жареные нэмы)','Вьетнамская','Закуска','1 ч',{ricepaper:200,mince:400,shrimp:150,glassnoodle:50,mushrooms:100,carrot:100,onion:80,eggs:1,fishsauce:40,lettuce:1,mint:20,lime:1,sugar:20,oil:500}],
+ ['banhxeo','Бань сео (хрустящие блинчики)','Вьетнамская','Горячее','50 мин',{ricefloor:250,coconut:200,turmeric:3,shrimp:250,pork:200,sprouts:200,onion:80,greenonion:30,lettuce:1,mint:20,fishsauce:50,lime:1,sugar:30,oil:80}],
+ ['canhchua','Кань чуа (кисло-сладкий суп с рыбой)','Вьетнамская','Суп','40 мин',{whitefish:500,tomato:300,pineapple:250,sprouts:150,onion:80,garlic:15,fishsauce:50,lime:2,sugar:20,chili:10,cilantro:20,oil:20}],
+ ['cakhoto','Лосось в карамельном соусе (ка кхо)','Вьетнамская','Горячее','45 мин',{salmon:600,sugar:40,fishsauce:50,garlic:20,onion:80,chili:10,greenonion:30,bpepper:3,jasmine:300,oil:20}],
+ ['goiga','Гой га (салат с курицей и капустой)','Вьетнамская','Салат','40 мин',{fillet:500,cabbage:400,carrot:150,onion:80,mint:20,cilantro:30,peanuts:60,fishsauce:50,lime:2,sugar:30,chili:10,garlic:10}],
+ // Японская
+ ['ramenchashu','Рамен со свининой чашу','Японская','Суп','3 ч',{porkbelly:400,chicken:600,eggnoodles:400,eggs:4,soy:120,mirin:80,sugar:30,ginger:30,garlic:20,greenonion:50,nori:4,mushrooms:150,salt:10}],
+ ['misoramen','Мисо-рамен','Японская','Суп','1 ч',{eggnoodles:400,miso:100,mince:300,garlic:15,ginger:20,sprouts:200,corn:150,greenonion:40,eggs:4,sesameoil:20,butter:40,soy:30}],
+ ['karaage','Карааге (курица во фритюре)','Японская','Горячее','40 мин + 1 ч',{thighs:800,soy:50,mirin:30,ginger:20,garlic:15,starch:100,lemon:1,mayo:60,oil:700,jasmine:300}],
+ ['salmonteriyaki','Лосось терияки','Японская','Горячее','25 мин',{salmon:600,soy:60,mirin:60,sugar:20,ginger:15,sesame:10,greenonion:20,broccoli:300,jasmine:300,oil:20}],
+ ['chahan','Тяхан (японский жареный рис)','Японская','Горячее','20 мин',{jasmine:400,eggs:3,ham:150,greenonion:50,soy:30,sesameoil:15,garlic:10,oil:30,salt:5,bpepper:2}],
+ // Китайская
+ ['dandan','Лапша дань-дань','Китайская','Горячее','30 мин',{eggnoodles:400,mince:300,sesame:30,peanuts:40,soy:50,chili:15,sichuan:3,garlic:15,greenonion:30,spinach:150,sugar:10,ricevin:20,sesameoil:20,oil:30}],
+ ['tomatoegg','Помидоры с яйцом по-китайски','Китайская','Горячее','15 мин',{tomato:600,eggs:6,greenonion:30,sugar:15,soy:15,starch:10,jasmine:300,oil:40,salt:5}],
+ ['charsiu','Свинина чар сиу','Китайская','Горячее','1 ч + ночь',{pork:1000,hoisin:80,soy:50,honey:50,garlic:20,sugar:20,ricevin:20,jasmine:300,greenonion:20}],
+ ['jiaozi','Цзяоцзы (китайские пельмени)','Китайская','Горячее','1 ч 30 мин',{flour:400,mince:500,cabbage:300,ginger:20,greenonion:40,soy:40,sesameoil:15,ricevin:30,garlic:15,salt:8}],
+ ['hotsour','Кисло-острый суп','Китайская','Суп','30 мин',{tofu:200,mushrooms:200,pork:150,carrot:80,eggs:2,soy:40,ricevin:50,starch:20,bpepper:4,chili:10,greenonion:30,sesameoil:10}],
+ ['guobaorou','Гобаожоу (свинина в кляре)','Китайская','Горячее','45 мин',{pork:600,starch:150,sugar:60,ricevin:60,soy:15,ginger:15,garlic:10,carrot:60,greenonion:20,oil:700,jasmine:300}],
+ // Тайская
+ ['massaman','Массаман карри с говядиной','Тайская','Горячее','2 ч',{beef:700,potato:500,onion:150,coconut:400,curry:20,peanuts:60,fishsauce:30,sugar:20,cinnamon:3,staranise:2,jasmine:300,oil:20}],
+ ['khaopad','Као пад (тайский жареный рис)','Тайская','Горячее','20 мин',{jasmine:400,shrimp:300,eggs:3,onion:100,garlic:15,fishsauce:30,soy:20,sugar:10,tomato:150,cucumber:150,lime:1,greenonion:20,oil:40}],
+ ['mangorice','Манго с клейким рисом','Тайская','Десерт','40 мин + 4 ч',{sushirice:300,coconut:400,sugar:80,mango:2,sesame:10,salt:3}],
+ // Корейская
+ ['kimchirice','Жареный рис с кимчи','Корейская','Горячее','20 мин',{jasmine:400,kimchi:300,bacon:150,eggs:4,gochujang:30,greenonion:30,sesameoil:15,nori:2,oil:30}],
+ ['dakgangjeong','Курица по-корейски в остром соусе','Корейская','Горячее','50 мин',{wings:1200,starch:120,gochujang:60,honey:60,soy:40,garlic:20,ginger:15,sesame:15,greenonion:20,oil:700}],
+ // Североамериканская
+ ['burger','Классический бургер','Североамериканская','Горячее','30 мин',{beefmince:700,buns:4,cheddar:120,tomato:200,onion:100,lettuce:1,pickles:100,ketchup:60,mustard:20,mayo:40,salt:8,bpepper:3,oil:20}],
+ ['macncheese','Мак энд чиз','Североамериканская','Горячее','35 мин',{penne:400,cheddar:250,milk:500,butter:50,flour:40,mustard:10,breadcrumbs:40,paprika:3,salt:8}],
+ ['bbqribs','Свиные рёбрышки барбекю','Североамериканская','Горячее','3 ч',{porkribs:1500,bbq:250,honey:40,garlic:20,paprika:10,sugar:20,salt:15,bpepper:5,potato:800,butter:40}],
+ ['pulledpork','Пулд порк в булочке','Североамериканская','Горячее','4 ч',{pork:1200,bbq:200,paprika:10,sugar:30,garlic:20,buns:4,cabbage:300,carrot:100,mayo:60,ricevin:15,salt:15}],
+ ['wings','Куриные крылья баффало','Североамериканская','Закуска','50 мин',{wings:1200,flour:50,butter:60,sriracha:80,garlic:15,paprika:5,celery:200,sourcream:150,salt:10}],
+ ['chilicon','Чили кон карне','Североамериканская','Горячее','1 ч 20 мин',{beefmince:700,beans:400,ctomato:800,onion:200,pepper:200,garlic:20,chili:15,zira:5,paprika:10,oregano:3,tpaste:70,sourcream:150,oil:30,salt:10}],
+ ['pancakes','Американские панкейки','Североамериканская','Завтрак','25 мин',{flour:250,milk:300,eggs:2,sugar:30,bakingpowder:10,butter:40,maple:100,berries:200,salt:2}],
+ ['chowder','Чаудер с треской и картофелем','Североамериканская','Суп','45 мин',{whitefish:500,potato:500,bacon:150,onion:150,celery:100,milk:500,cream:200,butter:30,flour:30,bayleaf:1,salt:10,parsley:15}],
+ ['friedchicken','Жареная курица по-южному','Североамериканская','Горячее','1 ч + 2 ч',{thighs:1000,kefir:400,flour:250,paprika:10,garlic:10,salt:12,bpepper:4,oil:1000}],
+ ['cobb','Салат Кобб','Североамериканская','Салат','30 мин',{fillet:400,bacon:150,eggs:3,avocado:2,tomato:250,lettuce:2,cheese:100,olive:50,ricevin:20,mustard:10,salt:5}],
+ ['cheesecake','Нью-Йоркский чизкейк','Североамериканская','Десерт','1 ч 30 мин + ночь',{creamcheese:450,sugar:100,eggs:2,sourcream:100,cookies:120,butter:50,lemon:1,starch:10}],
+ ['brownie','Шоколадный брауни','Североамериканская','Десерт','45 мин',{chocolate:200,butter:150,sugar:200,eggs:3,flour:100,cocoa:30,salt:2}],
+ ['jambalaya','Джамбалайя','Североамериканская','Горячее','1 ч',{rice:400,fillet:400,shrimp:250,sausages:250,onion:150,pepper:200,celery:100,ctomato:400,garlic:15,paprika:10,chili:10,oil:30,salt:10}],
+ // Мексиканская
+ ['tacos','Тако с говядиной','Мексиканская','Горячее','40 мин',{beefmince:600,tortilla:8,onion:150,tomato:300,cilantro:30,lime:2,avocado:2,zira:5,paprika:8,chili:10,cheddar:100,sourcream:150,oil:20,salt:8}],
+ ['burrito','Буррито с курицей','Мексиканская','Горячее','45 мин',{fillet:500,tortilla:4,rice:200,beans:400,cheddar:150,tomato:200,onion:100,pepper:150,sourcream:150,zira:4,paprika:6,lime:1,cilantro:20,oil:30,salt:8}],
+ ['quesadilla','Кесадилья с курицей и сыром','Мексиканская','Закуска','25 мин',{fillet:400,tortilla:4,cheddar:200,pepper:150,onion:80,jalapeno:60,sourcream:100,paprika:4,oil:20}],
+ ['guacamole','Гуакамоле с начос','Мексиканская','Закуска','15 мин',{avocado:4,tomato:150,onion:60,lime:2,cilantro:20,chili:10,tortilla:6,oil:60,salt:5}],
+ ['fajitas','Фахитас с говядиной','Мексиканская','Горячее','35 мин',{steak:600,pepper:400,onion:200,tortilla:8,lime:2,garlic:15,zira:4,paprika:8,sourcream:150,avocado:1,oil:40,salt:8}],
+ ['enchiladas','Энчиладас с курицей','Мексиканская','Горячее','1 ч',{fillet:600,tortilla:8,ctomato:400,onion:150,garlic:15,chili:10,zira:4,cheddar:200,sourcream:150,cilantro:20,oil:30}],
+ ['esquites','Эскитес (кукуруза по-мексикански)','Мексиканская','Закуска','20 мин',{corn:680,butter:30,mayo:60,sourcream:60,feta:100,lime:1,chili:5,paprika:3,cilantro:15}],
+ ['huevos','Уэвос ранчерос','Мексиканская','Завтрак','25 мин',{eggs:8,tortilla:4,ctomato:400,onion:100,garlic:10,chili:10,beans:400,avocado:1,cilantro:15,feta:80,oil:30}],
+ // Южноамериканская
+ ['lomosaltado','Ломо сальтадо','Южноамериканская','Горячее','40 мин',{steak:600,potato:600,onion:200,tomato:300,soy:40,ricevin:20,garlic:15,chili:10,cilantro:20,jasmine:300,oil:400}],
+ ['ceviche','Севиче из белой рыбы','Южноамериканская','Закуска','30 мин',{whitefish:600,lime:6,onion:150,chili:15,cilantro:30,corn:200,salt:8}],
+ ['polloalabrasa','Курица по-перуански','Южноамериканская','Горячее','1 ч 30 мин + 4 ч',{chicken:1600,soy:40,lime:2,garlic:25,zira:5,paprika:10,oregano:3,oil:40,potato:800,mayo:60,cilantro:20,salt:15}],
+ ['empanadas','Эмпанадас с говядиной','Южноамериканская','Выпечка','1 ч 30 мин',{flour:500,butter:120,beefmince:500,onion:200,eggs:3,olives:80,zira:4,paprika:8,salt:10}],
+ ['chimichurri','Стейк с соусом чимичурри','Южноамериканская','Горячее','30 мин',{steak:800,parsley:60,garlic:20,olive:120,ricevin:30,oregano:3,chili:5,potato:800,salt:12,bpepper:4}],
+ ['feijoada','Фейжоада','Южноамериканская','Горячее','2 ч',{beans:800,pork:500,sausages:300,bacon:150,onion:200,garlic:20,bayleaf:2,orange:300,rice:300,oil:30,salt:10}],
+ ['arepas','Арепы с курицей и авокадо','Южноамериканская','Завтрак','45 мин',{cornmeal:300,fillet:400,avocado:2,mayo:40,lime:1,cilantro:20,cheese:100,butter:30,salt:8}],
+ ['brigadeiro','Бригадейру','Южноамериканская','Десерт','30 мин + 1 ч',{condensed:380,cocoa:25,butter:20,chocolate:50}],
+];

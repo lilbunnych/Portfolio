@@ -11,7 +11,7 @@ const ALIAS = {
   salmon: ['лосос'], whitefish: ['треск'], shrimp: ['кревет'], herring: ['сельд'], tuna: ['тун(?:ец|ца|цом)'], crab: ['крабов'],
   potato: ['картоф', 'картошк'], onion: ['лук(?!-порей| зелен)'], carrot: ['морков'], beet: ['свекл'],
   cabbage: ['капуст(?![а-я]* (?:квашен|цветн))', 'кочан'], tomato: ['помидор'], cherry: ['черри'], cucumber: ['огур(?:ец|цы|цов|цом|ца)'],
-  pepper: ['перец(?! чили)', 'перц(?:ы|ев|ем|а)?\\b'], zucchini: ['кабач'], eggplant: ['баклажан'], mushrooms: ['гриб', 'шампиньон'],
+  pepper: ['болгарск[а-я]* перец', 'болгарск[а-я]* перц', 'сладк[а-я]* перец', 'перец(?! чили)', 'перц(?:ы|ев)\\b'], zucchini: ['кабач'], eggplant: ['баклажан'], mushrooms: ['гриб', 'шампиньон'],
   broccoli: ['брокколи'], greenbeans: ['стручков[а-я]* фасол'], spinach: ['шпинат'], sorrel: ['щавел'], lettuce: ['салат(?:а|ом|е|ы)?\\b'],
   celery: ['сельдере'], leek: ['поре[йя]'], garlic: ['чеснок', 'чеснока', 'чесноком'], ginger: ['имбир'], chili: ['чили(?! соус)'],
   dill: ['укроп'], parsley: ['петрушк'], cilantro: ['кинз'], greenonion: ['зелен[а-я]* лук', 'лук[а-я]* зелен'], basil: ['базилик'],
@@ -39,11 +39,18 @@ const ALIAS = {
   jam: ['варень'], almonds: ['миндал'], icecream: ['морожен'], radish: ['редис'], semolina: ['манк', 'манн[а-я]* круп'], cranberry: ['клюкв'],
   berries: ['ягод'], poppy: ['мак(?:а|ом)?\\b'], chicken: ['куриц', 'тушк'], currypaste: ['паст[а-я]* карри', 'карри'],
   creamcheese: ['сливочн[а-я]* сыр'], tteok: ['клецк'], glassnoodle: ['фунчоз'], oyster: ['устричн'],
+  // 2026-10-28: Vietnam, Japan, China, Thailand, Korea, the Americas
+  lemongrass: ['лемонграсс'], mint: ['мят'], sprouts: ['ростк', 'проростк'], staranise: ['бадьян'], cinnamon: ['кориц'],
+  hoisin: ['хойсин'], sriracha: ['шрирач'], mirin: ['мирин'], ricefloor: ['рисов[а-я]* мук', 'мук(?:а|у|и|ой)\\b'], turmeric: ['куркум'],
+  pineapple: ['ананас'], tortilla: ['тортиль', 'лепешк'], buns: ['булочк', 'булк'], cheddar: ['чеддер', 'сыр(?:а|ом|у)?\\b'],
+  bbq: ['барбекю'], ketchup: ['кетчуп'], wings: ['крыл'], porkribs: ['ребрышк'], maple: ['кленов[а-я]* сироп', 'сироп'],
+  bakingpowder: ['разрыхлит'], jalapeno: ['халапеньо'], paprika: ['паприк'], oregano: ['орегано'], cookies: ['печень[еяю]'],
+  condensed: ['сгущ'], mango: ['манго'], sichuan: ['сычуаньск'], porkbelly: ['грудинк'],
 };
 // Общие слова: «мясо», «курица», «рыба» — относим к первому подходящему продукту в блюде
 const GENERIC = [
-  ['мяс', ['beef', 'pork', 'lamb', 'mince', 'beefmince', 'steak', 'duck', 'knuckle', 'ribs', 'chicken', 'fillet', 'thighs']],
-  ['кур(?:ин|иц|ицу)', ['fillet', 'thighs', 'chicken']],
+  ['мяс', ['beef', 'pork', 'lamb', 'mince', 'beefmince', 'steak', 'duck', 'knuckle', 'ribs', 'porkribs', 'porkbelly', 'chicken', 'fillet', 'thighs', 'wings']],
+  ['кур(?:ин|иц|ицу)', ['fillet', 'thighs', 'chicken', 'wings']],
   ['рыб(?![а-я]* соус)', ['whitefish', 'salmon', 'herring', 'tuna']],
 ];
 
@@ -84,6 +91,13 @@ function smartStep(d, k, text, ctx = { seen: new Set(), half: new Set() }) {
   for (const [re, list] of GENERIC) { const pid = list.find((p) => pids.includes(p)); if (pid) rules.push({ pid, re, w: 1 }); }
   rules.sort((a, b) => b.w - a.w);
   const taken = []; const marks = []; const used = new Set();
+  // Two-word names («сливочное масло», «болгарский перец») belong to their own product only:
+  // the short stem «масл» of sunflower oil must not take them
+  const reserved = [];
+  for (const r of rules) if (r.re.includes(' ')) {
+    const rx = new RegExp('(^|[^а-я])(' + r.re + ')[а-я]*', 'g'); let m;
+    while ((m = rx.exec(low))) reserved.push([m.index + m[1].length, m.index + m[0].length, r.pid]);
+  }
   // Products with the most specific names go first; each takes its earliest free mention
   const order = [...new Set(rules.map((r) => r.pid))];
   for (const pid of order) {
@@ -94,6 +108,7 @@ function smartStep(d, k, text, ctx = { seen: new Set(), half: new Set() }) {
       while ((m = rx.exec(low))) {
         const s = m.index + m[1].length, e = m.index + m[0].length;
         if (taken.some(([a, b]) => s < b && e > a)) continue;
+        if (!r.re.includes(' ') && reserved.some(([a, b, p]) => p !== pid && s < b && e > a)) continue;
         if (!best || s < best.s) best = { s, e };
         break;
       }

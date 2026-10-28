@@ -45,7 +45,14 @@ window.NUTR = {
  ricotta:[174,11,13,3], jam:[260,0.4,0,66], almonds:[609,18.6,53.7,13], icecream:[227,3.2,15,20.8],
  radish:[19,1.2,0.1,3.4], semolina:[333,10.3,1,73.3], cranberry:[30,0.5,0.2,6], berries:[45,0.8,0.4,9],
  poppy:[556,17.5,47.5,14.5], chicken:[150,13,10,0], currypaste:[120,2,6,13], creamcheese:[280,6,27,3],
- tteok:[230,4,0.5,50], glassnoodle:[330,0.5,0,82], oyster:[51,1.4,0.3,11]
+ tteok:[230,4,0.5,50], glassnoodle:[330,0.5,0,82], oyster:[51,1.4,0.3,11],
+ // 2026-10-28 (dishes-world.js); tortilla, buns and mango are per piece
+ lemongrass:[99,1.8,0.5,25], mint:[70,3.8,0.9,15], sprouts:[30,3,0.2,6], staranise:[337,18,16,50], cinnamon:[247,4,1.2,81],
+ hoisin:[220,3.3,3.4,44], sriracha:[93,2,1,19], mirin:[240,0.3,0,43], ricefloor:[366,6,1.4,80], turmeric:[312,10,3.3,67],
+ pineapple:[60,0.5,0.1,15], tortilla:[180,5,4.5,30], buns:[220,7,3.5,40], cheddar:[400,25,33,1.3], bbq:[170,1,0.6,40],
+ ketchup:[110,1.8,0.1,25], wings:[190,18,13,0], porkribs:[280,15,24,0], maple:[260,0,0.1,67], bakingpowder:[53,0,0,28],
+ jalapeno:[28,1,0.4,5], paprika:[282,14,13,54], oregano:[265,9,4.3,69], cookies:[460,7,18,68], condensed:[320,7.2,8.5,56],
+ mango:[120,1.6,0.8,30], sichuan:[300,11,9,58], porkbelly:[500,9,52,0]
 };
 
 // Масло для фритюра почти всё остаётся в кастрюле: сверх 120 мл на рецепт считаем впитавшимися ~15%.
@@ -66,11 +73,11 @@ window.nutr = function (d) {
 
 // Правильное питание: сытная, но лёгкая порция без колбас, майонеза, фритюра и лишнего сахара.
 // Порции в рецептах полные, с гарниром, поэтому планка — 600 ккал на тарелку.
-const PP_NO = new Set(['bacon','salo','pepperoni','sausage','sausages','ham','ribs','knuckle','mayo','puff','icecream','jam','savoiardi','sweetchili','creamcheese','mascarpone','baguette']);
-const PP_VEG = new Set(['potato','onion','carrot','beet','cabbage','tomato','cherry','cucumber','pepper','zucchini','eggplant','mushrooms','broccoli','greenbeans','spinach','sorrel','celery','garlic','dill','parsley','cilantro','greenonion','basil','pumpkin','cauliflower','radish','ctomato','beans','peas','sauerkraut','kimchi']);
+const PP_NO = new Set(['bacon','salo','pepperoni','sausage','sausages','ham','ribs','knuckle','mayo','puff','icecream','jam','savoiardi','sweetchili','creamcheese','mascarpone','baguette','porkbelly','porkribs','bbq','ketchup','condensed','cookies','maple','buns']);
+const PP_VEG = new Set(['potato','onion','carrot','beet','cabbage','tomato','cherry','cucumber','pepper','zucchini','eggplant','mushrooms','broccoli','greenbeans','spinach','sorrel','celery','garlic','dill','parsley','cilantro','greenonion','basil','pumpkin','cauliflower','radish','ctomato','beans','peas','sauerkraut','kimchi','sprouts','mint','lemongrass','pineapple','lettuce']);
 const PP_GOODFAT = new Set(['salmon','herring','tuna','whitefish','shrimp','mussels','olive','avocado']);
 const PP_GRAIN = new Set(['buckwheat','oats','millet','perlovka','barley','buckflour','soba']);
-const PP_WHITE = new Set(['spaghetti','penne','lasagna','eggnoodles','udon','bread','baguette','toast','breadcrumbs','tteok','flour']);
+const PP_WHITE = new Set(['spaghetti','penne','lasagna','eggnoodles','udon','bread','baguette','toast','breadcrumbs','tteok','flour','ricefloor']);
 window.isPP = function (d) {
   if (d.type === 'Десерт' || d.type === 'Выпечка') return false;
   const ids = Object.keys(d.i);

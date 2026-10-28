@@ -351,3 +351,118 @@ nav.tabs svg{width:20px;height:20px;flex:none}
 .pp-lead{color:var(--muted);margin:-8px 0 18px;max-width:52ch}
 .pp-filters{margin:0 -18px 10px}
 .pp-filters+.filters{margin-top:0}
+
+/* ===== 2026-10-28: regions, week planner, smooth transitions ===== */
+/* Motion tokens: one spring-like curve for everything that moves */
+:root{--ease:cubic-bezier(.2,.8,.2,1);--spring:linear(0,.009,.035 2.1%,.141 4.4%,.723 12.9%,.938 16.7%,1.017 19.6%,1.067 22.6%,1.077 25.1%,1.067 28.1%,1.002 37.6%,.991 42.6%,1.001 58.4%,1)}
+
+/* Bottom bar: the light pill slides to the active tab */
+nav.tabs .in{position:relative}
+nav.tabs button{z-index:1;transition:color .25s}
+nav.tabs button[aria-current="page"]{background:transparent;color:var(--fg)}
+.nav-thumb{position:absolute;top:6px;bottom:6px;left:0;width:var(--tw,0);transform:translateX(var(--tx,0));background:var(--bg);border-radius:999px;opacity:0;transition:transform .45s var(--spring),width .45s var(--spring),opacity .2s}
+nav.tabs .in.has .nav-thumb{opacity:1}
+
+/* Region switcher: Популярное · Азия · Европа · Другое · ПП */
+.regions{position:relative;display:flex;gap:2px;background:var(--surface);border-radius:999px;padding:4px;margin:0 0 18px;overflow-x:auto;scrollbar-width:none}
+.regions::-webkit-scrollbar{display:none}
+.regions button{position:relative;z-index:1;flex:1 1 auto;border:0;background:none;border-radius:999px;padding:10px 12px;font-weight:700;font-size:15px;color:var(--muted);white-space:nowrap;transition:color .25s}
+.regions button[aria-selected="true"]{color:var(--bg)}
+.regions .thumb{position:absolute;top:4px;bottom:4px;left:0;width:var(--tw,0);transform:translateX(var(--tx,0));background:var(--fg);border-radius:999px;opacity:0;transition:transform .45s var(--spring),width .45s var(--spring),opacity .2s}
+.regions.has .thumb{opacity:1}
+.cuisines{flex-wrap:nowrap;overflow-x:auto;margin:0 -18px 14px;padding:2px 18px;scrollbar-width:none}
+.cuisines::-webkit-scrollbar{display:none}
+.cuisine{flex:none;transition:transform .2s var(--ease),background .2s,color .2s}
+.cuisine:active{transform:scale(.95)}
+.filters{margin-top:0}
+.shelf-head h2 small{display:block;font-family:var(--body);font-weight:600;font-size:13px;letter-spacing:0;color:var(--muted);margin-top:2px}
+.shelf-head button{white-space:nowrap}
+
+/* Cards: tint while the photo loads, press feedback, long grids render lazily */
+.dish-photo{transition:transform .25s var(--ease)}
+.dish-open:active .dish-photo{transform:scale(.96)}
+.grid .dish{content-visibility:auto;contain-intrinsic-size:auto 240px}
+.quick{transition:transform .2s var(--spring),background .2s,color .2s}
+.quick:active{transform:scale(.85)}
+.dish-photo::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;border-radius:inherit;background:radial-gradient(120% 90% at 50% 35%,transparent 55%,rgba(10,14,12,.28));mix-blend-mode:multiply}
+.dish-photo .time,.dish-photo .kcal{z-index:2}
+
+/* Week promo on the home screen */
+.week-promo{width:100%;border:0;display:flex;align-items:center;gap:14px;text-align:left;background:linear-gradient(135deg,var(--fg),color-mix(in srgb,var(--fg) 70%,var(--beet)));color:var(--bg);border-radius:var(--r-lg);padding:18px 20px;margin:0 0 26px;transition:transform .25s var(--ease)}
+.week-promo:active{transform:scale(.98)}
+.week-promo b{display:block;font-family:var(--display);font-size:19px;letter-spacing:-.02em}
+.week-promo small{display:block;margin-top:3px;font-size:14px;opacity:.8;font-weight:600}
+.week-promo i{margin-left:auto;font-style:normal;font-size:22px;width:44px;height:44px;border-radius:50%;background:var(--beet);color:#fff;display:grid;place-items:center;flex:none}
+
+/* Week planner */
+.likes{display:flex;gap:8px;overflow-x:auto;margin:0 -18px 14px;padding:2px 18px;scrollbar-width:none}
+.likes::-webkit-scrollbar{display:none}
+.likes .cuisine[aria-pressed="false"]{opacity:.55}
+.likes .cuisine[aria-pressed="false"] img{filter:grayscale(1)}
+.wk-bar{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:14px}
+.wk-bar .stepper{background:var(--surface)}
+.shuffle-btn{border:0;background:var(--beet);color:#fff;border-radius:999px;padding:9px 16px 9px 9px;font-weight:800;font-size:15px;display:inline-flex;align-items:center;gap:9px;transition:transform .15s var(--ease)}
+.shuffle-btn:active{transform:scale(.95)}
+.shuffle-btn .die{background:#fff}
+.shuffle-btn .die i{background:var(--beet)}
+.week{list-style:none;margin:0 0 18px;padding:0;display:flex;flex-direction:column;gap:8px}
+.day{display:grid;grid-template-columns:64px 1fr auto;align-items:center;gap:10px;background:var(--surface);border-radius:var(--r-md);padding:8px 8px 8px 12px;animation:dayin .5s var(--ease) both}
+.day:nth-child(2){animation-delay:.04s}.day:nth-child(3){animation-delay:.08s}.day:nth-child(4){animation-delay:.12s}.day:nth-child(5){animation-delay:.16s}.day:nth-child(6){animation-delay:.2s}.day:nth-child(7){animation-delay:.24s}
+@keyframes dayin{from{opacity:0;transform:translateY(10px)}}
+.dlabel b{display:block;font-weight:800;font-size:15px;text-transform:capitalize}
+.dlabel span{font-size:12px;color:var(--muted);font-weight:600}
+.dday{all:unset;cursor:pointer;display:flex;align-items:center;gap:12px;min-width:0}
+.dday img{width:56px;height:56px;border-radius:14px;object-fit:cover;flex:none}
+.dday b{display:block;font-weight:700;font-size:15px;line-height:1.25;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.dday small{display:block;font-size:12px;color:var(--muted);font-weight:600;margin-top:2px}
+.dact{display:flex;gap:4px}
+.dact button{border:0;width:36px;height:36px;border-radius:50%;background:var(--sunk);font-weight:800;font-size:15px;transition:transform .3s var(--spring)}
+.dact button:first-child:active{transform:rotate(180deg)}
+.dempty{grid-column:2/-1;border:2px dashed var(--line);background:none;border-radius:14px;padding:16px;font-weight:700;color:var(--muted);text-align:left}
+.day.free{background:transparent;box-shadow:inset 0 0 0 1.5px var(--line)}
+.wk-sum{background:var(--surface);border-radius:var(--r-lg);padding:16px;margin-bottom:8px}
+.wk-nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.wk-nums b{display:block;font-family:var(--display);font-size:20px;letter-spacing:-.02em;white-space:nowrap}
+.wk-nums span{font-size:12px;color:var(--muted);font-weight:600;line-height:1.3;display:block}
+.wk-shared-h{margin:16px 0 8px;font-weight:700;font-size:14px}
+.wk-shared{display:flex;flex-wrap:wrap;gap:6px}
+.wk-shared span{background:var(--dill-soft);color:var(--fg);border-radius:999px;padding:5px 10px;font-size:13px;font-weight:600}
+.wk-shared b{color:var(--dill);margin-left:5px}
+
+/* Bottom sheet: pick a dish for a day */
+body.locked{overflow:hidden}
+.bsheet{position:fixed;inset:0;z-index:40}
+.bs-veil{position:absolute;inset:0;background:rgba(10,14,12,.45);opacity:0;transition:opacity .28s}
+.bs-panel{position:absolute;left:0;right:0;bottom:0;max-height:86svh;background:var(--bg);border-radius:26px 26px 0 0;padding:8px 18px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;transform:translateY(100%);transition:transform .38s var(--ease);max-width:760px;margin:0 auto}
+.bsheet.on .bs-veil{opacity:1}
+.bsheet.on .bs-panel{transform:none}
+.bs-grab{width:40px;height:5px;border-radius:9px;background:var(--line);margin:4px auto 10px}
+.bs-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.bs-head h2{margin:0}
+.bs-x{border:0;width:38px;height:38px;border-radius:50%;background:var(--surface);font-weight:800}
+.bs-list{overflow-y:auto;display:flex;flex-direction:column;gap:6px;margin:0 -6px;padding:0 6px 6px}
+.bs-item{border:0;background:var(--surface);border-radius:16px;padding:8px;display:flex;align-items:center;gap:12px;text-align:left;transition:transform .15s var(--ease)}
+.bs-item:active{transform:scale(.98)}
+.bs-item img{width:52px;height:52px;border-radius:12px;object-fit:cover;flex:none}
+.bs-item b{display:block;font-size:15px}
+.bs-item small{font-size:12px;color:var(--muted);font-weight:600}
+
+/* View transitions: header and tab bar stay put, the page cross-fades, the photo flies from card to recipe */
+header{view-transition-name:top}
+nav.tabs{view-transition-name:tabbar}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.24s;animation-timing-function:var(--ease)}
+html[data-vt="region"]::view-transition-old(root){animation:vt-out .2s var(--ease) both}
+html[data-vt="region"]::view-transition-new(root){animation:vt-in .32s var(--ease) both}
+@keyframes vt-out{to{opacity:0;transform:translateY(-6px)}}
+@keyframes vt-in{from{opacity:0;transform:translateY(10px)}}
+::view-transition-group(dish){animation-duration:.48s;animation-timing-function:var(--ease);z-index:5}
+::view-transition-image-pair(dish){isolation:auto}
+::view-transition-old(dish),::view-transition-new(dish){animation:none;mix-blend-mode:normal;height:100%;object-fit:cover;overflow:clip}
+html[data-vt="open"]::view-transition-new(root){animation:vt-sheet .48s var(--ease) both}
+@keyframes vt-sheet{from{opacity:0;transform:translateY(40px)}}
+html[data-vt="shuffle"] .week{view-transition-name:week}
+::view-transition-new(week){animation:vt-in .4s var(--ease) both}
+.hero img{animation:none}
+
+/* Photos read as plated food: a touch warmer, deeper shadows, same grade everywhere */
+.dish-photo img,.hero img,.today img,.cook-final img,.dday img,.bs-item img{filter:saturate(1.12) contrast(1.06) brightness(1.02) sepia(.06)}
